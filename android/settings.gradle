@@ -1,0 +1,3 @@
+rootProject.name = 'rcCar'
+
+include ':app'

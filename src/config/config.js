@@ -1,0 +1,1 @@
+const SERVER_URL = 'ws://192.168.4.1:82'; // FIX (check port if its correct one)!!!
