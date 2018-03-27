@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
   },
   firstItem: {
     borderTopWidth:0.5,
-    borderTopColor: '#fff',
+    borderTopColor: 'rgba(255,255,255,.5)',
   },
   lastItem: {
     borderBottomWidth:0
@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
     //alignItems:'center',
     justifyContent:'space-between',
     borderBottomWidth:0.5,
-    borderBottomColor: '#fff',
+    borderBottomColor: 'rgba(255,255,255,.5)',
     paddingTop:15,
     paddingBottom:15
   },

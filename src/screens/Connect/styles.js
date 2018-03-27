@@ -3,18 +3,15 @@ import { colors } from "../../config/styles/colors";
 
 export const styles = StyleSheet.create({
   container: {
+    position: 'relative',
     flex: 1,
     backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
   },
   logo: {
-    marginTop:70,
-    justifyContent:'flex-start',
-  },
-  inputBox: {
-    flex:1,
-    justifyContent: 'center',
+    position: 'absolute',
+    top: 70,
   },
   textInput: {
     borderBottomWidth: 0,

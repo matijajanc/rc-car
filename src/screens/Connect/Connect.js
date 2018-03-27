@@ -22,10 +22,8 @@ export class ConnectScreen extends React.Component {
     return (
       <View style={styles.container}>
         <Image style={styles.logo} source={require('../../../images/logo.png')} />
-        <View style={styles.inputBox}>
-          <TextInput style={styles.textInput} value={this.state.ip} onChangeText={(ip) => this.setState({ip})} />
-          <Button style={styles.button} title="Connect" onPress={this.connect} />
-        </View>
+        <TextInput style={styles.textInput} value={this.state.ip} onChangeText={(ip) => this.setState({ip})} />
+        <Button style={styles.button} title="Connect" onPress={this.connect} />
       </View>
     );
   }

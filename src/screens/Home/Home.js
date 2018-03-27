@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Button, Switch } from 'react-native';
+import { View, Text, Button, Switch, TouchableHighlight } from 'react-native';
 
 import { styles } from "../Home/styles";
 
@@ -61,9 +61,9 @@ export class HomeScreen extends React.Component {
           <Switch style={styles.switch} onValueChange={this.setBlinkers} value={this.state.blinkers} />
         </View>
 
-        <View style={[styles.item, styles.lastItem]}>
+        <TouchableHighlight style={[styles.item, styles.lastItem]} onPress={() => navigate('Arduino')}>
           <Text style={styles.title}>Arduino Uno R3</Text>
-        </View>
+        </TouchableHighlight >
       </View>
     );
   }

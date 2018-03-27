@@ -1,6 +1,7 @@
 import { StackNavigator } from 'react-navigation';
 import { ConnectScreen } from '../screens/Connect/Connect';
 import { HomeScreen } from '../screens/Home/Home';
+import { ArduinoScreen } from '../screens/Arduino/Arduino';
 
 export const Routes = StackNavigator(
   {
@@ -9,6 +10,9 @@ export const Routes = StackNavigator(
     },
     Home: {
       screen: HomeScreen
+    },
+    Arduino: {
+      screen: ArduinoScreen
     }
   },
   {
