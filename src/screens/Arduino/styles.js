@@ -11,11 +11,12 @@ export const styles = StyleSheet.create({
   },
   image: {
     marginTop:25,
-    marginBottom:40,
+    marginBottom:20,
     alignSelf: 'center'
   },
   sectionHeader: {
     color:'#fff',
+    marginTop:20,
     paddingTop:10,
     paddingBottom:10,
     paddingLeft:15,

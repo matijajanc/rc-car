@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { View, Image, ScrollView } from 'react-native';
-import { sectionListData } from './sectionListData';
+import { sectionListData } from './data/sectionListData';
 import { styles } from './styles';
-import ArduinoPins from "./pins/section";
+import ArduinoPins from './components/section';
 
 export class ArduinoScreen extends React.Component {
   render() {
