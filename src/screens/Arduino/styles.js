@@ -4,44 +4,50 @@ import { colors } from "../../config/styles/colors";
 export const styles = StyleSheet.create({
   container: {
     position: 'relative',
-    flex: 1,
+    //flex: 1,
     backgroundColor: colors.background,
-    alignItems: 'center',
     justifyContent: 'flex-start',
+    paddingBottom:25
   },
   image: {
     marginTop:25,
-    marginBottom:50,
-    alignItems: 'center'
+    marginBottom:40,
+    alignSelf: 'center'
   },
   sectionHeader: {
     color:'#fff',
     paddingTop:10,
     paddingBottom:10,
-    paddingLeft:20,
-    paddingRight:20,
+    paddingLeft:15,
+    paddingRight:15,
     backgroundColor:'rgba(0,0,0,0.8)'
   },
   listItem: {
     flexDirection: 'row',
-    alignItems:'flex-start',
-    paddingTop:7,
-    paddingBottom:7,
-    paddingLeft:20,
-    paddingRight:20,
+    paddingTop:8,
+    paddingBottom:8,
+    paddingLeft:15,
+    paddingRight:15,
   },
   pin: {
     color:'#fff',
+    marginRight:15,
+    backgroundColor:'rgba(0,0,0,0.8)',
+    paddingTop:2,
+    paddingBottom:2,
+    paddingRight:8,
+    paddingLeft:8
   },
   text: {
     color:'#fff',
+    flexGrow:2
   },
   type: {
     color:'#fff',
-    justifyContent:'flex-end'
   },
   color: {
     color:'#fff',
-    justifyContent:'flex-end'
+    justifyContent:'flex-end',
+    marginRight:10
   }
 });
