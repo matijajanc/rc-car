@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, Button, Switch, TouchableHighlight } from 'react-native';
-
+import { View, Text, Switch, TouchableHighlight } from 'react-native';
 import { styles } from "../Home/styles";
+import Transmitter from '../../utils/transmitter';
 
 export class HomeScreen extends React.Component {
-
   constructor() {
     super();
     this.state = {
@@ -20,10 +19,12 @@ export class HomeScreen extends React.Component {
 
   setRangeSensors = (value) => {
     this.setState = ({rangeSensors: value});
+    Transmitter.send('rs'+ (value ? 1 : 0));
   };
 
   setBlinkers = (value) => {
     this.setState = ({blinkers: value});
+    Transmitter.send('bl'+ (value ? 1 : 0));
   };
 
   render() {

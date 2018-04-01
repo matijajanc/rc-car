@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { TextInput } from 'react-native';
 import {styles} from "../../styles";
+import Config from 'react-native-config';
 
 export default class IP extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      domain: '192.168.4.1'
+      domain: Config.WS_SERVER_IP
     };
     this.props.callbackchild(this.state.domain);
   }

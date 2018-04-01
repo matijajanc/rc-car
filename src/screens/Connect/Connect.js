@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { View, TextInput, Button, Image } from 'react-native';
 import { styles } from './styles';
 import ConnectionType from "./components/connection-type";
+import WebSocketNodeJs from '../../utils/websocket';
+import KeepAlive from '../../utils/keep-alive';
 
 export class ConnectScreen extends React.Component {
   constructor(props) {
@@ -18,10 +20,19 @@ export class ConnectScreen extends React.Component {
   };
 
   connect = () => {
-    console.log(this.state.domain);
-    // if (this.state.ip.length) {
-    //   //this.props.navigation.navigate('Home')
-    // }
+    if (this.state.domain) {
+      const socket = WebSocketNodeJs.createSocket(this.state.domain);
+
+      socket.onopen = () => {
+        console.log("Connection Opened");
+        //KeepAlive.start();
+        this.props.navigation.navigate('Home');
+      };
+
+      socket.onerror = (e) => {
+        console.log("Error");
+      };
+    }
   };
 
   render() {
