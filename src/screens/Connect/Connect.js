@@ -5,12 +5,14 @@ import ConnectionType from "./components/connection-type";
 import WebSocketNodeJs from '../../utils/websocket';
 import KeepAlive from '../../utils/keep-alive';
 import Settings from '../../utils/settings';
+import Vibrate from '../../utils/vibrate';
 
 export class ConnectScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      domain: null
+      domain: null,
+      fallback: 0
     };
   }
 
@@ -35,8 +37,21 @@ export class ConnectScreen extends React.Component {
       socket.onerror = (e) => {
         console.log("Error");
       };
+
+      Vibrate.vibrate();
+      this.fallback();
     }
   };
+
+  /**
+   * Fallback so that we can open an App without NodeJs Server
+   */
+  fallback() {
+    this.setState({fallback: this.state.fallback + 1});
+    if (this.state.fallback >= 10) {
+      this.props.navigation.navigate('Home');
+    }
+  }
 
   render() {
     return (
