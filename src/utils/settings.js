@@ -7,7 +7,7 @@ class Settings {
       for (let key of keys) {
         AsyncStorage.getItem(key).then((value) => {
           const command = key.replace('setting-', '');
-          Transmitter.send(command + (value === 'true' ? 1 : 0));
+          Transmitter.send(command + (value === 'true' ? 1 : 0));   // Not All Are Boolean (Steer calibrations)   // maybe different storage keys for different purposes
         });
       }
     });

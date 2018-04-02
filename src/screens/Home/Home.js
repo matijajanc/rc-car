@@ -55,9 +55,9 @@ export class HomeScreen extends React.Component {
           <Text style={styles.title}>Steer Sensitivity</Text>
         </View>
 
-        <View style={styles.item}>
+        <TouchableHighlight style={styles.item} onPress={() => navigate('SteerCalibrate')}>
           <Text style={styles.title}>Steer Calibrate</Text>
-        </View>
+        </TouchableHighlight>
 
         <View style={styles.item}>
           <Text style={styles.title}>Range Sensors</Text>
@@ -71,7 +71,7 @@ export class HomeScreen extends React.Component {
 
         <TouchableHighlight style={[styles.item, styles.lastItem]} onPress={() => navigate('Arduino')}>
           <Text style={styles.title}>Arduino Uno R3</Text>
-        </TouchableHighlight >
+        </TouchableHighlight>
       </View>
     );
   }

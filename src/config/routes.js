@@ -2,6 +2,7 @@ import { StackNavigator } from 'react-navigation';
 import { ConnectScreen } from '../screens/Connect/Connect';
 import { HomeScreen } from '../screens/Home/Home';
 import { ArduinoScreen } from '../screens/Arduino/Arduino';
+import { SteerCalibrateScreen } from "../screens/SteerCalibrate/SteerCalibrate";
 
 export const Routes = StackNavigator(
   {
@@ -13,6 +14,9 @@ export const Routes = StackNavigator(
     },
     Arduino: {
       screen: ArduinoScreen
+    },
+    SteerCalibrate: {
+      screen: SteerCalibrateScreen
     }
   },
   {

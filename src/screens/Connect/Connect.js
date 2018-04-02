@@ -28,6 +28,7 @@ export class ConnectScreen extends React.Component {
         console.log("Connection Opened");
         //KeepAlive.start();
         Settings.send();
+        //Settings.clearAll(); // just for testing
         this.props.navigation.navigate('Home');
       };
 
