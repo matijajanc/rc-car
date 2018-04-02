@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Switch, TouchableHighlight } from 'react-native';
+import { View, Text, Switch, TouchableHighlight, AsyncStorage } from 'react-native';
 import { styles } from "../Home/styles";
 import Transmitter from '../../utils/transmitter';
 
@@ -8,23 +8,34 @@ export class HomeScreen extends React.Component {
     super();
     this.state = {
       calibration: false,
-      rangeSensors: false,
-      blinkers: false
-    }
+      rs: false,
+      bl: false
+    };
+    this.updateStates();
+  }
+
+  updateStates() {
+    AsyncStorage.getAllKeys().then((keys) => {
+      const settings = keys.filter((key) => key.startsWith('setting-'));
+      for (let item of settings) {
+        AsyncStorage.getItem(item).then((value) => {
+          const setting = item.replace('setting-', '');
+          this.setState({[setting]: (value === 'true')});
+        });
+      }
+    });
   }
 
   calibrateAccelerometers = (value) => {
-    this.setState = ({calibration: value});
+    this.setState({calibration: value});
   };
 
-  setRangeSensors = (value) => {
-    this.setState = ({rangeSensors: value});
-    Transmitter.send('rs'+ (value ? 1 : 0));
-  };
-
-  setBlinkers = (value) => {
-    this.setState = ({blinkers: value});
-    Transmitter.send('bl'+ (value ? 1 : 0));
+  setSetting = (newSate) => {
+    const key = Object.keys(newSate)[0];
+    const value = Object.values(newSate)[0];
+    this.setState(newSate);
+    Transmitter.send(key+ (value ? 1 : 0));
+    AsyncStorage.setItem('setting-'+key, value.toString());
   };
 
   render() {
@@ -41,10 +52,6 @@ export class HomeScreen extends React.Component {
         </View>
 
         <View style={styles.item}>
-          <Text style={styles.title}>Speed</Text>
-        </View>
-
-        <View style={styles.item}>
           <Text style={styles.title}>Steer Sensitivity</Text>
         </View>
 
@@ -54,12 +61,12 @@ export class HomeScreen extends React.Component {
 
         <View style={styles.item}>
           <Text style={styles.title}>Range Sensors</Text>
-          <Switch style={styles.switch} onValueChange={this.setRangeSensors} value={this.state.rangeSensors} />
+          <Switch style={styles.switch} onValueChange={(value) => this.setSetting({rs: value})} value={this.state.rs} />
         </View>
 
         <View style={styles.item}>
           <Text style={styles.title}>Blinkers</Text>
-          <Switch style={styles.switch} onValueChange={this.setBlinkers} value={this.state.blinkers} />
+          <Switch style={styles.switch} onValueChange={(value) => this.setSetting({bl: value})} value={this.state.bl} />
         </View>
 
         <TouchableHighlight style={[styles.item, styles.lastItem]} onPress={() => navigate('Arduino')}>

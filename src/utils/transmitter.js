@@ -29,10 +29,9 @@ import WebSocketNodeJs from './websocket';
 
 export default class Transmitter {
   static send(command) {
-    const socket = WebSocketNodeJs.getSocket();
-    console.log(socket);
-    console.log(command + END_CHAR);
-
+    const socket = WebSocketNodeJs.get();
     socket.send(command + END_CHAR);
+
+    console.log(command + END_CHAR);
   }
 }

@@ -6,16 +6,16 @@ class WebSocketNodeJs {
   }
 
   createSocket(ip) {
-    return this.setSocket(new WebSocket('ws://'+ip+':'+Config.WS_PORT));
+    return this.set(new WebSocket('ws://'+ip+':'+Config.WS_PORT));
   }
 
-  setSocket(socket) {
+  set(socket) {
     this.socket = socket;
 
     return this.socket;
   }
 
-  getSocket() {
+  get() {
     return this.socket;
   }
 }

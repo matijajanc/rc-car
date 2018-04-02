@@ -4,6 +4,7 @@ import { styles } from './styles';
 import ConnectionType from "./components/connection-type";
 import WebSocketNodeJs from '../../utils/websocket';
 import KeepAlive from '../../utils/keep-alive';
+import Settings from '../../utils/settings';
 
 export class ConnectScreen extends React.Component {
   constructor(props) {
@@ -26,6 +27,7 @@ export class ConnectScreen extends React.Component {
       socket.onopen = () => {
         console.log("Connection Opened");
         //KeepAlive.start();
+        Settings.send();
         this.props.navigation.navigate('Home');
       };
 
