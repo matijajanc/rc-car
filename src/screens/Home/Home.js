@@ -47,9 +47,9 @@ export class HomeScreen extends React.Component {
           <Switch style={styles.switch} onValueChange={this.calibrateAccelerometers} value={this.state.calibration} />
         </View>
 
-        <View style={styles.item}>
+        <TouchableHighlight style={styles.item} onPress={() => navigate('Speed')}>
           <Text style={styles.title}>Speed</Text>
-        </View>
+        </TouchableHighlight>
 
         <View style={styles.item}>
           <Text style={styles.title}>Steer Sensitivity</Text>

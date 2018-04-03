@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Button, Image, TouchableHighlight, AsyncStorage } from 'react-native';
+import { View, Text, Image, TouchableHighlight, AsyncStorage } from 'react-native';
 import {styles} from "./styles";
 import Transmitter from '../../utils/transmitter';
 import Vibrate from '../../utils/vibrate';
@@ -13,6 +13,9 @@ export class SteerCalibrateScreen extends React.Component {
     this.updateStates();
   }
 
+  /**
+   * Update state from saved value
+   */
   updateStates() {
     AsyncStorage.getItem('setting-sc').then((value) => {
       if (value) {
@@ -21,6 +24,11 @@ export class SteerCalibrateScreen extends React.Component {
     });
   }
 
+  /**
+   * Calibrate Steer on RC car
+   *
+   * @param value
+   */
   calibrate = (value) => {
     if (((this.state.angle > -15) || (value !== 'decrement'))
       && ((this.state.angle < 15) || (value !== 'increment'))
