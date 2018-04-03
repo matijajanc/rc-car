@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Button, AsyncStorage } from 'react-native';
+import { View, Text, Button, Image, TouchableHighlight, AsyncStorage } from 'react-native';
 import {styles} from "./styles";
 import Transmitter from '../../utils/transmitter';
 import Vibrate from '../../utils/vibrate';
@@ -36,11 +36,17 @@ export class SteerCalibrateScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Button title="<" onPress={() => this.calibrate('decrement')}/>
-        <View>
-          <Text>Tyre</Text>
-        </View>
-        <Button title=">" onPress={() => this.calibrate('increment')}/>
+        <View style={styles.contentBox}>
+          <TouchableHighlight style={[styles.button]} onPress={() => this.calibrate('decrement')}>
+            <Image style={styles.arrow} source={require('./images/arrow.png')}/>
+          </TouchableHighlight>
+          <View style={styles.tyreBox}>
+            <Image style={styles.tyre} source={require('./images/tyre.png')}/>
+          </View>
+          <TouchableHighlight style={styles.button} onPress={() => this.calibrate('increment')}>
+            <Image style={[styles.arrow, styles.right]} source={require('./images/arrow.png')}/>
+          </TouchableHighlight>
+          </View>
         <View style={styles.angleBg}>
           <Text style={styles.angle}>{this.state.angle}</Text>
         </View>
