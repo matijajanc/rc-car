@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Switch, TouchableHighlight, AsyncStorage } from 'react-native';
+import { View, Image, Text, Switch, TouchableHighlight, AsyncStorage } from 'react-native';
 import { styles } from "../Home/styles";
 import Transmitter from '../../utils/transmitter';
 
@@ -42,6 +42,10 @@ export class HomeScreen extends React.Component {
     const { navigate } = this.props.navigation;
     return (
       <View style={styles.container}>
+        <TouchableHighlight style={styles.driveMode} onPress={() => navigate('DriveWithButtons')}>
+          <Image style={styles.touchImg} source={require('./images/tablet-screen-128.png')} />
+        </TouchableHighlight>
+
         <View style={[styles.item, styles.firstItem]}>
           <Text style={styles.title}>Calibration</Text>
           <Switch style={styles.switch} onValueChange={this.calibrateAccelerometers} value={this.state.calibration} />

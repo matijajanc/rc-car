@@ -8,6 +8,13 @@ export const styles = StyleSheet.create({
     alignContent: 'flex-end',
     justifyContent: 'flex-end',
   },
+  driveMode: {
+    flex:1,
+    justifyContent: 'center',
+    alignSelf: 'center',
+  },
+  touchImg: {
+  },
   firstItem: {
     borderTopWidth:0.5,
     borderTopColor: 'rgba(255,255,255,.5)',

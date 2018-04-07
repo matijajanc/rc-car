@@ -4,6 +4,7 @@ import { HomeScreen } from '../screens/Home/Home';
 import { ArduinoScreen } from '../screens/Arduino/Arduino';
 import { SteerCalibrateScreen } from "../screens/SteerCalibrate/SteerCalibrate";
 import { SpeedScreen } from "../screens/Speed/Speed";
+import DriveModeButtonsScreen from '../screens/DriveMode/Buttons/DriveModeButtons';
 
 export const Routes = StackNavigator(
   {
@@ -22,6 +23,9 @@ export const Routes = StackNavigator(
     Arduino: {
       screen: ArduinoScreen
     },
+    DriveWithButtons: {
+      screen: DriveModeButtonsScreen
+    }
   },
   {
     initialRouteName: 'Connect',
