@@ -1,10 +1,31 @@
 import React, { Component } from 'react';
 import { View, Image, Text, TouchableHighlight, TouchableWithoutFeedback } from 'react-native';
 import Transmitter from '../../../utils/transmitter';
+import WebSocketNodeJs from '../../../utils/websocket';
 import Vibrate from '../../../utils/vibrate';
 import { styles } from './styles';
 
 export default class DriveModeButtonsScreen extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      sp: 0,
+      mt: 0,
+      bv: 0,
+      rs: null
+    };
+    this.receiver();
+  }
+
+  receiver() {
+    const socket = WebSocketNodeJs.get();
+    socket.onmessage = (data) => {
+      const stopChar = /[^X]*/.exec(data.data)[0];
+      const option = stopChar.substring(0, 2);
+      const value = stopChar.substring(2);
+      this.setState({[option]: value});
+    };
+  }
 
   buttonPress = (command) => {
     Transmitter.send(command);
@@ -31,7 +52,7 @@ export default class DriveModeButtonsScreen extends React.Component {
           </TouchableWithoutFeedback>
         </View>
         <View style={styles.mainBox}>
-          <Text style={styles.speed}>0</Text>
+          <Text style={styles.speed}>{this.state.sp}</Text>
         </View>
         <View style={styles.leftRightBox}>
           <TouchableWithoutFeedback onPressIn={() => this.buttonPress('dba')} onPressOut={() => this.buttonRelease('dbg')}>

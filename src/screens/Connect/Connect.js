@@ -28,7 +28,7 @@ export class ConnectScreen extends React.Component {
 
       socket.onopen = () => {
         console.log("Connection Opened");
-        //KeepAlive.start();
+        KeepAlive.start();
         Settings.send();
         //Settings.clearAll(); // just for testing
         this.props.navigation.navigate('Home');
