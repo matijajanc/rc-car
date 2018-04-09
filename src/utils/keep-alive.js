@@ -4,7 +4,6 @@ class KeepAlive {
   start() {
     setInterval(function () {
       Transmitter.send('kp');
-      console.log("KP!!!");
     }, 100);
   }
 }

@@ -26,10 +26,11 @@ export const styles = StyleSheet.create({
   button: {
     width:100,
     height:100,
-    borderColor:'#fff',
+    borderColor:'rgba(255,255,255,.1)',
     borderWidth:1,
     alignItems:'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    borderRadius:8
   },
   buttonArrow: {
     color:'#fff'
@@ -47,7 +48,16 @@ export const styles = StyleSheet.create({
     flexGrow:2
   },
   speed: {
-    fontSize:60,
+    position:'absolute',
+    justifyContent:'center',
+    alignSelf: 'center',
+    fontSize:90,
     color:'#fff',
+  },
+  speedometer: {
+    flex:1,
+    position:'absolute',
+    width:300,
+    height:280
   }
 });

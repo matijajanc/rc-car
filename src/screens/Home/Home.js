@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Image, Text, Switch, TouchableHighlight, AsyncStorage } from 'react-native';
 import { styles } from "../Home/styles";
 import Transmitter from '../../utils/transmitter';
+import Orientation from "react-native-orientation";
 
 export class HomeScreen extends React.Component {
   constructor() {
@@ -12,6 +13,10 @@ export class HomeScreen extends React.Component {
       bl: false
     };
     this.updateStates();
+  }
+
+  componentDidMount() {
+    Orientation.lockToPortrait();
   }
 
   updateStates() {

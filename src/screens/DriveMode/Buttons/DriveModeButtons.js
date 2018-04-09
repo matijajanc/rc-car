@@ -4,6 +4,8 @@ import Transmitter from '../../../utils/transmitter';
 import WebSocketNodeJs from '../../../utils/websocket';
 import Vibrate from '../../../utils/vibrate';
 import { styles } from './styles';
+import Orientation from 'react-native-orientation';
+import Speedometer from '../components/speedometer/speedometer';
 
 export default class DriveModeButtonsScreen extends React.Component {
   constructor() {
@@ -17,13 +19,18 @@ export default class DriveModeButtonsScreen extends React.Component {
     this.receiver();
   }
 
+  componentDidMount() {
+    Orientation.lockToLandscape();
+  }
+
   receiver() {
     const socket = WebSocketNodeJs.get();
     socket.onmessage = (data) => {
       const stopChar = /[^X]*/.exec(data.data)[0];
       const option = stopChar.substring(0, 2);
       const value = stopChar.substring(2);
-      this.setState({[option]: value});
+      this.setState({[option]: parseInt(value)});   // SLOW !!! (How to update component faster)
+      console.log("WS: "+ parseInt(value));
     };
   }
 
@@ -52,6 +59,8 @@ export default class DriveModeButtonsScreen extends React.Component {
           </TouchableWithoutFeedback>
         </View>
         <View style={styles.mainBox}>
+          <Speedometer speed={this.state.sp}/>
+          <Image style={styles.speedometer} source={require('../components/speedometer/images/speedometer.png')} />
           <Text style={styles.speed}>{this.state.sp}</Text>
         </View>
         <View style={styles.leftRightBox}>

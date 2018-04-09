@@ -6,6 +6,7 @@ import WebSocketNodeJs from '../../utils/websocket';
 import KeepAlive from '../../utils/keep-alive';
 import Settings from '../../utils/settings';
 import Vibrate from '../../utils/vibrate';
+import Orientation from 'react-native-orientation';
 
 export class ConnectScreen extends React.Component {
   constructor(props) {
@@ -14,6 +15,10 @@ export class ConnectScreen extends React.Component {
       domain: null,
       fallback: 0
     };
+  }
+
+  componentDidMount() {
+    Orientation.lockToPortrait();
   }
 
   callbackDomain = (value) => {
