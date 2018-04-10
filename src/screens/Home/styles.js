@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
   },
   firstItem: {
     borderTopWidth:0.5,
-    borderTopColor: 'rgba(255,255,255,.5)',
+    borderTopColor: 'rgba(0,0,0,.3)',
   },
   lastItem: {
     borderBottomWidth:0

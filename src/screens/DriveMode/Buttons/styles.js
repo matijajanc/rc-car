@@ -4,6 +4,7 @@ import { colors } from "../../../config/styles/colors";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: 'relative',
     backgroundColor: colors.background,
     flexDirection:'row',
     justifyContent: 'center',
@@ -15,13 +16,20 @@ export const styles = StyleSheet.create({
     // justifyContent: 'flex-end',
   },
   upDownBox: {
-    justifyContent:'flex-end',
-    alignSelf:'flex-end'
+    // justifyContent:'flex-end',
+    // alignSelf:'flex-end'
+    position:'absolute',
+    left: 15,
+    bottom:15,
+    zIndex:2
   },
   leftRightBox: {
     flexDirection:'row',
     alignItems:'center',
-    justifyContent:'flex-end'
+    position:'absolute',
+    right:15,
+    height:'100%',
+    zIndex:2
   },
   button: {
     width:100,
@@ -33,31 +41,28 @@ export const styles = StyleSheet.create({
     borderRadius:8
   },
   buttonArrow: {
-    color:'#fff'
+    color:'transparent'
   },
   bottomSpace: {
     marginBottom:10
   },
-  rightSpace: {
-    marginRight:10
+  btnLeft: {
+    marginRight:10,
+    //display:'flex'
+  },
+  btnRight: {
+
   },
   mainBox: {
+    //flex:1,
+    position:'absolute',
+    width:'100%',
+    height:'100%',
     justifyContent:'center',
     alignItems: 'center',
     alignSelf:'center',
-    flexGrow:2
+    //flexGrow:2
+    zIndex:1,
+    //backgroundColor:'red'
   },
-  speed: {
-    position:'absolute',
-    justifyContent:'center',
-    alignSelf: 'center',
-    fontSize:90,
-    color:'#fff',
-  },
-  speedometer: {
-    flex:1,
-    position:'absolute',
-    width:300,
-    height:280
-  }
 });

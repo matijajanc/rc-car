@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { View, Image, Text, TouchableHighlight, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TouchableWithoutFeedback, StatusBar } from 'react-native';
 import Transmitter from '../../../utils/transmitter';
 import WebSocketNodeJs from '../../../utils/websocket';
 import Vibrate from '../../../utils/vibrate';
 import { styles } from './styles';
 import Orientation from 'react-native-orientation';
 import Speedometer from '../components/speedometer/speedometer';
+import BatteryLevel from "../components/battery/battery-level";
+import MotorTemp from "../components/temperature/motor-temp";
 
 export default class DriveModeButtonsScreen extends React.Component {
   constructor() {
@@ -46,6 +48,7 @@ export default class DriveModeButtonsScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
+        <StatusBar hidden/>
         <View style={styles.upDownBox}>
           <TouchableWithoutFeedback onPressIn={() => this.buttonPress('dbw')} onPressOut={() => this.buttonRelease('dbx')}>
             <View style={[styles.button, styles.bottomSpace]}>
@@ -60,17 +63,17 @@ export default class DriveModeButtonsScreen extends React.Component {
         </View>
         <View style={styles.mainBox}>
           <Speedometer speed={this.state.sp}/>
-          <Image style={styles.speedometer} source={require('../components/speedometer/images/speedometer.png')} />
-          <Text style={styles.speed}>{this.state.sp}</Text>
+          <BatteryLevel battery={this.state.bv}/>
+          <MotorTemp temp={this.state.mt}/>
         </View>
         <View style={styles.leftRightBox}>
           <TouchableWithoutFeedback onPressIn={() => this.buttonPress('dba')} onPressOut={() => this.buttonRelease('dbg')}>
-            <View style={[styles.button, styles.rightSpace]}>
+            <View style={[styles.button, styles.btnLeft]}>
               <Text style={styles.buttonArrow}>LEFT</Text>
             </View>
           </TouchableWithoutFeedback>
           <TouchableWithoutFeedback onPressIn={() => this.buttonPress('dbd')} onPressOut={() => this.buttonRelease('dbg')}>
-            <View style={styles.button}>
+            <View style={[styles.button, styles.btnRight]}>
               <Text style={styles.buttonArrow}>RIGHT</Text>
             </View>
           </TouchableWithoutFeedback>
