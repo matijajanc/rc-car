@@ -12,12 +12,8 @@ export const styles = StyleSheet.create({
     paddingRight:15,
     paddingBottom:15,
     paddingLeft:15
-    // alignContent: 'flex-end',
-    // justifyContent: 'flex-end',
   },
   upDownBox: {
-    // justifyContent:'flex-end',
-    // alignSelf:'flex-end'
     position:'absolute',
     left: 15,
     bottom:15,
@@ -48,7 +44,6 @@ export const styles = StyleSheet.create({
   },
   btnLeft: {
     marginRight:10,
-    //display:'flex'
   },
   btnRight: {
 
@@ -61,8 +56,11 @@ export const styles = StyleSheet.create({
     justifyContent:'center',
     alignItems: 'center',
     alignSelf:'center',
-    //flexGrow:2
     zIndex:1,
-    //backgroundColor:'red'
   },
+  carDataBox: {
+    flex:1,
+    position:'absolute',
+    left:390
+  }
 });

@@ -3,14 +3,13 @@ import { colors } from "../../../../config/styles/colors";
 
 export const styles = StyleSheet.create({
   batteryLevelBox: {
-    position:'absolute',
-    //top:25,
-    top:0,
-    left:400
+    height:'50%',
+    justifyContent:'flex-end',
   },
   image: {
-    width:84,
-    height:140,
+    width:87,
+    height:145,
+    marginBottom:-10
     //transform: [{ rotate: '-5deg'}]
   }
 });

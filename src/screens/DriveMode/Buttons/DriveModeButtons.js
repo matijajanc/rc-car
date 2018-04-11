@@ -31,8 +31,7 @@ export default class DriveModeButtonsScreen extends React.Component {
       const stopChar = /[^X]*/.exec(data.data)[0];
       const option = stopChar.substring(0, 2);
       const value = stopChar.substring(2);
-      this.setState({[option]: parseInt(value)});   // SLOW !!! (How to update component faster)
-      console.log("WS: "+ parseInt(value));
+      this.setState({[option]: parseInt(value)});
     };
   }
 
@@ -63,8 +62,10 @@ export default class DriveModeButtonsScreen extends React.Component {
         </View>
         <View style={styles.mainBox}>
           <Speedometer speed={this.state.sp}/>
-          <BatteryLevel battery={this.state.bv}/>
-          <MotorTemp temp={this.state.mt}/>
+          <View style={styles.carDataBox}>
+            <BatteryLevel battery={this.state.bv}/>
+            <MotorTemp temp={this.state.mt}/>
+          </View>
         </View>
         <View style={styles.leftRightBox}>
           <TouchableWithoutFeedback onPressIn={() => this.buttonPress('dba')} onPressOut={() => this.buttonRelease('dbg')}>

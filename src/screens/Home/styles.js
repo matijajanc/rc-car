@@ -16,8 +16,8 @@ export const styles = StyleSheet.create({
   touchImg: {
   },
   firstItem: {
-    borderTopWidth:0.5,
-    borderTopColor: 'rgba(0,0,0,.3)',
+    borderTopWidth:1,
+    borderTopColor: 'rgba(0,0,0,.4)',
   },
   lastItem: {
     borderBottomWidth:0
@@ -26,8 +26,8 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     //alignItems:'center',
     justifyContent:'space-between',
-    borderBottomWidth:0.5,
-    borderBottomColor: 'rgba(255,255,255,.5)',
+    borderBottomWidth:1,
+    borderBottomColor: 'rgba(0,0,0,.4)',
     paddingTop:15,
     paddingBottom:15
   },

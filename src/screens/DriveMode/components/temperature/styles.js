@@ -3,14 +3,12 @@ import { colors } from "../../../../config/styles/colors";
 
 export const styles = StyleSheet.create({
   motorTempBox: {
-    position:'absolute',
-    //top:195,
-    top:170,
-    left:400
+    justifyContent:'flex-start',
   },
   image: {
-    width:98,
-    height:140,
+    width:102,
+    height:142,
+    marginTop:15,
     //transform: [{ rotate: '-4deg'}]
   }
 });

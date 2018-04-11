@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Image, Text, Switch, TouchableHighlight, AsyncStorage } from 'react-native';
+import { colors } from "../../config/styles/colors";
 import { styles } from "../Home/styles";
 import Transmitter from '../../utils/transmitter';
 import Orientation from "react-native-orientation";
@@ -53,7 +54,7 @@ export class HomeScreen extends React.Component {
 
         <View style={[styles.item, styles.firstItem]}>
           <Text style={styles.title}>Calibration</Text>
-          <Switch style={styles.switch} onValueChange={this.calibrateAccelerometers} value={this.state.calibration} />
+          <Switch style={styles.switch} onValueChange={this.calibrateAccelerometers} value={this.state.calibration} onTintColor={colors.switchOnTintColor} tintColor={colors.switchTintColor} thumbTintColor={colors.switchThumbTintColor} />
         </View>
 
         <TouchableHighlight style={styles.item} onPress={() => navigate('Speed')}>
@@ -70,12 +71,12 @@ export class HomeScreen extends React.Component {
 
         <View style={styles.item}>
           <Text style={styles.title}>Range Sensors</Text>
-          <Switch style={styles.switch} onValueChange={(value) => this.setSetting({rs: value})} value={this.state.rs} />
+          <Switch style={styles.switch} onValueChange={(value) => this.setSetting({rs: value})} value={this.state.rs} tintColor={colors.lightBlue} onTintColor={colors.switchOnTintColor} tintColor={colors.switchTintColor} thumbTintColor={colors.switchThumbTintColor} />
         </View>
 
         <View style={styles.item}>
           <Text style={styles.title}>Blinkers</Text>
-          <Switch style={styles.switch} onValueChange={(value) => this.setSetting({bl: value})} value={this.state.bl} />
+          <Switch style={styles.switch} onValueChange={(value) => this.setSetting({bl: value})} value={this.state.bl} tintColor={colors.lightBlue} onTintColor={colors.switchOnTintColor} tintColor={colors.switchTintColor} thumbTintColor={colors.switchThumbTintColor} />
         </View>
 
         <TouchableHighlight style={[styles.item, styles.lastItem]} onPress={() => navigate('Arduino')}>

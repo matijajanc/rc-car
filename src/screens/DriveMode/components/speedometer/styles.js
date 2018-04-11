@@ -1,4 +1,4 @@
-import {StyleSheet} from "react-native"
+import {StyleSheet} from "react-native";
 import { colors } from "../../../../config/styles/colors";
 
 export const styles = StyleSheet.create({
@@ -23,8 +23,10 @@ export const styles = StyleSheet.create({
   speedometer: {
     flex:1,
     position:'absolute',
-    top:4,
-    left:4,
+    top:5,
+    left:5,
+    // width:'300@s',
+    // height:'100%',
     width:300,
     height:282
   },
