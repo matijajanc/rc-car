@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+    import React, { Component } from 'react';
 import { View, Image, Text, Switch, TouchableHighlight, AsyncStorage } from 'react-native';
 import { colors } from "../../config/styles/colors";
 import { styles } from "../Home/styles";
@@ -18,6 +18,12 @@ export class HomeScreen extends React.Component {
 
   componentDidMount() {
     Orientation.lockToPortrait();
+
+    this.switch = {
+      onTintColor: colors.switchOnTintColor,
+      tintColor: colors.switchOnTintColor,
+      thumbTintColor: colors.switchThumbTintColor
+    }
   }
 
   updateStates() {
@@ -54,7 +60,7 @@ export class HomeScreen extends React.Component {
 
         <View style={[styles.item, styles.firstItem]}>
           <Text style={styles.title}>Calibration</Text>
-          <Switch style={styles.switch} onValueChange={this.calibrateAccelerometers} value={this.state.calibration} onTintColor={colors.switchOnTintColor} tintColor={colors.switchTintColor} thumbTintColor={colors.switchThumbTintColor} />
+          <Switch style={styles.switch} onValueChange={this.calibrateAccelerometers} value={this.state.calibration} {...this.switch} />
         </View>
 
         <TouchableHighlight style={styles.item} onPress={() => navigate('Speed')}>
@@ -71,12 +77,12 @@ export class HomeScreen extends React.Component {
 
         <View style={styles.item}>
           <Text style={styles.title}>Range Sensors</Text>
-          <Switch style={styles.switch} onValueChange={(value) => this.setSetting({rs: value})} value={this.state.rs} tintColor={colors.lightBlue} onTintColor={colors.switchOnTintColor} tintColor={colors.switchTintColor} thumbTintColor={colors.switchThumbTintColor} />
+          <Switch style={styles.switch} onValueChange={(value) => this.setSetting({rs: value})} value={this.state.rs} {...this.switch} />
         </View>
 
         <View style={styles.item}>
           <Text style={styles.title}>Blinkers</Text>
-          <Switch style={styles.switch} onValueChange={(value) => this.setSetting({bl: value})} value={this.state.bl} tintColor={colors.lightBlue} onTintColor={colors.switchOnTintColor} tintColor={colors.switchTintColor} thumbTintColor={colors.switchThumbTintColor} />
+          <Switch style={styles.switch} onValueChange={(value) => this.setSetting({bl: value})} value={this.state.bl} {...this.switch} />
         </View>
 
         <TouchableHighlight style={[styles.item, styles.lastItem]} onPress={() => navigate('Arduino')}>

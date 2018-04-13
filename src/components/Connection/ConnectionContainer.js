@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
-import { View, Button, Image } from 'react-native';
-import { styles } from './styles';
 import WebSocketNodeJs from '../../utils/websocket';
 import KeepAlive from '../../utils/keep-alive';
 import Settings from '../../utils/settings';
 import Vibrate from '../../utils/vibrate';
 import Orientation from 'react-native-orientation';
-import IP from "./components/ip";
+import Connection from "./components/Connection";
 
-export class ConnectScreen extends React.Component {
+export class ConnectionContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -59,11 +57,7 @@ export class ConnectScreen extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Image style={styles.logo} source={require('./images/logo.png')} />
-        <IP callback={this.callbackDomain}/>
-        <Button style={styles.button} title="Connect" onPress={this.connect} />
-      </View>
+      <Connection domain={this.callbackDomain} connect={this.connect}/>
     );
   }
 }

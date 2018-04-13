@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { TextInput } from 'react-native';
-import {styles} from "../../styles";
+import {styles} from "../styles";
 import Config from 'react-native-config';
 
 export default class IP extends React.Component {
@@ -9,14 +9,14 @@ export default class IP extends React.Component {
     this.state = {
       domain: Config.WS_SERVER_IP
     };
-    this.props.callbackchild(this.state.domain);
+    this.props.callback(this.state.domain);
   }
 
   callback = (value) => {
     this.setState({
       domain: value
     });
-    this.props.callbackchild(value);
+    this.props.callback(value);
   };
 
   render() {
