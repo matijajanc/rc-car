@@ -2,12 +2,10 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import { styles } from './assets/styles/styles';
 import ImageLink from './ImageLink';
-import SwitchComponent from './Switch';
 import Link from './Link';
 import OnOffSettingContainer from '../../Onoff-setting/OnOffSettingContainer';
 
 export default Home = props => {
-  console.log('Home Compo');
    return <View style={styles.container}>
         <ImageLink src={require('./assets/images/tablet-screen-128.png')}
           navigate={() => props.navigate('DriveWithButtons')}
