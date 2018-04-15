@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { View } from 'react-native';
 import WebSocketNodeJs from '../../utils/websocket';
 import KeepAlive from '../../utils/keep-alive';
 import Settings from '../../utils/settings';
@@ -6,7 +7,10 @@ import Vibrate from '../../utils/vibrate';
 import Orientation from 'react-native-orientation';
 import Connection from "./components/Connection";
 
-export class ConnectionContainer extends React.Component {
+import ContainerComponent from '../Common/ContainerComponent';
+const Container = ContainerComponent(View);
+
+export default class ConnectionContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -57,7 +61,9 @@ export class ConnectionContainer extends React.Component {
 
   render() {
     return (
-      <Connection domain={this.callbackDomain} connect={this.connect}/>
+      <Container>
+        <Connection domain={this.callbackDomain} connect={this.connect}/>
+      </Container>
     );
   }
 }

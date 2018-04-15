@@ -1,14 +1,7 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import styles from './styles';
 
-export default class ContainerComponent extends React.Component {
-  render() {
-    return (
-      <View style={{flex:1, backgroundColor:'red'}}>
-        <ContainerComponent>
-          {...this.props}
-        </ContainerComponent>
-      </View>
-    );
-  }
-}
+export default ContainerComponent = Component => ({children, ...props}) =>
+    <Component style={styles.container} {...props}>
+      {children}
+    </Component>

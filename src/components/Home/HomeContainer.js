@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Orientation from "react-native-orientation";
 import Home from './components/Home';
 
-export class HomeContainer extends React.Component {
+export default class HomeContainer extends React.Component {
   constructor() {
     super();
   }
