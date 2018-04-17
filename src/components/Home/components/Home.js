@@ -1,21 +1,20 @@
-import React, { Component } from 'react';
-import { View } from 'react-native';
-import { styles } from './assets/styles/styles';
-import ImageLink from './ImageLink';
+import React, {Component} from 'react';
+import {View, Image, TouchableHighlight} from 'react-native';
+import {styles} from './assets/styles/styles';
 import Link from './Link';
-import OnOffSettingContainer from '../../Onoff-setting/OnOffSettingContainer';
+import OnOff from './OnOff';
 
-export default Home = props => {
-   return <View style={styles.container}>
-        <ImageLink src={require('./assets/images/tablet-screen-128.png')}
-          navigate={() => props.navigate('DriveWithButtons')}
-        />
-        <OnOffSettingContainer text={'Range Sensors'} setting={'calibration'} />
-        <Link text={'Speed'} navigate={() => props.navigate('Speed')}/>
-        <Link text={'Steer Sensitivity'} navigate={() => props.navigate('')}/>
-        <Link text={'Steer Calibrate'} navigate={() => props.navigate('SteerCalibrate')}/>
-        <OnOffSettingContainer text={'Range Sensors'} setting={'rs'} />
-        <OnOffSettingContainer text={'Range Sensors'} setting={'bl'} />
-        <Link text={'Arduino Uno R3'} navigate={() => props.navigate('Arduino')}/>
-    </View>
-}
+export default Home = props =>
+  <View style={styles.container}>
+    <TouchableHighlight style={styles.driveMode} onPress={() => props.navigate()}>
+      <Image style={styles.touchImg} source={require('./assets/images/tablet-screen-128.png')}/>
+    </TouchableHighlight>
+    <OnOff text={'Calibrate'} setting={'calibration'}/>
+    <Link text={'Speed'} navigate={() => props.navigate('Speed')}/>
+    <Link text={'Speed'} navigate={() => props.navigate('Speed')}/>
+    <Link text={'Steer Sensitivity'} navigate={() => props.navigate('')}/>
+    <Link text={'Steer Calibrate'} navigate={() => props.navigate('SteerCalibrate')}/>
+    <OnOff text={'Range Sensors'} setting={'rs'}/>
+    <OnOff text={'Blinkers'} setting={'bl'}/>
+    <Link text={'Arduino Uno R3'} navigate={() => props.navigate('Arduino')}/>
+  </View>

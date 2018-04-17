@@ -30,8 +30,10 @@ import WebSocketNodeJs from './websocket';
 export default class Transmitter {
   static send(command) {
     const socket = WebSocketNodeJs.get();
-    socket.send(command + END_CHAR);
+    if (Object.keys(socket).length) {
+      socket.send(command + END_CHAR);
 
-    console.log(command + END_CHAR);
+      console.log(command + END_CHAR);
+    }
   }
 }

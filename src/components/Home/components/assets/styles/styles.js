@@ -15,19 +15,11 @@ export const styles = StyleSheet.create({
   },
   touchImg: {
   },
-  firstItem: {
-    borderTopWidth:1,
-    borderTopColor: 'rgba(0,0,0,.4)',
-  },
-  lastItem: {
-    borderBottomWidth:0
-  },
   item: {
     flexDirection: 'row',
-    //alignItems:'center',
     justifyContent:'space-between',
-    borderBottomWidth:1,
-    borderBottomColor: 'rgba(0,0,0,.4)',
+    borderTopWidth:1,
+    borderTopColor: 'rgba(0,0,0,.4)',
     paddingTop:15,
     paddingBottom:15
   },
