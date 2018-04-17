@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
+import { View } from 'react-native';
 import Orientation from "react-native-orientation";
 import Home from './components/Home';
+import ContainerComponent from '../Common/Container/ContainerComponent';
+const Container = ContainerComponent(View);
 
 export default class HomeContainer extends React.Component {
   constructor() {
@@ -17,7 +20,9 @@ export default class HomeContainer extends React.Component {
 
   render() {
     return (
-      <Home navigate={(value) => this.navigate(value)} />
+      <Container>
+        <Home navigate={(value) => this.navigate(value)} />
+      </Container>
     )
   }
 }

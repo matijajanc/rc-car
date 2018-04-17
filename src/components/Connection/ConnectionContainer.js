@@ -6,8 +6,7 @@ import Settings from '../../utils/settings';
 import Vibrate from '../../utils/vibrate';
 import Orientation from 'react-native-orientation';
 import Connection from "./components/Connection";
-
-import ContainerComponent from '../Common/ContainerComponent';
+import ContainerComponent from '../Common/Container/ContainerComponent';
 const Container = ContainerComponent(View);
 
 export default class ConnectionContainer extends React.Component {

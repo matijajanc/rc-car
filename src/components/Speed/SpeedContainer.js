@@ -1,19 +1,15 @@
 import React, { Component } from 'react';
-import { AsyncStorage } from 'react-native';
+import { View, AsyncStorage } from 'react-native';
 import Speed from './components/Speed';
 import Transmitter from '../../utils/transmitter';
+import ContainerComponent from '../Common/Container/ContainerComponent';
+const Container = ContainerComponent(View);
 
 export default class SpeedContainer extends React.Component {
-
   constructor() {
     super();
     this.state = {
       sliderValue: 120
-    };
-    this.settings = {
-      minimumValue: 95,
-      maximumValue: 165,
-      step: 1
     };
   }
 
@@ -26,6 +22,14 @@ export default class SpeedContainer extends React.Component {
         this.setState({sliderValue: parseInt(value)});
       }
     });
+  }
+
+  defaultSettings() {
+    return {
+      minimumValue: 95,
+      maximumValue: 165,
+      step: 1
+    }
   }
 
   /**
@@ -41,7 +45,9 @@ export default class SpeedContainer extends React.Component {
 
   render() {
     return (
-      <Speed settings={this.settings} value={this.state.sliderValue} callback={(value) => this.setSpeed(value)} />
+      <Container>
+        <Speed settings={this.defaultSettings()} value={this.state.sliderValue} callback={(value) => this.setSpeed(value)} />
+      </Container>
     )
   }
 }
