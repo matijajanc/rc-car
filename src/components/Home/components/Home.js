@@ -6,7 +6,7 @@ import OnOff from './OnOff';
 
 export default Home = props =>
   <View style={styles.container}>
-    <TouchableHighlight style={styles.driveMode} onPress={() => props.navigate()}>
+    <TouchableHighlight style={styles.driveMode} onPress={() => props.navigate('DriveWithButtons')}>
       <Image style={styles.touchImg} source={require('./assets/images/tablet-screen-128.png')}/>
     </TouchableHighlight>
     <OnOff text={'Calibrate'} setting={'calibration'}/>

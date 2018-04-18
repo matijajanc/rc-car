@@ -6,6 +6,7 @@ import Settings from '../../utils/settings';
 import Vibrate from '../../utils/vibrate';
 import Orientation from 'react-native-orientation';
 import Connection from "./components/Connection";
+import Config from 'react-native-config';
 import ContainerComponent from '../Common/Container/ContainerComponent';
 const Container = ContainerComponent(View);
 
@@ -13,7 +14,7 @@ export default class ConnectionContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      domain: null,
+      domain: Config.WS_SERVER_IP,
       fallback: 0
     };
   }
@@ -61,7 +62,7 @@ export default class ConnectionContainer extends React.Component {
   render() {
     return (
       <Container>
-        <Connection domain={this.callbackDomain} connect={this.connect}/>
+        <Connection callback={this.callbackDomain} connect={this.connect}/>
       </Container>
     );
   }

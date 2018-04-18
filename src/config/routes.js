@@ -1,11 +1,10 @@
 import { StackNavigator } from 'react-navigation';
-import DriveModeButtonsScreen from '../screens/DriveMode/Buttons/DriveModeButtons';
-
 import ConnectionContainer from "../components/Connection/ConnectionContainer";
 import HomeContainer from "../components/Home/HomeContainer";
 import ArduinoContainer from '../components/Arduino/ArduinoContainer';
 import SpeedContainer from '../components/Speed/SpeedContainer';
 import SteerCalibrateContainer from '../components/SteerCalibrate/SteerCalibrateContainer';
+import DriveModeButtonsContainer from '../components/DriveModeButtons/DriveModeButtonsContainer';
 
 export const Routes = StackNavigator(
   {
@@ -25,11 +24,11 @@ export const Routes = StackNavigator(
       screen: ArduinoContainer
     },
     DriveWithButtons: {
-      screen: DriveModeButtonsScreen
+      screen: DriveModeButtonsContainer
     }
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'Connect',
     headerMode: 'none'
   }
 );

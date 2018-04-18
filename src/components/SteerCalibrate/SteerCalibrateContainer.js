@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { AsyncStorage } from 'react-native';
+import { View, AsyncStorage } from 'react-native';
 import Transmitter from '../../utils/transmitter';
 import Vibrate from '../../utils/vibrate';
 import SteerCalibrate from './components/SteerCalibrate';
+import ContainerComponent from '../Common/Container/ContainerComponent';
+const Container = ContainerComponent(View);
 
 export default class SteerCalibrateContainer extends React.Component {
   constructor() {
@@ -34,16 +36,17 @@ export default class SteerCalibrateContainer extends React.Component {
     ) {
       const angle = this.state.angle + ((value === 'increment') ? +1 : -1);
       this.setState({angle});
-      //Transmitter.send('sc'+angle);
+      Transmitter.send('sc'+angle);
       AsyncStorage.setItem('setting-sc', angle.toString());
       Vibrate.vibrate();
     }
   };
 
   render() {
-    console.log("render");
     return (
-      <SteerCalibrate {...this.state} callback={(value) => this.calibrate(value)} />
+      <Container>
+        <SteerCalibrate angle={this.state.angle} callback={(value) => this.calibrate(value)} />
+      </Container>
     );
   }
 }
