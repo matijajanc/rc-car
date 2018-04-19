@@ -9,7 +9,8 @@ export default styles = StyleSheet.create({
   image: {
     width:87,
     height:145,
-    marginBottom:-10
+    marginBottom:-10,
+    backgroundColor:'red'
     //transform: [{ rotate: '-5deg'}]
   }
 });
