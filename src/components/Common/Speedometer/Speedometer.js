@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Image, Text} from 'react-native';
+import {View, Image, Text, TouchableHighlight} from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import styles from './assets/styles/styles';
 
@@ -20,5 +20,7 @@ export default Speedometer = props =>
     <AnimatedCircularProgress {...circularSettings} fill={(props.speed * speedFactor)}>
     </AnimatedCircularProgress>
     <Image style={styles.speedometer} source={require('./assets/images/speedometer.png')}/>
-    <Text style={styles.speed}>{props.speed}</Text>
+    <TouchableHighlight style={styles.speedBox} onPress={props.navigate}>
+      <Text style={styles.speed}>{props.speed}</Text>
+    </TouchableHighlight>
   </View>

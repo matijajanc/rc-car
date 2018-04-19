@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import { View, Text, TouchableWithoutFeedback, StatusBar } from 'react-native';
+import { View } from 'react-native';
 import Transmitter from '../../utils/transmitter';
 import WebSocketNodeJs from '../../utils/websocket';
 import Vibrate from '../../utils/vibrate';
 import Orientation from 'react-native-orientation';
-
 import DriveModeButtons from './components/DriveModeButtons';
 import ContainerComponent from '../Common/Container/ContainerComponent';
 const Container = ContainerComponent(View);
@@ -18,11 +17,12 @@ export default class DriveModeButtonsContainer extends React.Component {
       bv: 0,
       rs: null
     };
-    this.receiver();
+    this.navigate = this.navigate.bind(this);
   }
 
   componentDidMount() {
     Orientation.lockToLandscape();
+    this.receiver();
   }
 
   receiver() {
@@ -44,6 +44,10 @@ export default class DriveModeButtonsContainer extends React.Component {
     Transmitter.send(command);
   };
 
+  navigate(value) {
+    this.props.navigation.navigate(value);
+  }
+
   render() {
     const {state} = this;
     return (
@@ -55,6 +59,7 @@ export default class DriveModeButtonsContainer extends React.Component {
           rangeSensors={state.rs}
           callbackBtnPress={this.buttonPress}
           callbackBtnRelease={this.buttonRelease}
+          navigate={this.navigate}
         />
       </Container>
     )

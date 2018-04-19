@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, AsyncStorage } from 'react-native';
 import Transmitter from '../../utils/transmitter';
 import Vibrate from '../../utils/vibrate';
+import Orientation from 'react-native-orientation';
 import SteerCalibrate from './components/SteerCalibrate';
 import ContainerComponent from '../Common/Container/ContainerComponent';
 const Container = ContainerComponent(View);
@@ -25,6 +26,10 @@ export default class SteerCalibrateContainer extends React.Component {
     });
   }
 
+  componentDidMount() {
+    Orientation.lockToPortrait();
+  }
+
   /**
    * Calibrate Steer on RC car
    *
@@ -45,7 +50,7 @@ export default class SteerCalibrateContainer extends React.Component {
   render() {
     return (
       <Container>
-        <SteerCalibrate angle={this.state.angle} callback={(value) => this.calibrate(value)} />
+        <SteerCalibrate angle={this.state.angle} callback={this.calibrate} />
       </Container>
     );
   }

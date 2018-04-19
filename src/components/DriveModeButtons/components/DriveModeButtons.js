@@ -21,9 +21,11 @@ export default DriveModeButton = props =>
       />
     </View>
     <View style={styles.mainBox}>
-      <Speedometer speed={props.speed} />
-      <BatteryLevel batteryVoltage={props.batteryVoltage} />
-      <MotorTemperature motorTemperature={props.motorTemperature} />
+      <Speedometer speed={props.speed} navigate={() => props.navigate('Speed')} />
+      <View style={styles.carDataBox}>
+        <BatteryLevel batteryVoltage={props.batteryVoltage} />
+        <MotorTemperature motorTemperature={props.motorTemperature} />
+      </View>
     </View>
     <View style={styles.leftRightBox}>
       <DriveButton

@@ -30,10 +30,12 @@ export default styles = StyleSheet.create({
     width:300,
     height:282
   },
-  speed: {
+  speedBox: {
     position:'absolute',
     justifyContent:'center',
     alignSelf: 'center',
+  },
+  speed: {
     fontSize:90,
     color:'#fff',
   },

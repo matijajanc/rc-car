@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Orientation from 'react-native-orientation';
 import sectionListData from './data/sectionListData';
 import Arduino from './components/Arduino';
 
@@ -12,6 +13,10 @@ export default class ArduinoContainer extends React.Component {
 
   componentWillMount() {
     this.setState({data: sectionListData});
+  }
+
+  componentDidMount() {
+    Orientation.lockToPortrait();
   }
 
   render() {

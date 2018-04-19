@@ -11,7 +11,6 @@ export default Home = props =>
     </TouchableHighlight>
     <OnOff text={'Calibrate'} setting={'calibration'}/>
     <Link text={'Speed'} navigate={() => props.navigate('Speed')}/>
-    <Link text={'Speed'} navigate={() => props.navigate('Speed')}/>
     <Link text={'Steer Sensitivity'} navigate={() => props.navigate('')}/>
     <Link text={'Steer Calibrate'} navigate={() => props.navigate('SteerCalibrate')}/>
     <OnOff text={'Range Sensors'} setting={'rs'}/>
