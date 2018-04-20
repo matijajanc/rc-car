@@ -58,6 +58,6 @@ export default styles = StyleSheet.create({
   carDataBox: {
     flex:1,
     position:'absolute',
-    left:390
+    left:390,
   }
 });

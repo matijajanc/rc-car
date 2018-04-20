@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Svg,{Circle, Path, Rect, G, Text} from 'react-native-svg';
+import Svg,{Path, Rect, Text} from 'react-native-svg';
 import extractBrush from 'react-native-svg/lib/extract/extractBrush';
 import { View } from 'react-native';
 import {styles} from "./assets/styles/styles";
@@ -8,20 +8,40 @@ export default class MotorTemperature extends React.Component {
   constructor(props) {
     super(props);
     this.unitsNum = 39;
-    this.setBatteryLevelColors();
+    this.setMotorTemperatureColors();
     this.fillColor = this.primaryColor;
+    this.range = {
+      start: 0,
+      end: 0
+    };
+    this.setSettings(props.motorTemperature);
   }
 
   componentDidUpdate() {
-
+    this.setSettings(this.props.motorTemperature);
   }
 
-  setBatteryLevelColors() {
+  setMotorTemperatureColors() {
     this.primaryColor = '#fff';
-    this.batteryLevelFullColor = 'green';
-    this.batteryLevelHalfFullColor = 'orange';
-    this.batteryLevelEmptyColor = 'red';
+    this.temperatureHighColor = 'red';
+    this.temperatureMediumColor = 'orange';
+    this.temperatureLowColor = 'green';
   }
+
+  setSettings(temperature) {
+    if (temperature < 20) {
+      this.fillColor = this.temperatureLowColor;
+    } else if (temperature >= 20 && temperature < 60) {
+      this.fillColor = this.temperatureMediumColor;
+    } else {
+      this.fillColor = this.temperatureHighColor;
+    }
+    this.range.end = this.calculateUnitsZone(temperature);
+  }
+
+  calculateUnitsZone(temperature) {
+    return parseInt((this.unitsNum * parseInt(temperature)) / 100);
+  };
 
   fillSvg = (e) => {
     if (e) {
@@ -31,13 +51,13 @@ export default class MotorTemperature extends React.Component {
         childId = parseInt(id.split('_')[1]);
       }
 
-      /*if ((id >= this.range.start && id <= this.range.end)
+      if ((id >= this.range.start && id <= this.range.end)
         || ((childId >= this.range.start && childId <= this.range.end) && childId)
       ) {
         e.setNativeProps({fill: extractBrush(this.fillColor)});
       } else {
         e.setNativeProps({fill: extractBrush(this.primaryColor)});
-      }*/
+      }
     }
   };
 
@@ -85,45 +105,45 @@ export default class MotorTemperature extends React.Component {
           <Rect id="3" ref={(c) => this.fillSvg(c)} fill="#fff" x="328.98" y="734.45" width="1" height="12" transform="translate(788.38 401.21) rotate(132)"/>
           <Rect id="2" ref={(c) => this.fillSvg(c)} fill="#fff" x="326.01" y="737.69" width="1" height="12" transform="translate(781.26 422.24) rotate(133)"/>
           <Rect id="1" ref={(c) => this.fillSvg(c)} fill="#fff" x="322.98" y="740.88" width="1" height="12" transform="translate(773.63 443.16) rotate(134)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#f00" x="388.28" y="595.9" width="1" height="4" transform="translate(712.22 -316.11) rotate(96)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="387.79" y="600.19" width="1" height="4" transform="translate(721.49 -299.67) rotate(97)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="387.23" y="604.48" width="1" height="4" transform="translate(730.44 -282.92) rotate(98)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="386.59" y="608.76" width="1" height="4" transform="translate(739.05 -265.88) rotate(99)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="385.88" y="613.02" width="1" height="4" transform="translate(747.32 -248.54) rotate(100)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="385.09" y="617.27" width="1" height="4" transform="translate(755.23 -230.92) rotate(101)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="384.23" y="621.51" width="1" height="4" transform="translate(762.77 -213.03) rotate(102)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="383.29" y="625.73" width="1" height="4" transform="translate(769.94 -194.87) rotate(103)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="382.28" y="629.94" width="1" height="4" transform="translate(776.72 -176.45) rotate(104)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="381.2" y="634.12" width="1" height="4" transform="translate(783.11 -157.78) rotate(105)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="380.04" y="638.29" width="1" height="4" transform="translate(789.09 -138.88) rotate(106)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="378.81" y="642.44" width="1" height="4" transform="translate(794.67 -119.75) rotate(107)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="377.51" y="646.56" width="1" height="4" transform="translate(799.82 -100.39) rotate(108)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="376.14" y="650.66" width="1" height="4" transform="translate(804.54 -80.83) rotate(109)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="374.7" y="654.74" width="1" height="4" transform="translate(808.83 -61.07) rotate(110)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="373.18" y="658.79" width="1" height="4" transform="translate(812.67 -41.13) rotate(111)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="371.6" y="662.81" width="1" height="4" transform="translate(816.06 -21.01) rotate(112)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="369.94" y="666.8" width="1" height="4" transform="translate(819 -0.73) rotate(113)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="368.22" y="670.77" width="1" height="4" transform="translate(821.47 19.71) rotate(114)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="366.43" y="674.7" width="1" height="4" transform="translate(823.47 40.29) rotate(115)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="364.57" y="678.61" width="1" height="4" transform="translate(825 60.99) rotate(116)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="362.64" y="682.48" width="1" height="4" transform="translate(826.04 81.81) rotate(117)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="360.64" y="686.31" width="1" height="4" transform="translate(826.6 102.73) rotate(118)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="358.58" y="690.11" width="1" height="4" transform="translate(826.67 123.74) rotate(119)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="356.45" y="693.87" width="1" height="4" transform="translate(826.24 144.83) rotate(120)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="354.25" y="697.6" width="1" height="4" transform="translate(825.31 165.98) rotate(121)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="349.67" y="704.93" width="1" height="4" transform="translate(821.95 208.43) rotate(123)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="347.28" y="708.54" width="1" height="4" transform="translate(819.5 229.69) rotate(124)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="344.83" y="712.1" width="1" height="4" transform="translate(816.54 250.96) rotate(125)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="342.32" y="715.62" width="1" height="4" transform="translate(813.07 272.23) rotate(126)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="339.75" y="719.1" width="1" height="4" transform="translate(809.09 293.48) rotate(127)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="337.12" y="722.53" width="1" height="4" transform="translate(804.59 314.69) rotate(128)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="334.43" y="725.91" width="1" height="4" transform="translate(799.57 335.86) rotate(129)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="331.68" y="729.25" width="1" height="4" transform="translate(794.04 356.97) rotate(130)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="328.87" y="732.54" width="1" height="4" transform="translate(787.99 378.01) rotate(131)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="326" y="735.78" width="1" height="4" transform="translate(781.43 398.95) rotate(132)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="351.99" y="701.29" width="1" height="4" transform="translate(823.88 187.19) rotate(122)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="320.11" y="742.1" width="1" height="4" transform="translate(766.75 440.52) rotate(134)"/>
-          <Rect id="39" ref={(c) => this.fillSvg(c)} fill="#fff" x="323.08" y="738.97" width="1" height="4" transform="translate(774.35 419.79) rotate(133)"/>
+          <Rect id="0_39" ref={(c) => this.fillSvg(c)} fill="#f00" x="388.28" y="595.9" width="1" height="4" transform="translate(712.22 -316.11) rotate(96)"/>
+          <Rect id="0_38" ref={(c) => this.fillSvg(c)} fill="#fff" x="387.79" y="600.19" width="1" height="4" transform="translate(721.49 -299.67) rotate(97)"/>
+          <Rect id="0_37" ref={(c) => this.fillSvg(c)} fill="#fff" x="387.23" y="604.48" width="1" height="4" transform="translate(730.44 -282.92) rotate(98)"/>
+          <Rect id="0_36" ref={(c) => this.fillSvg(c)} fill="#fff" x="386.59" y="608.76" width="1" height="4" transform="translate(739.05 -265.88) rotate(99)"/>
+          <Rect id="0_35" ref={(c) => this.fillSvg(c)} fill="#fff" x="385.88" y="613.02" width="1" height="4" transform="translate(747.32 -248.54) rotate(100)"/>
+          <Rect id="0_34" ref={(c) => this.fillSvg(c)} fill="#fff" x="385.09" y="617.27" width="1" height="4" transform="translate(755.23 -230.92) rotate(101)"/>
+          <Rect id="0_33" ref={(c) => this.fillSvg(c)} fill="#fff" x="384.23" y="621.51" width="1" height="4" transform="translate(762.77 -213.03) rotate(102)"/>
+          <Rect id="0_32" ref={(c) => this.fillSvg(c)} fill="#fff" x="383.29" y="625.73" width="1" height="4" transform="translate(769.94 -194.87) rotate(103)"/>
+          <Rect id="0_31" ref={(c) => this.fillSvg(c)} fill="#fff" x="382.28" y="629.94" width="1" height="4" transform="translate(776.72 -176.45) rotate(104)"/>
+          <Rect id="0_30" ref={(c) => this.fillSvg(c)} fill="#fff" x="381.2" y="634.12" width="1" height="4" transform="translate(783.11 -157.78) rotate(105)"/>
+          <Rect id="0_29" ref={(c) => this.fillSvg(c)} fill="#fff" x="380.04" y="638.29" width="1" height="4" transform="translate(789.09 -138.88) rotate(106)"/>
+          <Rect id="0_28" ref={(c) => this.fillSvg(c)} fill="#fff" x="378.81" y="642.44" width="1" height="4" transform="translate(794.67 -119.75) rotate(107)"/>
+          <Rect id="0_27" ref={(c) => this.fillSvg(c)} fill="#fff" x="377.51" y="646.56" width="1" height="4" transform="translate(799.82 -100.39) rotate(108)"/>
+          <Rect id="0_26" ref={(c) => this.fillSvg(c)} fill="#fff" x="376.14" y="650.66" width="1" height="4" transform="translate(804.54 -80.83) rotate(109)"/>
+          <Rect id="0_25" ref={(c) => this.fillSvg(c)} fill="#fff" x="374.7" y="654.74" width="1" height="4" transform="translate(808.83 -61.07) rotate(110)"/>
+          <Rect id="0_24" ref={(c) => this.fillSvg(c)} fill="#fff" x="373.18" y="658.79" width="1" height="4" transform="translate(812.67 -41.13) rotate(111)"/>
+          <Rect id="0_23" ref={(c) => this.fillSvg(c)} fill="#fff" x="371.6" y="662.81" width="1" height="4" transform="translate(816.06 -21.01) rotate(112)"/>
+          <Rect id="0_22" ref={(c) => this.fillSvg(c)} fill="#fff" x="369.94" y="666.8" width="1" height="4" transform="translate(819 -0.73) rotate(113)"/>
+          <Rect id="0_21" ref={(c) => this.fillSvg(c)} fill="#fff" x="368.22" y="670.77" width="1" height="4" transform="translate(821.47 19.71) rotate(114)"/>
+          <Rect id="0_20" ref={(c) => this.fillSvg(c)} fill="#fff" x="366.43" y="674.7" width="1" height="4" transform="translate(823.47 40.29) rotate(115)"/>
+          <Rect id="0_19" ref={(c) => this.fillSvg(c)} fill="#fff" x="364.57" y="678.61" width="1" height="4" transform="translate(825 60.99) rotate(116)"/>
+          <Rect id="0_18" ref={(c) => this.fillSvg(c)} fill="#fff" x="362.64" y="682.48" width="1" height="4" transform="translate(826.04 81.81) rotate(117)"/>
+          <Rect id="0_17" ref={(c) => this.fillSvg(c)} fill="#fff" x="360.64" y="686.31" width="1" height="4" transform="translate(826.6 102.73) rotate(118)"/>
+          <Rect id="0_16" ref={(c) => this.fillSvg(c)} fill="#fff" x="358.58" y="690.11" width="1" height="4" transform="translate(826.67 123.74) rotate(119)"/>
+          <Rect id="0_15" ref={(c) => this.fillSvg(c)} fill="#fff" x="356.45" y="693.87" width="1" height="4" transform="translate(826.24 144.83) rotate(120)"/>
+          <Rect id="0_14" ref={(c) => this.fillSvg(c)} fill="#fff" x="354.25" y="697.6" width="1" height="4" transform="translate(825.31 165.98) rotate(121)"/>
+          <Rect id="0_13" ref={(c) => this.fillSvg(c)} fill="#fff" x="349.67" y="704.93" width="1" height="4" transform="translate(821.95 208.43) rotate(123)"/>
+          <Rect id="0_12" ref={(c) => this.fillSvg(c)} fill="#fff" x="347.28" y="708.54" width="1" height="4" transform="translate(819.5 229.69) rotate(124)"/>
+          <Rect id="0_11" ref={(c) => this.fillSvg(c)} fill="#fff" x="344.83" y="712.1" width="1" height="4" transform="translate(816.54 250.96) rotate(125)"/>
+          <Rect id="0_10" ref={(c) => this.fillSvg(c)} fill="#fff" x="342.32" y="715.62" width="1" height="4" transform="translate(813.07 272.23) rotate(126)"/>
+          <Rect id="0_9" ref={(c) => this.fillSvg(c)} fill="#fff" x="339.75" y="719.1" width="1" height="4" transform="translate(809.09 293.48) rotate(127)"/>
+          <Rect id="0_8" ref={(c) => this.fillSvg(c)} fill="#fff" x="337.12" y="722.53" width="1" height="4" transform="translate(804.59 314.69) rotate(128)"/>
+          <Rect id="0_7" ref={(c) => this.fillSvg(c)} fill="#fff" x="334.43" y="725.91" width="1" height="4" transform="translate(799.57 335.86) rotate(129)"/>
+          <Rect id="0_6" ref={(c) => this.fillSvg(c)} fill="#fff" x="331.68" y="729.25" width="1" height="4" transform="translate(794.04 356.97) rotate(130)"/>
+          <Rect id="0_5" ref={(c) => this.fillSvg(c)} fill="#fff" x="328.87" y="732.54" width="1" height="4" transform="translate(787.99 378.01) rotate(131)"/>
+          <Rect id="0_4" ref={(c) => this.fillSvg(c)} fill="#fff" x="326" y="735.78" width="1" height="4" transform="translate(781.43 398.95) rotate(132)"/>
+          <Rect id="0_3" ref={(c) => this.fillSvg(c)} fill="#fff" x="351.99" y="701.29" width="1" height="4" transform="translate(823.88 187.19) rotate(122)"/>
+          <Rect id="0_2" ref={(c) => this.fillSvg(c)} fill="#fff" x="320.11" y="742.1" width="1" height="4" transform="translate(766.75 440.52) rotate(134)"/>
+          <Rect id="0_1" ref={(c) => this.fillSvg(c)} fill="#fff" x="323.08" y="738.97" width="1" height="4" transform="translate(774.35 419.79) rotate(133)"/>
           <Text fill="#fff" transform="translate(102.31 12.83)">100°</Text>
           <Text fill="#fff" transform="translate(77.74 103.66)">50°</Text>
           <Text fill="#fff" transform="translate(23.42 181.36)">0°</Text>

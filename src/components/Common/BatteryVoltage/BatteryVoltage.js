@@ -59,8 +59,8 @@ export default class BatteryLevel extends React.Component {
     this.range.end = this.calculateUnitsZone(battery);
   }
 
-  calculateUnitsZone(temperature) {
-    return parseInt((this.unitsNum * parseInt(temperature)) / 100);
+  calculateUnitsZone(battery) {
+    return parseInt((this.unitsNum * parseInt(battery)) / 100);
   };
 
   fillSvg = (e) => {
