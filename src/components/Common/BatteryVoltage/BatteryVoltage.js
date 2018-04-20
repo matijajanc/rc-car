@@ -8,7 +8,8 @@ export default class BatteryLevel extends React.Component {
   constructor(props) {
     super(props);
     this.unitsNum = 39;
-    this.fillColor = '#fff';
+    this.setBatteryLevelColors();
+    this.fillColor = this.primaryColor;
     this.range = {
       start: 0,
       end: 0
@@ -20,6 +21,13 @@ export default class BatteryLevel extends React.Component {
   componentDidUpdate() {
     this.batteryPercentage = this.batteryLevel(this.props.batteryVoltage);
     this.setSettings(this.batteryPercentage);
+  }
+
+  setBatteryLevelColors() {
+    this.primaryColor = '#fff';
+    this.batteryLevelFullColor = 'green';
+    this.batteryLevelHalfFullColor = 'orange';
+    this.batteryLevelEmptyColor = 'red';
   }
 
   /**
@@ -42,15 +50,13 @@ export default class BatteryLevel extends React.Component {
 
   setSettings(battery) {
     if (battery < 20) {
-      this.fillColor = 'red';
-      this.range.end = this.calculateUnitsZone(battery);
+      this.fillColor = this.batteryLevelEmptyColor;
     } else if (battery >= 20 && battery < 60) {
-      this.fillColor = 'orange';
-      this.range.end = this.calculateUnitsZone(battery);
+      this.fillColor = this.batteryLevelHalfFullColor;
     } else {
-      this.fillColor = 'green';
-      this.range.end = this.calculateUnitsZone(battery);
+      this.fillColor = this.batteryLevelFullColor;
     }
+    this.range.end = this.calculateUnitsZone(battery);
   }
 
   calculateUnitsZone(temperature) {
@@ -70,7 +76,7 @@ export default class BatteryLevel extends React.Component {
       ) {
         e.setNativeProps({fill: extractBrush(this.fillColor)});
       } else {
-        e.setNativeProps({fill: extractBrush('#fff')});
+        e.setNativeProps({fill: extractBrush(this.primaryColor)});
       }
     }
   };
