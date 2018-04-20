@@ -10,7 +10,5 @@ export default styles = StyleSheet.create({
     width:87,
     height:145,
     marginBottom:-10,
-    backgroundColor:'red'
-    //transform: [{ rotate: '-5deg'}]
   }
 });
