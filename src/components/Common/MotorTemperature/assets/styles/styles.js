@@ -9,6 +9,5 @@ export const styles = StyleSheet.create({
     width:102,
     height:142,
     marginTop:15,
-    //transform: [{ rotate: '-4deg'}]
   }
 });
