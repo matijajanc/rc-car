@@ -17,8 +17,10 @@ export default class MotorTemperature extends React.Component {
     this.setSettings(props.motorTemperature);
   }
 
-  componentDidUpdate() {
-    this.setSettings(this.props.motorTemperature);
+  componentDidUpdate(nextProps) {
+    if (this.props.motorTemperature !== nextProps.motorTemperature) {
+      this.setSettings(nextProps.motorTemperature);
+    }
   }
 
   setMotorTemperatureColors() {

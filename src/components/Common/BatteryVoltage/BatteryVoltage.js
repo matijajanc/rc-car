@@ -18,9 +18,11 @@ export default class BatteryLevel extends React.Component {
     this.setSettings(this.batteryPercentage);
   };
 
-  componentDidUpdate() {
-    this.batteryPercentage = this.batteryLevel(this.props.batteryVoltage);
-    this.setSettings(this.batteryPercentage);
+  componentDidUpdate(nextProps) {
+    if (this.props.batteryVoltage !== nextProps.batteryVoltage) {
+      this.batteryPercentage = this.batteryLevel(nextProps.batteryVoltage);
+      this.setSettings(this.batteryPercentage);
+    }
   }
 
   setBatteryLevelColors() {
@@ -82,6 +84,8 @@ export default class BatteryLevel extends React.Component {
   };
 
   render() {
+    console.log("RENDER BATTERY VOLTAGE!!!!!");
+
     return <View style={styles.batteryLevelBox}>
       <Svg style={styles.image} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110.64 183.77">
         <Path fill="#fff"
