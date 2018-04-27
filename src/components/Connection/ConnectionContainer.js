@@ -8,6 +8,7 @@ import Orientation from 'react-native-orientation';
 import Connection from "./components/Connection";
 import Config from 'react-native-config';
 import ContainerComponent from '../Common/Container/ContainerComponent';
+import Receiver from '../../utils/receiver';
 const Container = ContainerComponent(View);
 
 export default class ConnectionContainer extends React.Component {
@@ -36,6 +37,7 @@ export default class ConnectionContainer extends React.Component {
       socket.onopen = () => {
         KeepAlive.start();
         Settings.send();
+        Receiver.receive();
         //Settings.clearAll(); // just for testing
         this.props.navigation.navigate('Home');
       };

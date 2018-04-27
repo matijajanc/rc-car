@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {View, Image, Text, TouchableHighlight} from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import styles from './assets/styles/styles';

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import {View, StatusBar} from 'react-native';
 import styles from './assets/styles/styles';
-import Speedometer from '../../Common/Speedometer/Speedometer';
-import BatteryLevel from '../../Common/BatteryVoltage/BatteryVoltage';
-import MotorTemperature from '../../Common/MotorTemperature/MotorTemperature';
+import SpeedometerContainer from "../../Speedometer/SpeedometerContainer";
+import BatteryLevelContainer from '../../BatteryVoltage/BatteryLevelContainer';
+import MotorTemperatureContainer from '../../MotorTemperature/MotorTemperatureContainer';
 import DriveButton from './DriveButton/DriveButton';
 
 export default DriveModeButton = props =>
@@ -21,10 +21,10 @@ export default DriveModeButton = props =>
       />
     </View>
     <View style={styles.mainBox}>
-      <Speedometer speed={props.speed} navigate={() => props.navigate('Speed')} />
+      <SpeedometerContainer navigate={() => props.navigate('Speed')} />
       <View style={styles.carDataBox}>
-        <BatteryLevel batteryVoltage={props.batteryVoltage} />
-        <MotorTemperature motorTemperature={props.motorTemperature} />
+        <BatteryLevelContainer />
+        <MotorTemperatureContainer />
       </View>
     </View>
     <View style={styles.leftRightBox}>
