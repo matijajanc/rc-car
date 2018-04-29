@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {View, StatusBar} from 'react-native';
 import styles from './assets/styles/styles';
 import SpeedometerContainer from "../../Speedometer/SpeedometerContainer";
-import BatteryLevelContainer from '../../BatteryVoltage/BatteryLevelContainer';
+import BatteryLevelContainer from '../../BatteryLevel/BatteryLevelContainer';
 import MotorTemperatureContainer from '../../MotorTemperature/MotorTemperatureContainer';
 import DriveButton from './DriveButton/DriveButton';
 

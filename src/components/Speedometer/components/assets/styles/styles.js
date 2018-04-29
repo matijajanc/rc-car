@@ -7,7 +7,7 @@ export default styles = StyleSheet.create({
     position:'absolute',
     // top:30,
     left:120,
-    width:300,
+    width:310,
     height:280,
     justifyContent:'center',
     alignItems: 'center',
@@ -39,4 +39,17 @@ export default styles = StyleSheet.create({
     fontSize:90,
     color:'#fff',
   },
+  controlsBox: {
+    //flex:1,
+    marginTop:'auto',
+    flexDirection:'row',
+    justifyContent:'center',
+    alignItems:'flex-end',
+    //flexGrow:1,
+    //wrap:'wrap',
+    bottom:40,
+    width:180,
+    //height:15,
+    //backgroundColor:'green'
+  }
 });

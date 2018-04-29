@@ -24,7 +24,11 @@ export default class SpeedometerContainer extends React.Component {
     EventRegister.removeEventListener(this.listener);
   }
 
+  navigate(value) {
+    this.props.navigate(value);
+  }
+
   render() {
-    return <Speedometer speed={this.state.speed} />
+    return <Speedometer speed={this.state.speed} navigate={(value) => this.navigate(value)} />
   }
 }
