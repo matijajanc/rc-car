@@ -7,6 +7,11 @@ import SteerCalibrate from './components/SteerCalibrate';
 import ContainerComponent from '../Common/Container/ContainerComponent';
 const Container = ContainerComponent(View);
 
+/**
+ * Sometimes you wanna calibrate servo motor for
+ * steering the car so that it goes
+ * straight ahead.
+ */
 export default class SteerCalibrateContainer extends React.Component {
   constructor() {
     super();

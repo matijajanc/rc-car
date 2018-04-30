@@ -6,6 +6,9 @@ import SpeedContainer from '../components/Speed/SpeedContainer';
 import SteerCalibrateContainer from '../components/SteerCalibrate/SteerCalibrateContainer';
 import DriveModeButtonsContainer from '../components/DriveModeButtons/DriveModeButtonsContainer';
 
+/**
+ * Main router
+ */
 export const Routes = StackNavigator(
   {
     Connect: {

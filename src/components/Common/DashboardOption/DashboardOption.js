@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import {TouchableHighlight} from 'react-native';
 import Transmitter from '../../../utils/transmitter';
 
+/**
+ * Car Dashboard
+ */
 export default DashboardOption = Component => class extends React.Component {
   constructor(props) {
     super(props);

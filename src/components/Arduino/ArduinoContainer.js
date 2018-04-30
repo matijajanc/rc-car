@@ -3,6 +3,9 @@ import Orientation from 'react-native-orientation';
 import sectionListData from './data/sectionListData';
 import Arduino from './components/Arduino';
 
+/**
+ * Displaying Arduino data
+ */
 export default class ArduinoContainer extends React.Component {
   constructor() {
     super();

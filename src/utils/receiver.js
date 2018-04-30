@@ -1,6 +1,17 @@
+// INCOMING DATA (ARDUINO DATA)
+// mt -> motor temperature
+// sp -> car speed
+// bv -> battery voltage
+// rs -> range sensor problem
+
 import WebSocketNodeJs from './websocket';
 import { EventRegister } from 'react-native-event-listeners';
 
+/**
+ * Registering event listener for receiving RC
+ * car data through websockets.
+ * We are receiving speed, battery voltage, motor temperature
+ */
 export default class Receiver {
   static receive() {
     const socket = WebSocketNodeJs.get();

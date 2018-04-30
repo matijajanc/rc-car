@@ -11,6 +11,9 @@ import ContainerComponent from '../Common/Container/ContainerComponent';
 import Receiver from '../../utils/receiver';
 const Container = ContainerComponent(View);
 
+/**
+ * For establishing connection with websocket server
+ */
 export default class ConnectionContainer extends React.Component {
   constructor(props) {
     super(props);
@@ -30,6 +33,9 @@ export default class ConnectionContainer extends React.Component {
     });
   };
 
+  /**
+   * Connect to websocket server
+   */
   connect = () => {
     if (this.state.domain) {
       const socket = WebSocketNodeJs.createSocket(this.state.domain);
@@ -38,7 +44,7 @@ export default class ConnectionContainer extends React.Component {
         KeepAlive.start();
         Settings.send();
         Receiver.receive();
-        //Settings.clearAll(); // just for testing
+        //Settings.clearAll(); // for debugging
         this.props.navigation.navigate('Home');
       };
 

@@ -3,6 +3,9 @@ import { Switch, AsyncStorage } from 'react-native';
 import Transmitter from '../../../utils/transmitter';
 import { colors } from "../../../config/styles/colors";
 
+/**
+ * Setting and sending updated settings to RC car
+ */
 export default class OnOffSetting extends React.Component {
   constructor(props) {
     super(props);
@@ -12,6 +15,7 @@ export default class OnOffSetting extends React.Component {
   }
 
   componentWillMount() {
+    // Updates switch with saved settings
     const key = this.props.setting;
     AsyncStorage.getItem('setting-'+key).then((value) => {
       this.setState({[key]: (value === 'true')});

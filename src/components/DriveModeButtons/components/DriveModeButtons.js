@@ -6,6 +6,9 @@ import BatteryLevelContainer from '../../BatteryLevel/BatteryLevelContainer';
 import MotorTemperatureContainer from '../../MotorTemperature/MotorTemperatureContainer';
 import DriveButton from './DriveButton/DriveButton';
 
+/**
+ * Look of the driving dashboard
+ */
 export default DriveModeButton = props =>
   <View style={styles.container}>
     <StatusBar hidden/>

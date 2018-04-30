@@ -2,6 +2,9 @@ import React, {Component} from 'react';
 import { EventRegister } from 'react-native-event-listeners';
 import Speedometer from './components/Speedometer';
 
+/**
+ * Speedometer with additional dashboard icons
+ */
 export default class SpeedometerContainer extends React.Component {
   constructor(props) {
     super(props);

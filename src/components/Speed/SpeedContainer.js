@@ -5,6 +5,12 @@ import Transmitter from '../../utils/transmitter';
 import ContainerComponent from '../Common/Container/ContainerComponent';
 const Container = ContainerComponent(View);
 
+/**
+ * If you are driving inside or outside
+ * you maybe need to adjust car maximum speed
+ * especially if car is fast and you are in a small
+ * space, so here you can limit car speed.
+ */
 export default class SpeedContainer extends React.Component {
   constructor() {
     super();

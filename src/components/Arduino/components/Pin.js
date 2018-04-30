@@ -2,6 +2,10 @@ import React, {Component} from 'react';
 import {Text, View} from 'react-native';
 import {styles} from "./assets/styles/styles";
 
+/**
+ * Displays Arduino pin id, description,
+ * color of the wire and pin type (Input/Output)
+ */
 export default Pin = props => {
   const {item} = props;
   return (

@@ -4,6 +4,9 @@ import { EventRegister } from 'react-native-event-listeners';
 import MotorTemperature from './components/MotorTemperature';
 import {colors} from "../../config/styles/colors";
 
+/**
+ * To present motor temperature of the RC car
+ */
 export default class MotorTemperatureContainer extends React.Component {
   constructor(props) {
     super(props);
@@ -27,6 +30,7 @@ export default class MotorTemperatureContainer extends React.Component {
   }
 
   componentWillMount() {
+    // Registering to websocket event listener for receiving car data
     this.listener = EventRegister.addEventListener('wsReceive', (data) => {
       if (data.option === 'mt' && this.state.motorTemperature !== data.value) {
         this.setState({
@@ -38,9 +42,13 @@ export default class MotorTemperatureContainer extends React.Component {
   }
 
   componentWillUnmount() {
+    // Remove websocket event listener
     EventRegister.removeEventListener(this.listener);
   }
 
+  /**
+   * Setting default colors
+   */
   setMotorTemperatureColors() {
     this.primaryColor = '#fff';
     this.temperatureHighColor = colors.red;
@@ -48,6 +56,11 @@ export default class MotorTemperatureContainer extends React.Component {
     this.temperatureLowColor = colors.green;
   }
 
+  /**
+   * Setting motor temperature color chart
+   *
+   * @param temperature
+   */
   setSettings(temperature) {
     if (temperature < 40) {
       this.fillColor = this.temperatureLowColor;
@@ -59,10 +72,22 @@ export default class MotorTemperatureContainer extends React.Component {
     this.range.end = this.calculateUnitsZone(temperature);
   }
 
+  /**
+   * Calculate the end range to where to mark with color
+   *
+   * @param temperature
+   * @returns {Number}
+   */
   calculateUnitsZone(temperature) {
     return parseInt((this.unitsNum * parseInt(temperature)) / 100);
   };
 
+  /**
+   * Fills svg parts with appropriate color.
+   * Manipulates directly with DOM elements.
+   *
+   * @param e
+   */
   fillSvg = (e) => {
     if (e) {
       const id = e.props.id;

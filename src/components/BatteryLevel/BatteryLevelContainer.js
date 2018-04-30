@@ -4,6 +4,9 @@ import { EventRegister } from 'react-native-event-listeners';
 import BatteryLevel from './components/BatteryLevel';
 import {colors} from "../../config/styles/colors";
 
+/**
+ * To present battery level of the battery on the RC car side
+ */
 export default class BatteryLevelContainer extends React.Component {
   constructor(props) {
     super(props);
@@ -22,6 +25,7 @@ export default class BatteryLevelContainer extends React.Component {
   };
 
   componentWillMount() {
+    // Registering to websocket event listener for receiving car data
     this.listener = EventRegister.addEventListener('wsReceive', (data) => {
       if (data.option === 'bv' && this.state.batteryVoltage !== data.value) {
         this.setState({
@@ -34,9 +38,13 @@ export default class BatteryLevelContainer extends React.Component {
   }
 
   componentWillUnmount() {
+    // Remove websocket event listener
     EventRegister.removeEventListener(this.listener);
   }
 
+  /**
+   * Setting default colors
+   */
   setBatteryLevelColors() {
     this.primaryColor = '#fff';
     this.batteryLevelFullColor = colors.green;
@@ -62,6 +70,11 @@ export default class BatteryLevelContainer extends React.Component {
     return batteryPercentage;
   }
 
+  /**
+   * Setting battery level color chart
+   *
+   * @param battery
+   */
   setSettings(battery) {
     if (battery < 20) {
       this.fillColor = this.batteryLevelEmptyColor;
@@ -73,10 +86,21 @@ export default class BatteryLevelContainer extends React.Component {
     this.range.end = this.calculateUnitsZone(battery);
   }
 
+  /**
+   * Calculate the end range to where to mark with color
+   *
+   * @param battery
+   * @returns {Number}
+   */
   calculateUnitsZone(battery) {
     return parseInt((this.unitsNum * parseInt(battery)) / 100);
   };
 
+  /**
+   * Fills svg parts with appropriate color
+   *
+   * @param e
+   */
   fillSvg = (e) => {
     if (e) {
       const id = e.props.id;

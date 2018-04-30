@@ -18,22 +18,26 @@
 // cm -> camera
 // ll -> long lights
 
-// INCOMING DATA (ARDUINO DATA)
-// mt -> motor temperature
-// sp -> car speed
-// bv -> battery voltage
-// rs -> range sensor problem
-
 import { END_CHAR } from '../config/config';
 import WebSocketNodeJs from './websocket';
 
+/**
+ * The purpose of this class is for sending
+ * all kind of data to RC car.
+ */
 export default class Transmitter {
+  /**
+   * Sends commands and adds an end character so that we
+   * know on a car side when some command is finished.
+   * We are splitting commands by this end character.
+   *
+   * @string command
+   */
   static send(command) {
     const socket = WebSocketNodeJs.get();
     if (Object.keys(socket).length) {
       socket.send(command + END_CHAR);
-
-      console.log(command + END_CHAR);
+      console.log(command + END_CHAR);  // For debugging
     }
   }
 }
