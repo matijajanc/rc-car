@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {View, Image, Text, TouchableHighlight} from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import styles from './assets/styles/styles';
+import {colors} from "../../../config/styles/colors";
 import Lights from '../../Common/DashboardOption/components/Lights/Lights';
 import Blinkers from '../../Common/DashboardOption/components/Blinkers/Blinkers';
 import LongLights from '../../Common/DashboardOption/components/Long-lights/Long-lights';
@@ -27,8 +28,8 @@ export default Speedometer = props =>
       <Text style={styles.speed}>{props.speed}</Text>
     </TouchableHighlight>
     <View style={styles.controlsBox}>
-      <Lights command={'cl'} selectedColor={'#0f0'} />
-      <Blinkers command={'b4'} selectedColor={'#f00'} />
-      <LongLights command={'ll'} selectedColor={'#00f'} />
+      <Lights command={'cl'} selectedColor={colors.green} />
+      <Blinkers command={'b4'} selectedColor={colors.orange} />
+      <LongLights command={'ll'} selectedColor={colors.lightBlue} />
     </View>
   </View>

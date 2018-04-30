@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import extractBrush from 'react-native-svg/lib/extract/extractBrush';
 import { EventRegister } from 'react-native-event-listeners';
 import MotorTemperature from './components/MotorTemperature';
+import {colors} from "../../config/styles/colors";
 
 export default class MotorTemperatureContainer extends React.Component {
   constructor(props) {
@@ -42,15 +43,15 @@ export default class MotorTemperatureContainer extends React.Component {
 
   setMotorTemperatureColors() {
     this.primaryColor = '#fff';
-    this.temperatureHighColor = 'red';
-    this.temperatureMediumColor = 'orange';
-    this.temperatureLowColor = 'green';
+    this.temperatureHighColor = colors.red;
+    this.temperatureMediumColor = colors.orange;
+    this.temperatureLowColor = colors.green;
   }
 
   setSettings(temperature) {
-    if (temperature < 20) {
+    if (temperature < 40) {
       this.fillColor = this.temperatureLowColor;
-    } else if (temperature >= 20 && temperature < 60) {
+    } else if (temperature >= 40 && temperature < 80) {
       this.fillColor = this.temperatureMediumColor;
     } else {
       this.fillColor = this.temperatureHighColor;

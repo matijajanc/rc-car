@@ -4,5 +4,8 @@ export const colors = {
   button: '#1B95E0',
   switchOnTintColor:'#00e0ff',
   switchTintColor:'#000',
-  switchThumbTintColor:'#fff'
+  switchThumbTintColor:'#fff',
+  green: '#0f0',
+  orange: '#FFA500',
+  red: '#f00'
 };

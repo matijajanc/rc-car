@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import extractBrush from 'react-native-svg/lib/extract/extractBrush';
 import { EventRegister } from 'react-native-event-listeners';
 import BatteryLevel from './components/BatteryLevel';
+import {colors} from "../../config/styles/colors";
 
 export default class BatteryLevelContainer extends React.Component {
   constructor(props) {
@@ -38,9 +39,9 @@ export default class BatteryLevelContainer extends React.Component {
 
   setBatteryLevelColors() {
     this.primaryColor = '#fff';
-    this.batteryLevelFullColor = 'green';
-    this.batteryLevelHalfFullColor = 'orange';
-    this.batteryLevelEmptyColor = 'red';
+    this.batteryLevelFullColor = colors.green;
+    this.batteryLevelHalfFullColor = colors.orange;
+    this.batteryLevelEmptyColor = colors.red;
   }
 
   /**
