@@ -12,11 +12,11 @@ const circularSettings = {
   style: styles.speedLine,
   size: 310,
   width: 4,
-  tintColor: '#00e0ff',
+  tintColor: colors.lightBlue,
   rotation: 225,
   arcSweepAngle: 270,
   prefill: 100,
-  backgroundColor: '#0f161c'
+  backgroundColor: '#000'
 };
 
 export default Speedometer = props =>
@@ -30,6 +30,6 @@ export default Speedometer = props =>
     <View style={styles.controlsBox}>
       <Lights command={'cl'} selectedColor={colors.green} />
       <Blinkers command={'b4'} selectedColor={colors.orange} />
-      <LongLights command={'ll'} selectedColor={colors.lightBlue} />
+      <LongLights command={'ll'} selectedColor={colors.blue} />
     </View>
   </View>

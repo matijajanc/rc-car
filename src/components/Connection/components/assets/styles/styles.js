@@ -17,10 +17,22 @@ export const styles = StyleSheet.create({
     fontSize:20,
     color:'#fff',
     marginBottom:30,
+    paddingTop:10,
+    paddingBottom:10,
     paddingLeft:15,
     paddingRight:15,
-    backgroundColor:'rgba(0, 0, 0, 0.3)'
+    backgroundColor:'#000'
   },
   button: {
+    backgroundColor: colors.blue,
+    paddingTop:10,
+    paddingBottom:10,
+    paddingLeft:30,
+    paddingRight:30,
+    borderRadius:400
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize:16
   }
 });

@@ -16,22 +16,33 @@ export const styles = StyleSheet.create({
   },
   item: {
     flexDirection: 'row',
-    justifyContent:'space-between',
     borderTopWidth:1,
     borderTopColor: 'rgba(0,0,0,.4)',
     paddingTop:15,
     paddingBottom:15
   },
-  icon: {
+  itemBox: {
+    flexDirection:'row',
   },
   title: {
-    alignSelf:'flex-start',
+    alignSelf:'center',
+    justifyContent:'center',
     fontSize:14,
     color: '#fff',
     marginLeft: 15
   },
   switch: {
-    alignSelf:'flex-end',
+    marginLeft:'auto',
     marginRight: 15
+  },
+  svgBox: {
+    width: 25,
+    height:25,
+    marginLeft: 15,
+    paddingTop:5,
+    paddingBottom:5,
+    alignItems:'center',
+    justifyContent:'center',
+    borderRadius:400
   }
 });

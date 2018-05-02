@@ -30,7 +30,7 @@ export default styles = StyleSheet.create({
     justifyContent:'center',
     width:50,
     height:50,
-    backgroundColor:colors.lightBlue,
+    backgroundColor:colors.blue,
     borderRadius:100,
   },
   arrow: {

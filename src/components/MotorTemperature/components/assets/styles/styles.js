@@ -9,6 +9,5 @@ export default styles = StyleSheet.create({
     width:102,
     height:142,
     marginTop:15,
-    marginLeft:6 // *
   }
 });

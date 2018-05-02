@@ -34,8 +34,9 @@ export default styles = StyleSheet.create({
     alignSelf: 'center',
   },
   speed: {
-    fontSize:90,
+    fontSize:100,
     color:'#fff',
+    letterSpacing:-5
   },
   controlsBox: {
     marginTop:'auto',

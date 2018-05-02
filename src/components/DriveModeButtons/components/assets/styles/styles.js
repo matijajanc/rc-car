@@ -30,11 +30,13 @@ export default styles = StyleSheet.create({
     width:100,
     height:100,
     //borderColor:'rgba(255,255,255,.1)',
-    borderColor:'rgba(255,255,255,.5)',
+    //borderColor:'rgba(255,255,255,.5)',
+    borderColor:'#000',
     borderWidth:1,
     alignItems:'center',
     justifyContent: 'center',
-    borderRadius:8
+    borderRadius:8,
+    backgroundColor:'#131313'
   },
   buttonArrow: {
     color:'transparent'

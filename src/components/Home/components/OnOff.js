@@ -5,6 +5,7 @@ import OnOffSetting from '../../Common/Onoff-setting/OnOffSetting';
 
 export default OnOff = props =>
   <View style={styles.item}>
+    {props.icon}
     <Text style={styles.title}>{props.text}</Text>
     <OnOffSetting setting={props.setting} style={styles.switch} />
   </View>

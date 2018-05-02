@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View, Text, TouchableWithoutFeedback} from 'react-native';
+import {View, TouchableWithoutFeedback} from 'react-native';
 import styles from '../assets/styles/styles';
 
 export default DriveButton = props =>
@@ -8,6 +8,6 @@ export default DriveButton = props =>
     onPressOut={() => props.callbackBtnRelease()}
   >
     <View style={[styles.button, props.additionalStyles]}>
-      <Text style={styles.buttonArrow}>Arrow</Text>
+      {props.arrow}
     </View>
   </TouchableWithoutFeedback>

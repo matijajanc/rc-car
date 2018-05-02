@@ -24,8 +24,8 @@ export default class OnOffSetting extends React.Component {
 
   defaultStyles() {
     return {
-      onTintColor: colors.switchOnTintColor,
-      tintColor: colors.switchOnTintColor,
+      onTintColor: colors.blue,
+      tintColor: colors.blue,
       thumbTintColor: colors.switchThumbTintColor
     };
   }

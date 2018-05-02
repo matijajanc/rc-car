@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
   pin: {
     color:'#fff',
     marginRight:15,
-    backgroundColor:colors.lightBlue,
+    backgroundColor:colors.blue,
     paddingTop:2,
     paddingBottom:2,
     paddingRight:8,
