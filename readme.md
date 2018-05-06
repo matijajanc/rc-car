@@ -7,7 +7,7 @@ Here on this page [www.robotlec.com](http://www.robotlec.com) you can see  for w
 Code for React Native is written in container component pattern style. The main purpose of this pattern is that you separate business logic and presentation components. 
 More you can read on this [link](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0)
 
-![alt text](http://tvojnet.si/drive_mode.gif "Drive Mode")
+![alt text](https://github.com/matijajanc/rc-car/blob/master/github-images/screen1.png "Connect Screen")
 
 ## Getting Started
 
