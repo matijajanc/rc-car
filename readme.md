@@ -15,7 +15,7 @@ More you can read on this [link](https://medium.com/@dan_abramov/smart-and-dumb-
 
 | Dashboard Drive Mode |
 | --- |
-![alt text](https://github.com/matijajanc/rc-car/blob/master/github-images/dashboard.gif "Dashboard")
+![alt text](https://github.com/matijajanc/rc-car/blob/master/github-images/dashboard_rotated.gif "Dashboard")
 
 ## Getting Started
 
