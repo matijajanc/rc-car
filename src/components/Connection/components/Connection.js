@@ -6,7 +6,7 @@ import IP from './Ip';
 export default Connection = props =>
     <View style={styles.container}>
       <Image style={styles.logo} source={require('./assets/images/logo.png')} />
-      <IP callback={props.callback}/>
+      <IP callback={props.callback} domain={props.domain}/>
       <TouchableOpacity style={styles.button} onPress={props.connect}>
         <Text style={styles.buttonText}>Connect</Text>
       </TouchableOpacity>

@@ -70,7 +70,7 @@ export default class ConnectionContainer extends React.Component {
   render() {
     return (
       <Container>
-        <Connection callback={this.callbackDomain} connect={this.connect}/>
+        <Connection callback={this.callbackDomain} domain={this.state.domain} connect={this.connect}/>
       </Container>
     );
   }
