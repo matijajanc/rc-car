@@ -43,3 +43,17 @@ iOS
 ```
 react-native run-ios
 ```
+
+### NodeJS server (websocket)
+
+navigate to sub-folder "node_server"
+
+```
+npm install
+```
+
+Run
+
+```
+node server.js
+```
