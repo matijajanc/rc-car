@@ -13,7 +13,9 @@ More you can read on this [link](https://medium.com/@dan_abramov/smart-and-dumb-
 | --- | --- | --- | --- |
 | ![alt text](https://github.com/matijajanc/rc-car/blob/master/github-images/screen1.png "Connect Screen") | ![alt text](https://github.com/matijajanc/rc-car/blob/master/github-images/screen2.png "Home Screen") | ![alt text](https://github.com/matijajanc/rc-car/blob/master/github-images/screen3.png "Steer Calibrate") | ![alt text](https://github.com/matijajanc/rc-car/blob/master/github-images/screen4.png "Arduino Settings") |
 
-
+| Dashboard Drive Mode |
+| --- |
+![alt text](https://github.com/matijajanc/rc-car/blob/master/github-images/dashboard.gif "Dashboard")
 
 ## Getting Started
 
