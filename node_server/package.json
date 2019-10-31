@@ -1,6 +1,6 @@
 {
-  "name": "sora",
-  "description": "Sora - Europlakat",
+  "name": "rc-car",
+  "description": "RC car node server",
   "type": "project",
   "version": "1.0.0",
   "devDependencies": {},
