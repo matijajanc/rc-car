@@ -12,7 +12,7 @@
   "dependencies": {
     "create-react-native-app": "^1.0.0",
     "react": "16.3.0-alpha.1",
-    "react-native": "0.54.2",
+    "react-native": "0.70.6",
     "react-native-circular-progress": "^0.2.0",
     "react-native-config": "^0.11.5",
     "react-native-event-listeners": "^1.0.3",
@@ -25,7 +25,7 @@
   "devDependencies": {
     "babel-jest": "22.4.3",
     "babel-preset-react-native": "4.0.0",
-    "jest": "22.4.3",
+    "jest": "29.3.1",
     "react-test-renderer": "16.3.0-alpha.1"
   },
   "jest": {
