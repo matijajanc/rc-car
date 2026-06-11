@@ -1,18 +1,26 @@
-# RC Car — Android / React Native Upgrade Guide
+# RC Car — Android / React Native Upgrade
 
-**Goal:** bring the app from React Native **0.54.2 (2018)** to **0.85 (latest)** on a
-modern Android toolchain, while migrating the JS to **TypeScript + hooks** and
-wiring it to the new typed [`shared/protocol.ts`](shared/protocol.ts).
+**Status: ✅ APPLIED.** The app was upgraded from React Native **0.54.2 (2018)** to
+**0.86** with **TypeScript + hooks + React Navigation v7**, wired to the typed
+[`shared/protocol.ts`](shared/protocol.ts). This document is both the record of
+what was done and the reference for the remaining native-build step.
 
-> **Why this is a guide and not a finished diff.** This repository was modernised
-> on a machine with **no Java, no Android SDK, and no emulator**, so the native
-> Android build cannot be compiled or run here — shipping unverified native code
-> would be dishonest. Equally important: **hooks require React ≥ 16.8, but this
-> project ships React 16.3-alpha, and Metro 0.54 cannot resolve `.ts`/`.tsx`.**
-> So the TypeScript + hooks migration is *physically coupled* to the RN upgrade —
-> it can only run once React/Metro are upgraded. This document carries that
-> migration as concrete, ready-to-apply code so you can execute and verify it on
-> a machine with the Android toolchain.
+**Verified (no Android SDK needed, all green):** `npm run typecheck`, `npm run lint`,
+`npm test`, and a full **Metro production bundle** — the entire JS module graph
+resolves and transforms under RN 0.86.
+
+**Native build:** compiling the APK in Docker on this **Apple Silicon (arm64)** Mac
+gets through all 150 Gradle tasks (RN plugin, autolinking, every native module's
+Kotlin, codegen) and fails only at `processDebugResources`, because Google ships
+`aapt2` as an **x86_64-only** binary that can't run on arm64 Linux. So the native
+APK is built where `aapt2` runs natively: **CI on x86 ubuntu**
+([`.github/workflows/android.yml`](.github/workflows/android.yml)), a local Android
+SDK, or an `--platform=linux/amd64` (emulated) container via
+[`android-build.Dockerfile`](android-build.Dockerfile).
+
+> The sections below were the migration plan; they now double as the change record.
+> Versions landed slightly newer than originally targeted (RN **0.86**, React 19.2,
+> SDK 36, NDK 27, Gradle 9.3.1).
 
 The backend half of the project (the WebSocket bridge + simulator) **was**
 modernised and verified here — see [`node_server/`](node_server/) and

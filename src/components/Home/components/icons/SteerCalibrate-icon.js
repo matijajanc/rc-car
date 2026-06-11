@@ -4,7 +4,7 @@ import Svg,{G, Path} from 'react-native-svg';
 import {styles} from '../assets/styles/styles';
 import {colors} from "../../../../config/styles/colors";
 
-export default SteerCalibrateIcon = props =>
+const SteerCalibrateIcon = props =>
   <View style={[styles.svgBox, {'backgroundColor': props.bgColor}]}>
     <Svg width={13} height={15} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 133.75 143.4">
       <G fill={colors.background}>
@@ -22,3 +22,5 @@ export default SteerCalibrateIcon = props =>
       </G>
     </Svg>
   </View>
+
+export default SteerCalibrateIcon;

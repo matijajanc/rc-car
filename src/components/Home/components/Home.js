@@ -9,7 +9,7 @@ import ArduinoIcon from './icons/Arduino-icon';
 import RangeSensorsIcon from './icons/RangeSensors-icon';
 import BlinkersIcon from './icons/Blinkers-icon';
 
-export default Home = props =>
+const Home = props =>
   <View style={styles.container}>
     <TouchableHighlight style={styles.driveMode} onPress={() => props.navigate('DriveWithButtons')}>
       <Image style={styles.touchImg} source={require('./assets/images/tablet-screen-128.png')}/>
@@ -42,3 +42,5 @@ export default Home = props =>
       icon={<ArduinoIcon bgColor={'#AF4AD5'} />}
     />
   </View>
+
+export default Home;

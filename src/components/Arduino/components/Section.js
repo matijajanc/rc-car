@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 import { styles } from "./assets/styles/styles";
 import Pin from './Pin';
 
-export default Section = props => {
+const Section = props => {
   const { data } = props;
   return (
     <View>
@@ -14,3 +14,5 @@ export default Section = props => {
     </View>
   )
 }
+
+export default Section;

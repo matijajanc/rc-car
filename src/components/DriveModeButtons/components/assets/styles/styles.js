@@ -1,7 +1,7 @@
 import {StyleSheet} from "react-native"
 import { colors } from "../../../../../config/styles/colors";
 
-export default styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
@@ -63,3 +63,5 @@ export default styles = StyleSheet.create({
     left:390,
   }
 });
+
+export default styles;

@@ -1,7 +1,7 @@
 import {StyleSheet} from "react-native"
 import { colors } from "../../../../../config/styles/colors";
 
-export default styles = StyleSheet.create({
+const styles = StyleSheet.create({
   motorTempBox: {
     justifyContent:'flex-start',
   },
@@ -11,3 +11,5 @@ export default styles = StyleSheet.create({
     marginTop:15,
   }
 });
+
+export default styles;

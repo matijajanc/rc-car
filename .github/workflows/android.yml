@@ -1,0 +1,51 @@
+name: Android
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+# Least privilege: only reads the repo + uploads a build artifact.
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build debug APK
+    # ubuntu runners are x86_64, so aapt2/NDK run natively (no arm64/emulation
+    # issue that blocks the Docker build on Apple Silicon).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - uses: android-actions/setup-android@v3
+
+      - name: Install SDK packages (match the RN 0.86 scaffold)
+        run: |
+          sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0" \
+            "ndk;27.1.12297006" "cmake;3.22.1"
+
+      - name: Install JS dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon -PreactNativeArchitectures=arm64-v8a,x86_64
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error

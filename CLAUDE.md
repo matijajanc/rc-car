@@ -12,7 +12,7 @@ Mobile app (React Native)  ⇄ WebSocket ⇄  NodeJS bridge (node_server/)  ⇄ 
 
 The app never talks to the car directly. It opens a WebSocket to the NodeJS bridge server, which relays messages to/from the car's Arduino over a serial port. Understanding this hop is essential: anything the app "sends to the car" is a WebSocket message the bridge writes to the serial port, and anything "received from the car" is serial data the bridge broadcasts back over the WebSocket.
 
-**Two halves at different stages.** The **backend** (`node_server/` + `shared/`) has been modernised: TypeScript, env-driven config, a hardware-free **car simulator**, Docker, tests, and CI — all verified. The **app** (`src/`, `App.js`, `index.js`) is still the original **React Native 0.54.2 (2018)** code; its modernisation (RN 0.85, TypeScript, hooks) is specified, ready-to-apply, in [ANDROID_UPGRADE.md](ANDROID_UPGRADE.md). When working on the app, read that first.
+**Both halves are modernised.** The **backend** (`node_server/` + `shared/`): TypeScript, env-driven config, a hardware-free **car simulator**, Docker, tests, CI — all verified. The **app** (`src/`, `App.tsx`, `index.js`) was upgraded from RN 0.54 (2018) to **React Native 0.86** with **TypeScript + hooks + React Navigation v7**. The JS layer is verified (typecheck, lint, Jest, Metro bundle); the native APK is built in CI on x86 (see [ANDROID_UPGRADE.md](ANDROID_UPGRADE.md) for the migration record and the Apple-Silicon `aapt2` caveat).
 
 ## Commands
 
@@ -28,11 +28,12 @@ The app never talks to the car directly. It opens a WebSocket to the NodeJS brid
 **Backend via Docker** (run from repo root) — fully isolated, no hardware:
 - `docker compose up --build` — bridge + simulator on `:8085`
 
-**App** (run from repo root) — still RN 0.54; see [ANDROID_UPGRADE.md](ANDROID_UPGRADE.md) before changing:
-- `npm install`, `npm start` (Metro), `npm test` (Jest `react-native` preset)
-- `npm run android-dev` / `android-prod` / `build-android-prod`
+**App** (run from repo root) — React Native 0.86, TypeScript:
+- `npm install --legacy-peer-deps` (a couple of legacy libs need it), `npm start` (Metro)
+- `npm run typecheck` (`tsc --noEmit`), `npm run lint`, `npm test` (Jest, `@react-native/jest-preset`)
+- `npm run android-dev` / `android-prod` / `build-android-prod` (need a local Android SDK)
 
-CI (`.github/workflows/ci.yml`) runs typecheck + lint + format check + tests for the backend on Node 20 & 22.
+CI: `.github/workflows/ci.yml` runs typecheck + lint + format + tests for the backend (Node 20 & 22); `.github/workflows/android.yml` builds the debug APK on x86 ubuntu (where `aapt2` runs natively).
 
 ## Environment config
 
@@ -46,7 +47,7 @@ The bridge ships a **car simulator** (`node_server/src/simulator.ts`) that strea
 
 ## The command protocol (core domain knowledge)
 
-The protocol is now codified in one dependency-free module — **[`shared/protocol.ts`](shared/protocol.ts)** — the single source of truth, consumed by the backend today and by the app after the upgrade. It replaces the comment-only spec that used to live in `transmitter.js`/`receiver.js`. Change protocol behaviour there, and the Jest suite (`node_server/test/protocol.test.ts`) guards it.
+The protocol is codified in one dependency-free module — **[`shared/protocol.ts`](shared/protocol.ts)** — the single source of truth, consumed by both the backend and the app. It replaces the comment-only spec that used to live in `transmitter.js`/`receiver.js`. Change protocol behaviour there, and the Jest suites (`node_server/test/protocol.test.ts` and `__tests__/protocol.test.ts`) guard it.
 
 App↔car messages are short ASCII strings: a **2-character code** followed by a value. The two directions use **different terminators**, which is easy to get wrong:
 
@@ -67,25 +68,28 @@ Codes are exported as `COMMAND_CODES` and `TELEMETRY_CODES`:
 
 **Code lives together for tooling.** `shared/protocol.ts` sits at the repo root so both halves can import it. ESLint is scoped to `node_server/src` + `test`; `shared/` is covered by `tsc`, Prettier, and the Jest suite (it can't sit under ESLint's base path).
 
-### App (`src/`) — current RN 0.54 code (see ANDROID_UPGRADE.md for the modern target)
+### App (`src/`, `App.tsx`) — React Native 0.86, TypeScript + hooks
 
-**Container/presentation pattern.** Every feature lives in `src/components/<Feature>/`. `<Feature>Container.js` is the smart component (state, WebSocket send/receive, navigation, orientation lock); `components/<Feature>.js` is the dumb presentational component receiving props/callbacks. The README cites Dan Abramov's smart/dumb components article — follow it for new features.
+**Container/presentation pattern.** Every feature lives in `src/components/<Feature>/`. `<Feature>Container.tsx` is the smart component (state via hooks, WebSocket send/receive, navigation, orientation lock); `components/<Feature>.{tsx,js}` is the dumb presentational component. The smart/dumb split (Dan Abramov) still holds — follow it for new features. Dumb leaf components are still plain `.js` (allowed via `allowJs`) and carry a few cosmetic unused-import lint warnings.
 
-**Singletons.** `WebSocketNodeJs` (`src/utils/websocket.js`), `KeepAlive` (`keep-alive.js`), and `Settings` (`settings.js`) are exported as instantiated singletons (`export default (new X)`). The WebSocket singleton holds the one socket, set once on connect; everything else does `WebSocketNodeJs.get()`.
+**Utils are TS modules** (`src/utils/*.ts`) built on the shared protocol: `transmitter.send()`, `receiver.receive()`, `settings.sendAll()`, `keep-alive.start/stop()`, `websocket.createSocket/getSocket()`, `vibrate()`. Each also keeps a backward-compatible default export (e.g. `Transmitter.send`) so the older `.js` presentational components keep working unchanged.
 
-**Incoming data uses an event bus, not props.** `Receiver` emits `EventRegister.emit('wsReceive', {option, value})` (from `react-native-event-listeners`). Display containers (Speedometer, BatteryLevel, MotorTemperature) subscribe via `EventRegister.addEventListener('wsReceive', ...)` and filter by `option` code. Remember to remove the listener in `componentWillUnmount`.
+**Incoming data uses an event bus, not props.** `receiver.ts` decodes telemetry with `parseTelemetryStream` (buffering partial frames) and emits `EventRegister.emit('wsReceive', {code, value})`. Dashboard widgets (Speedometer, BatteryLevel, MotorTemperature) subscribe in a `useEffect`, filter by `code`, and remove the listener in the effect's cleanup.
 
-**Keep-alive is a safety mechanism.** `KeepAlive.start()` sends `kp` every 100ms after connect. The car stops itself if it misses the signal 3× in a row. Do not break or throttle this loop without understanding the safety implication.
+**Keep-alive is a safety mechanism.** `keep-alive.start()` sends `kp` every 100ms after connect; the car stops itself if it misses the signal 3× in a row. Do not throttle it without understanding the safety implication.
 
-**Settings persistence.** On/off and value settings are stored in `AsyncStorage` under `setting-<code>` keys (e.g. `setting-sp`, `setting-rs`). On connect, `Settings.send()` replays all stored settings to the car (booleans serialized as `1`/`0`). The `OnOffSetting` common component is the reusable persisted toggle.
+**Settings persistence.** Stored in `AsyncStorage` (`@react-native-async-storage/async-storage`) under `setting-<code>` keys; `settings.sendAll()` replays them to the car on connect (booleans → 1/0). `OnOffSetting` is the reusable persisted toggle.
 
-**Navigation.** `react-navigation` `StackNavigator` in `src/config/routes.js`, `headerMode: 'none'`, initial route `Connect`. Routes: Connect → Home → {Speed, SteerCalibrate, Arduino, DriveWithButtons}.
+**Navigation.** `@react-navigation/native` v7 native-stack in `App.tsx`, `headerShown: false`, initial route `Connect`; route names are typed via the exported `RootStackParamList`. Screens read navigation from `useNavigation<NativeStackNavigationProp<RootStackParamList>>()`.
 
-**Orientation locking.** Each container locks orientation in `componentDidMount` via `react-native-orientation` — portrait for menus, landscape for the driving dashboard (`DriveModeButtonsContainer`).
+**Orientation locking.** Each container locks orientation in a `useEffect` via `react-native-orientation-locker` — portrait for menus, landscape for the driving dashboard (`DriveModeButtonsContainer`).
+
+**Gauges.** Battery/Motor use `AnimatedCircularProgress`; the legacy imperative `react-native-svg` ref-fill (`extractBrush` + `setNativeProps`) was removed in the upgrade, so those gauges look different from the 2018 originals.
 
 ## Gotchas
 
 - **Connect-without-server fallback:** in `ConnectionContainer`, tapping Connect 10 times navigates to Home even with no server (see `fallback()`), so the UI can be opened standalone.
 - **Serial port is now env-driven.** The old `COM4`/19200 hardcoding is gone — set `SERIAL_PATH`/`SERIAL_BAUD` (and `SIMULATE=false`) on the machine wired to the car. The commented-out `setInterval` simulation from the old `server.js` is now the first-class `CarSimulator`.
 - **Unauthenticated LAN tool.** The WebSocket has no auth (it never did) and binds `0.0.0.0` so a phone on the same Wi-Fi can reach it. Fine for a LAN dev tool; never expose the host to the public internet.
-- **The app stack is deliberately frozen at RN 0.54** until the upgrade. Don't "modernise piecemeal" — hooks need React ≥16.8 and Metro 0.54 can't load `.ts`, so partial changes break the app. Do the whole migration via [ANDROID_UPGRADE.md](ANDROID_UPGRADE.md).
+- **Android build on Apple Silicon:** building the APK in Docker on an arm64 Mac fails at `processDebugResources` because Google ships `aapt2` as an x86_64-only binary. Use the CI workflow (x86 ubuntu), a local Android SDK, or an `--platform=linux/amd64` (emulated) container. The JS layer is fully verifiable anywhere (`npm run typecheck` + Metro bundle).
+- **`npm install` needs `--legacy-peer-deps`** because a few legacy libs (`react-native-circular-progress`, `react-native-event-listeners`) declare stale peer ranges.

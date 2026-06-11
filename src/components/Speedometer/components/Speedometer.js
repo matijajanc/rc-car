@@ -19,7 +19,7 @@ const circularSettings = {
   backgroundColor: '#000'
 };
 
-export default Speedometer = props =>
+const Speedometer = props =>
   <View style={styles.speedometerBox}>
     <AnimatedCircularProgress {...circularSettings} fill={(props.speed * speedFactor)}>
     </AnimatedCircularProgress>
@@ -33,3 +33,5 @@ export default Speedometer = props =>
       <LongLights command={'ll'} selectedColor={colors.blue} />
     </View>
   </View>
+
+export default Speedometer;

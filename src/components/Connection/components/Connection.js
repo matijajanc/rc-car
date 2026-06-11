@@ -3,7 +3,7 @@ import { View, Button, Image, TouchableOpacity, Text } from 'react-native';
 import { styles } from './assets/styles/styles';
 import IP from './Ip';
 
-export default Connection = props =>
+const Connection = props =>
     <View style={styles.container}>
       <Image style={styles.logo} source={require('./assets/images/logo.png')} />
       <IP callback={props.callback} domain={props.domain}/>
@@ -11,3 +11,5 @@ export default Connection = props =>
         <Text style={styles.buttonText}>Connect</Text>
       </TouchableOpacity>
     </View>
+
+export default Connection;

@@ -10,7 +10,7 @@ import ArrowIcon from './DriveButton/Arrow-icon';
 /**
  * Look of the driving dashboard
  */
-export default DriveModeButton = props =>
+const DriveModeButton = props =>
   <View style={styles.container}>
     <StatusBar hidden/>
     <View style={styles.upDownBox}>
@@ -47,3 +47,5 @@ export default DriveModeButton = props =>
       />
     </View>
   </View>
+
+export default DriveModeButton;

@@ -4,7 +4,7 @@ import Svg,{G, Path} from 'react-native-svg';
 import {styles} from '../assets/styles/styles';
 import {colors} from "../../../../config/styles/colors";
 
-export default RangeSensorsIcon = props =>
+const RangeSensorsIcon = props =>
   <View style={[styles.svgBox, {'backgroundColor': props.bgColor}]}>
     <Svg width={18} height={11} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 172.61 106.03">
       <G fill={colors.background}>
@@ -19,3 +19,5 @@ export default RangeSensorsIcon = props =>
       </G>
     </Svg>
   </View>
+
+export default RangeSensorsIcon;

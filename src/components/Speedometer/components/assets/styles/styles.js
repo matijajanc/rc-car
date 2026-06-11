@@ -1,7 +1,7 @@
 import {StyleSheet} from "react-native";
 import { colors } from "../../../../../config/styles/colors";
 
-export default styles = StyleSheet.create({
+const styles = StyleSheet.create({
   speedometerBox: {
     flex:1,
     position:'absolute',
@@ -47,3 +47,5 @@ export default styles = StyleSheet.create({
     width:180,
   }
 });
+
+export default styles;

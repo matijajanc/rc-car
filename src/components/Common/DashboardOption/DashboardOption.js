@@ -5,7 +5,7 @@ import Transmitter from '../../../utils/transmitter';
 /**
  * Car Dashboard
  */
-export default DashboardOption = Component => class extends React.Component {
+const DashboardOption = Component => class extends React.Component {
   constructor(props) {
     super(props);
     this.defaultColor = '#fff';
@@ -33,3 +33,5 @@ export default DashboardOption = Component => class extends React.Component {
     )
   }
 }
+
+export default DashboardOption;

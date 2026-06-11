@@ -1,4 +1,4 @@
-export default sectionListData = [
+const sectionListData = [
   {
     title: 'Analog Pins',
     data: [
@@ -114,3 +114,5 @@ export default sectionListData = [
     ]
   }
 ];
+
+export default sectionListData;

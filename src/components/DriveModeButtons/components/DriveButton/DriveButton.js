@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {View, TouchableWithoutFeedback} from 'react-native';
 import styles from '../assets/styles/styles';
 
-export default DriveButton = props =>
+const DriveButton = props =>
   <TouchableWithoutFeedback
     onPressIn={() => props.callbackBtnPress()}
     onPressOut={() => props.callbackBtnRelease()}
@@ -11,3 +11,5 @@ export default DriveButton = props =>
       {props.arrow}
     </View>
   </TouchableWithoutFeedback>
+
+export default DriveButton;

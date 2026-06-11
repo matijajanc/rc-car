@@ -3,7 +3,7 @@ import { View, Text, Image } from 'react-native';
 import styles from './assets/styles/styles';
 import CalibrateButton from './CalibrateButton/CalibrateButton';
 
-export default SteerCalibrate = props =>
+const SteerCalibrate = props =>
   <View style={styles.container}>
     <View style={styles.contentBox}>
       <CalibrateButton callback={() => props.callback('decrement')} />
@@ -16,3 +16,5 @@ export default SteerCalibrate = props =>
       <Text style={styles.angle}>{props.angle}</Text>
     </View>
   </View>
+
+export default SteerCalibrate;

@@ -4,7 +4,7 @@ import Svg,{G, Path} from 'react-native-svg';
 import {styles} from '../assets/styles/styles';
 import {colors} from "../../../../config/styles/colors";
 
-export default BlinkersIcon = props =>
+const BlinkersIcon = props =>
   <View style={[styles.svgBox, {'backgroundColor': props.bgColor}]}>
     <Svg width={18} height={9} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 184.35 91.94">
       <G fill={colors.background}>
@@ -13,3 +13,5 @@ export default BlinkersIcon = props =>
       </G>
     </Svg>
   </View>
+
+export default BlinkersIcon;

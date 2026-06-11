@@ -1,7 +1,7 @@
 import {StyleSheet} from "react-native"
 import { colors } from "../../../../../config/styles/colors";
 
-export default styles = StyleSheet.create({
+const styles = StyleSheet.create({
   batteryLevelBox: {
     height:'50%',
     justifyContent:'flex-end',
@@ -12,3 +12,5 @@ export default styles = StyleSheet.create({
     marginBottom:-10
   }
 });
+
+export default styles;

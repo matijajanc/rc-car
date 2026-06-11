@@ -4,7 +4,7 @@ import Svg,{G, Path} from 'react-native-svg';
 import {styles} from '../assets/styles/styles';
 import {colors} from "../../../../config/styles/colors";
 
-export default SpeedIcon = props =>
+const SpeedIcon = props =>
   <View style={[styles.svgBox, {'backgroundColor': props.bgColor}]}>
     <Svg width={15} height={15} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 166.98 166.09">
       <G fill={colors.background}>
@@ -25,3 +25,5 @@ export default SpeedIcon = props =>
       </G>
     </Svg>
   </View>
+
+export default SpeedIcon;

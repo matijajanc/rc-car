@@ -4,6 +4,8 @@ import Svg,{G, Path} from 'react-native-svg';
 import {styles} from '../assets/styles/styles';
 import {colors} from "../../../../config/styles/colors";
 
-export default ArduinoIcon = props =>
+const ArduinoIcon = props =>
   <View style={[styles.svgBox, {'backgroundColor': props.bgColor}]}>
   </View>
+
+export default ArduinoIcon;

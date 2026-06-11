@@ -6,7 +6,7 @@ import {styles} from "./assets/styles/styles";
  * Displays Arduino pin id, description,
  * color of the wire and pin type (Input/Output)
  */
-export default Pin = props => {
+const Pin = props => {
   const {item} = props;
   return (
     <View style={styles.listItem}>
@@ -19,3 +19,5 @@ export default Pin = props => {
     </View>
   )
 }
+
+export default Pin;

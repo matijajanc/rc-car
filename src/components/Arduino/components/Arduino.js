@@ -3,7 +3,7 @@ import { ScrollView, View, Image } from 'react-native';
 import { styles } from './assets/styles/styles';
 import Section from './Section';
 
-export default Arduino = props =>
+const Arduino = props =>
   <ScrollView>
     <View style={styles.container}>
       <Image style={styles.image} source={require('./assets/images/arduinoUno.png')}/>
@@ -12,3 +12,5 @@ export default Arduino = props =>
       )}
     </View>
   </ScrollView>
+
+export default Arduino;
