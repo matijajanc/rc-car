@@ -44,16 +44,36 @@ iOS
 react-native run-ios
 ```
 
-### NodeJS server (websocket)
+### NodeJS server (websocket bridge + simulator)
 
-navigate to sub-folder "node_server"
+The server is the bridge between the app and the car's Arduino. It now ships a
+**car simulator**, so you can run and "drive" the whole stack with **no hardware**.
+
+From the `node_server` sub-folder:
 
 ```
 npm install
+npm run dev        # hot-reload; simulator on by default (SIMULATE=true)
 ```
 
-Run
+Or fully isolated in Docker, from the repo root:
 
 ```
-node server.js
+docker compose up --build      # bridge + simulator on :8085
 ```
+
+To talk to a **real car** instead of the simulator, run on the machine wired to
+the Arduino with the serial port configured:
+
+```
+SIMULATE=false SERIAL_PATH=/dev/ttyUSB0 SERIAL_BAUD=19200 npm start
+```
+
+See `node_server/.env.example` for all options. The server is TypeScript, typed,
+and covered by tests (`npm test`) and CI.
+
+### Upgrading the app
+
+The mobile app is still on React Native 0.54 (2018). A complete, step-by-step
+upgrade to the latest React Native (TypeScript + hooks + React Navigation v7)
+is documented in [ANDROID_UPGRADE.md](ANDROID_UPGRADE.md).

@@ -1,0 +1,10 @@
+# Keep the build context small and reproducible.
+**/node_modules
+.git
+.idea
+android
+ios
+github-images
+**/*.log
+**/dist
+.DS_Store

@@ -1,0 +1,24 @@
+# Isolated local development environment for the RC car backend.
+#
+#   docker compose up --build
+#
+# Starts the WebSocket bridge with the built-in car simulator — no Arduino, no
+# serial cable, no phone required. Point the app's WS_SERVER_IP at this host
+# and you can "drive" a virtual car.
+#
+# Security note: the websocket is unauthenticated (it always has been — it is a
+# LAN dev tool). Port 8085 is published on all host interfaces so a phone on the
+# same Wi-Fi can connect. Do not expose this host to the public internet.
+services:
+  rc-car-server:
+    build:
+      context: .
+      dockerfile: node_server/Dockerfile
+    image: rc-car-server:latest
+    container_name: rc-car-server
+    environment:
+      SIMULATE: "true"
+      WS_PORT: "8085"
+    ports:
+      - "8085:8085"
+    restart: unless-stopped
