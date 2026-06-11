@@ -40,12 +40,15 @@ jobs:
       - name: Install JS dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Build debug APK
+      # Release bundles the JS into the APK (signed with the checked-in debug
+      # keystore — fine for personal/test installs, NOT for Play Store), so it
+      # runs standalone with no Metro dev server.
+      - name: Build release APK (self-contained)
         working-directory: android
-        run: ./gradlew assembleDebug --no-daemon -PreactNativeArchitectures=arm64-v8a,x86_64
+        run: ./gradlew assembleRelease --no-daemon -PreactNativeArchitectures=arm64-v8a,x86_64
 
       - uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk
-          path: android/app/build/outputs/apk/debug/*.apk
+          name: app-release-apk
+          path: android/app/build/outputs/apk/release/*.apk
           if-no-files-found: error
