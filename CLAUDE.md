@@ -84,7 +84,7 @@ Codes are exported as `COMMAND_CODES` and `TELEMETRY_CODES`:
 
 **Orientation locking.** Each container locks orientation in a `useEffect` via `react-native-orientation-locker` — portrait for menus, landscape for the driving dashboard (`DriveModeButtonsContainer`).
 
-**Gauges.** Battery/Motor use `AnimatedCircularProgress`; the legacy imperative `react-native-svg` ref-fill (`extractBrush` + `setNativeProps`) was removed in the upgrade, so those gauges look different from the 2018 originals.
+**Gauges.** Battery/Motor keep the **original segmented radial-arc SVG design**, re-implemented declaratively for react-native-svg v15 — each segment computes its `fill`/`opacity` in render (the legacy `extractBrush` + `setNativeProps` ref-fill was removed in v15). Speedometer uses `AnimatedCircularProgress` (unchanged from 2018).
 
 ## Gotchas
 
