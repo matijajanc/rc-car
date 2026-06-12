@@ -4,6 +4,7 @@ import Svg, { Circle, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { EventRegister } from 'react-native-event-listeners';
 import { TELEMETRY_CODES, Telemetry } from '../../../shared/protocol';
 import { colors } from '../../config/styles/colors';
+import { clampPercent, motorZone, segmentsLit } from '../../utils/gauges';
 
 // Original segmented gauge, reconstructed from the 2018 SVG and rendered
 // declaratively (no extractBrush / setNativeProps — removed in svg v15).
@@ -673,9 +674,10 @@ export default function MotorTemperatureContainer(): React.JSX.Element {
     };
   }, []);
 
-  const fillLevel = Math.max(0, Math.min(100, raw)); // 0..100 along the arc
-  const end = Math.floor((SEGMENT_COUNT * fillLevel) / 100);
-  const color = raw < 40 ? colors.green : raw < 80 ? colors.orange : colors.red;
+  const fillLevel = clampPercent(raw); // 0..100 along the arc
+  const end = segmentsLit(fillLevel, SEGMENT_COUNT);
+  const zone = motorZone(raw);
+  const color = zone === 0 ? colors.green : zone === 1 ? colors.orange : colors.red;
 
   return (
     <View style={styles.box}>

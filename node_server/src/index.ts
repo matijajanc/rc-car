@@ -11,7 +11,11 @@ async function main(): Promise<void> {
 
   const link: CarLink = config.simulate
     ? new CarSimulator({ logger: (message) => logger.debug('sim', 'event', { msg: message }) })
-    : new SerialCarLink({ path: config.serialPath, baudRate: config.serialBaud });
+    : new SerialCarLink({
+        path: config.serialPath,
+        baudRate: config.serialBaud,
+        logger: (event, fields) => logger.info('serial', event, fields),
+      });
 
   logger.info('server', 'starting', {
     simulate: config.simulate,

@@ -4,6 +4,7 @@ import Svg, { Circle, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { EventRegister } from 'react-native-event-listeners';
 import { TELEMETRY_CODES, Telemetry } from '../../../shared/protocol';
 import { colors } from '../../config/styles/colors';
+import { batteryPercent, batteryZone, segmentsLit } from '../../utils/gauges';
 
 // Original segmented gauge, reconstructed from the 2018 SVG and rendered
 // declaratively (no extractBrush / setNativeProps — removed in svg v15).
@@ -667,13 +668,6 @@ const CIRCLES: { cx: string; cy: string; r: string; fill: string }[] = [
 ];
 const TEXTS: { transform?: string; fill: string; content: string }[] = [];
 
-function batteryPercent(voltage: number): number {
-  if (!voltage) {
-    return 0;
-  }
-  return Math.max(0, Math.min(100, (voltage - 435) / ((675 - 435) / 100)));
-}
-
 export default function BatteryLevelContainer(): React.JSX.Element {
   const [raw, setRaw] = useState(0);
 
@@ -689,8 +683,9 @@ export default function BatteryLevelContainer(): React.JSX.Element {
   }, []);
 
   const fillLevel = batteryPercent(raw); // 0..100 along the arc
-  const end = Math.floor((SEGMENT_COUNT * fillLevel) / 100);
-  const color = fillLevel < 20 ? colors.red : fillLevel < 60 ? colors.orange : colors.green;
+  const end = segmentsLit(fillLevel, SEGMENT_COUNT);
+  const zone = batteryZone(fillLevel);
+  const color = zone === 0 ? colors.red : zone === 1 ? colors.orange : colors.green;
 
   return (
     <View style={styles.box}>
