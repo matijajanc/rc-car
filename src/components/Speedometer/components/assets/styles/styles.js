@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
   speedometerBox: {
     flex:1,
     position:'absolute',
-    left:120,
+    left:170,
     width:310,
     height:280,
     justifyContent:'center',

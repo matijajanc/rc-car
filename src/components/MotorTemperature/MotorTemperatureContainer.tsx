@@ -714,5 +714,7 @@ export default function MotorTemperatureContainer(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  box: { height: '50%', justifyContent: 'flex-end', alignItems: 'center' },
+  // Battery (above) is flex-end and motor-temp is flex-start so the two arcs
+  // meet at the vertical centre and nest into one continuous gauge.
+  box: { height: '50%', justifyContent: 'flex-start', alignItems: 'center' },
 });

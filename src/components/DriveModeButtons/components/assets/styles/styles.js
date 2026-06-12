@@ -58,9 +58,12 @@ const styles = StyleSheet.create({
     zIndex:1,
   },
   carDataBox: {
-    flex:1,
     position:'absolute',
     left:390,
+    // Span the full height so the gauges' height:'50%' resolves (a flex:1 on an
+    // absolute box with no top/bottom has no definite height to size against).
+    top:0,
+    bottom:0,
   }
 });
 
