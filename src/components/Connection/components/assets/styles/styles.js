@@ -1,5 +1,5 @@
-import {StyleSheet} from "react-native"
-import { colors } from "../../../../../config/styles/colors";
+import { StyleSheet } from 'react-native';
+import { colors } from '../../../../../config/styles/colors';
 
 export const styles = StyleSheet.create({
   container: {
@@ -12,27 +12,62 @@ export const styles = StyleSheet.create({
     position: 'absolute',
     top: 70,
   },
+  label: {
+    color: '#9aa0a6',
+    fontSize: 13,
+    marginBottom: 8,
+  },
   textInput: {
-    borderBottomWidth: 0,
-    fontSize:20,
-    color:'#fff',
-    marginBottom:30,
-    paddingTop:10,
-    paddingBottom:10,
-    paddingLeft:15,
-    paddingRight:15,
-    backgroundColor:'#000'
+    width: 260,
+    fontSize: 18,
+    color: '#fff',
+    textAlign: 'center',
+    backgroundColor: '#161616',
+    borderWidth: 1,
+    borderColor: colors.lightBlue,
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  statusRow: {
+    width: 290,
+    minHeight: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 6,
+  },
+  statusError: {
+    color: colors.red,
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  statusInfo: {
+    color: colors.lightBlue,
+    fontSize: 14,
+    textAlign: 'center',
   },
   button: {
     backgroundColor: colors.blue,
-    paddingTop:10,
-    paddingBottom:10,
-    paddingLeft:30,
-    paddingRight:30,
-    borderRadius:400
+    minWidth: 170,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 400,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
   buttonText: {
     color: '#fff',
-    fontSize:16
-  }
+    fontSize: 16,
+  },
+  skip: {
+    marginTop: 18,
+  },
+  skipText: {
+    color: '#777',
+    fontSize: 13,
+    textDecorationLine: 'underline',
+  },
 });
