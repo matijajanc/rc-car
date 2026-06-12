@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, TouchableHighlight } from 'react-native';
+import { View, TouchableHighlight } from 'react-native';
 import { styles } from './assets/styles/styles';
 import Link from './Link';
 import OnOff from './OnOff';
@@ -8,6 +8,7 @@ import SteerCalibrateIcon from './icons/SteerCalibrate-icon';
 import ArduinoIcon from './icons/Arduino-icon';
 import RangeSensorsIcon from './icons/RangeSensors-icon';
 import BlinkersIcon from './icons/Blinkers-icon';
+import TabletScreenIcon from './icons/TabletScreen-icon';
 
 interface Props {
   navigate: (route: string) => void;
@@ -16,7 +17,7 @@ interface Props {
 const Home = ({ navigate }: Props): React.JSX.Element => (
   <View style={styles.container}>
     <TouchableHighlight style={styles.driveMode} onPress={() => navigate('DriveWithButtons')}>
-      <Image style={styles.touchImg} source={require('./assets/images/tablet-screen-128.png')} />
+      <TabletScreenIcon width={128} height={128} />
     </TouchableHighlight>
     {/*<OnOff text={'Calibrate'} setting={'calibration'}/>*/}
     <Link
