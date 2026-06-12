@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { EventRegister } from 'react-native-event-listeners';
 import Orientation from 'react-native-orientation-locker';
 import Config from 'react-native-config';
-import { createSocket } from '../../utils/websocket';
+import { WS_STATUS_EVENT, createSocket, getSocket } from '../../utils/websocket';
+import type { WsStatus } from '../../utils/websocket';
 import { start as startKeepAlive } from '../../utils/keep-alive';
 import { sendAll } from '../../utils/settings';
 import { receive } from '../../utils/receiver';
@@ -23,62 +25,76 @@ export default function ConnectionContainer(): React.JSX.Element {
   const [domain, setDomain] = useState<string>(Config.WS_SERVER_IP ?? '');
   const [status, setStatus] = useState<ConnectionStatus>('idle');
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const attemptingRef = useRef(false);
 
   useEffect(() => {
     Orientation.lockToPortrait();
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
   }, []);
 
-  const goHome = (): void => {
-    setStatus('idle');
-    navigation.navigate('Home');
-  };
+  // Resolve a connect attempt off the global ws status emitted by websocket.ts.
+  useEffect(() => {
+    const clearTimer = (): void => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+    const sub = EventRegister.addEventListener(WS_STATUS_EVENT, (s: WsStatus) => {
+      if (!attemptingRef.current) {
+        return;
+      }
+      if (s === 'connected') {
+        attemptingRef.current = false;
+        clearTimer();
+        startKeepAlive();
+        void sendAll();
+        receive();
+        setStatus('idle');
+        navigation.navigate('Home');
+      } else if (s === 'disconnected') {
+        attemptingRef.current = false;
+        clearTimer();
+        setStatus('error');
+      }
+    });
+    return () => {
+      EventRegister.removeEventListener(sub as string);
+      clearTimer();
+    };
+  }, [navigation]);
 
   const connect = (): void => {
     const ip = domain.trim();
-    if (!ip || status === 'connecting') {
+    if (!ip || attemptingRef.current) {
       return;
     }
     setStatus('connecting');
+    attemptingRef.current = true;
     vibrate();
 
     // A malformed address can make the WebSocket constructor throw — never let
     // that crash the app.
-    let socket: WebSocket;
     try {
-      socket = createSocket(ip);
+      createSocket(ip);
     } catch {
+      attemptingRef.current = false;
       setStatus('error');
       return;
     }
 
-    let settled = false;
-    const finish = (ok: boolean): void => {
-      if (settled) {
+    timeoutRef.current = setTimeout(() => {
+      if (!attemptingRef.current) {
         return;
       }
-      settled = true;
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      if (ok) {
-        startKeepAlive();
-        void sendAll();
-        receive();
-        goHome();
-      } else {
-        socket.close();
-        setStatus('error');
-      }
-    };
+      attemptingRef.current = false;
+      getSocket()?.close();
+      setStatus('error');
+    }, CONNECT_TIMEOUT_MS);
+  };
 
-    timeoutRef.current = setTimeout(() => finish(false), CONNECT_TIMEOUT_MS);
-    socket.onopen = () => finish(true);
-    socket.onerror = () => finish(false);
+  const goHome = (): void => {
+    setStatus('idle');
+    navigation.navigate('Home');
   };
 
   return (
