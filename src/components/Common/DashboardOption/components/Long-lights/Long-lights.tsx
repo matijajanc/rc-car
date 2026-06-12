@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import Svg,{Path, G} from 'react-native-svg';
+import React from 'react';
+import Svg, { Path, G } from 'react-native-svg';
 import styles from './assets/styles/styles';
 import DashboardOption from '../../../../Common/DashboardOption/DashboardOption';
 
-const LongLights = props => {
+const LongLights = (props: { fillSvg: string }): React.JSX.Element => {
   return (
-    <Svg style={styles.icon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 164.77 103.43">
+    <Svg style={styles.icon} viewBox="0 0 164.77 103.43">
       <G fill={props.fillSvg}>
         <Path
           d="M397.89,735.21c-15.62,0-22.63-26-22.65-51.81s6.95-51.6,22.52-51.62c14.15,0,31.28,5.7,44.77,14.87,15.39,10.45,23.87,23.5,23.89,36.75,0,29.51-41.53,51.77-68.51,51.81Zm-.05-99.43c-12.25,0-18.61,24-18.6,47.62s6.43,47.81,18.65,47.81v0c13.32,0,29.58-5.49,42.45-14.27,8.25-5.64,22.09-17.49,22.07-33.54S448.54,655.57,440.29,650C427.42,641.21,411.15,635.78,397.84,635.78Z"

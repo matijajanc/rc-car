@@ -1,11 +1,11 @@
-import React, {Component} from 'react';
-import Svg, {G, Path} from 'react-native-svg';
+import React from 'react';
+import Svg, { G, Path } from 'react-native-svg';
 import styles from './assets/styles/styles';
 import DashboardOption from '../../../../Common/DashboardOption/DashboardOption';
 
-const Blinkers = props => {
+const Blinkers = (props: { fillSvg: string }): React.JSX.Element => {
   return (
-    <Svg style={styles.icon} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 158.99 138.34">
+    <Svg style={styles.icon} viewBox="0 0 158.99 138.34">
       <G fill={props.fillSvg}>
         <Path
           d="M306.52,752a2,2,0,0,1-1.73-1,2,2,0,0,1,0-2l77.31-134.33a2,2,0,0,1,1.73-1h0a2,2,0,0,1,1.73,1l77.69,134.11a2,2,0,0,1-1.73,3l-155,.22Zm77.31-132.34L310,748,458,747.78Z"

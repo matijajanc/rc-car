@@ -1,6 +1,6 @@
-import React, {Component} from 'react';
-import {View, Image, TouchableHighlight} from 'react-native';
-import {styles} from './assets/styles/styles';
+import React from 'react';
+import { View, Image, TouchableHighlight } from 'react-native';
+import { styles } from './assets/styles/styles';
 import Link from './Link';
 import OnOff from './OnOff';
 import SpeedIcon from './icons/Speed-icon';
@@ -9,21 +9,25 @@ import ArduinoIcon from './icons/Arduino-icon';
 import RangeSensorsIcon from './icons/RangeSensors-icon';
 import BlinkersIcon from './icons/Blinkers-icon';
 
-const Home = props =>
+interface Props {
+  navigate: (route: string) => void;
+}
+
+const Home = ({ navigate }: Props): React.JSX.Element => (
   <View style={styles.container}>
-    <TouchableHighlight style={styles.driveMode} onPress={() => props.navigate('DriveWithButtons')}>
-      <Image style={styles.touchImg} source={require('./assets/images/tablet-screen-128.png')}/>
+    <TouchableHighlight style={styles.driveMode} onPress={() => navigate('DriveWithButtons')}>
+      <Image style={styles.touchImg} source={require('./assets/images/tablet-screen-128.png')} />
     </TouchableHighlight>
     {/*<OnOff text={'Calibrate'} setting={'calibration'}/>*/}
     <Link
       text={'Speed'}
-      navigate={() => props.navigate('Speed')}
+      navigate={() => navigate('Speed')}
       icon={<SpeedIcon bgColor={'#F7380D'} />}
     />
-    {/*<Link text={'Steer Sensitivity'} navigate={() => props.navigate('')}/>*/}
+    {/*<Link text={'Steer Sensitivity'} navigate={() => navigate('')}/>*/}
     <Link
       text={'Steer Calibrate'}
-      navigate={() => props.navigate('SteerCalibrate')}
+      navigate={() => navigate('SteerCalibrate')}
       icon={<SteerCalibrateIcon bgColor={'#218BEC'} />}
     />
     <OnOff
@@ -38,9 +42,10 @@ const Home = props =>
     />
     <Link
       text={'Arduino Uno R3'}
-      navigate={() => props.navigate('Arduino')}
+      navigate={() => navigate('Arduino')}
       icon={<ArduinoIcon bgColor={'#AF4AD5'} />}
     />
   </View>
+);
 
 export default Home;
