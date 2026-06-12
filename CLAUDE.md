@@ -45,6 +45,10 @@ CI: `.github/workflows/ci.yml` runs typecheck + lint + format + tests for the ba
 
 The bridge ships a **car simulator** (`node_server/src/simulator.ts`) that streams realistic telemetry (`sp`/`bv`/`mt`) and reacts to commands, so the whole stack runs with no Arduino, serial cable, or even a phone. `SIMULATE=true` is the default. `docker compose up --build` runs it in an isolated container. It even mimics the car's keep-alive safety stop: stop sending `kp` and the simulated speed drops to 0.
 
+## Observability / logs
+
+Both legs are logged with timestamps via a small dependency-free structured logger (`node_server/src/logger.ts`): the **app↔server** leg (ws client connect/disconnect/errors) and the **server↔car** leg (serial open/close/errors + a `telemetry_gap` warning when the car stops sending). Logs go to the console (pretty) and to daily-rotated JSON-lines files (`LOG_DIR`, `LOG_LEVEL`). The server also serves `GET /health` and `GET /logs?limit&level` on the WebSocket port (LAN-only, unauthenticated). On the app side, `src/utils/diagnostics.ts` keeps a connection-event log in AsyncStorage, shown on the **Diagnostics** screen reached by tapping the top-left **connection dot** (grey/orange/green/red).
+
 ## The command protocol (core domain knowledge)
 
 The protocol is codified in one dependency-free module — **[`shared/protocol.ts`](shared/protocol.ts)** — the single source of truth, consumed by both the backend and the app. It replaces the comment-only spec that used to live in `transmitter.js`/`receiver.js`. Change protocol behaviour there, and the Jest suites (`node_server/test/protocol.test.ts` and `__tests__/protocol.test.ts`) guard it.

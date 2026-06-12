@@ -3,14 +3,17 @@ import WebSocket from 'ws';
 import { parseTelemetryStream } from '../../shared/protocol';
 import { loadConfig, ServerConfig } from '../src/config';
 import { CarLink } from '../src/link';
+import { Logger } from '../src/logger';
 import { CarSimulator } from '../src/simulator';
 import { Bridge, startBridge } from '../src/server';
 
+/** Quiet logger for tests: no console output, no files. */
+const quietLogger = (): Logger => new Logger({ dir: null, toConsole: false });
 const silent = (): void => {};
 
-/** Config bound to an ephemeral loopback port so tests never collide. */
+/** Config bound to an ephemeral loopback port; no log files in tests. */
 function testConfig(): ServerConfig {
-  return { ...loadConfig({}), wsPort: 0, host: '127.0.0.1' };
+  return { ...loadConfig({}), wsPort: 0, host: '127.0.0.1', logDir: null };
 }
 
 async function waitFor(predicate: () => boolean, timeoutMs = 2000): Promise<void> {
@@ -65,7 +68,7 @@ describe('bridge', () => {
 
   it('forwards commands app -> car and telemetry car -> app (mock link)', async () => {
     const link = new MockLink();
-    bridge = await startBridge(testConfig(), link, { logger: silent });
+    bridge = await startBridge(testConfig(), link, { logger: quietLogger() });
 
     client = new WebSocket(`ws://127.0.0.1:${bridge.port}`);
     await once(client, 'open');
@@ -89,7 +92,7 @@ describe('bridge', () => {
       tempIntervalMs: 1000,
       logger: silent,
     });
-    bridge = await startBridge(testConfig(), simulator, { logger: silent });
+    bridge = await startBridge(testConfig(), simulator, { logger: quietLogger() });
 
     client = new WebSocket(`ws://127.0.0.1:${bridge.port}`);
     await once(client, 'open');
@@ -106,7 +109,7 @@ describe('bridge', () => {
       keepAliveTimeoutMs: 0, // don't auto-stop during the test
       logger: silent,
     });
-    bridge = await startBridge(testConfig(), simulator, { logger: silent });
+    bridge = await startBridge(testConfig(), simulator, { logger: quietLogger() });
 
     client = new WebSocket(`ws://127.0.0.1:${bridge.port}`);
     await once(client, 'open');
@@ -126,12 +129,29 @@ describe('bridge', () => {
   });
 
   it('reports and updates the connected client count', async () => {
-    bridge = await startBridge(testConfig(), new MockLink(), { logger: silent });
+    bridge = await startBridge(testConfig(), new MockLink(), { logger: quietLogger() });
     expect(bridge.clientCount()).toBe(0);
 
     client = new WebSocket(`ws://127.0.0.1:${bridge.port}`);
     await once(client, 'open');
     await waitFor(() => bridge!.clientCount() === 1);
     expect(bridge.clientCount()).toBe(1);
+  });
+
+  it('serves /health and /logs over HTTP on the same port', async () => {
+    bridge = await startBridge(testConfig(), new MockLink(), { logger: quietLogger() });
+    const base = `http://127.0.0.1:${bridge.port}`;
+
+    const health = await fetch(`${base}/health`);
+    expect(health.status).toBe(200);
+    const body = (await health.json()) as { status: string; clients: number };
+    expect(body.status).toBe('ok');
+    expect(typeof body.clients).toBe('number');
+
+    const logs = await fetch(`${base}/logs?limit=50`);
+    expect(logs.status).toBe(200);
+    const entries = (await logs.json()) as { event: string }[];
+    expect(Array.isArray(entries)).toBe(true);
+    expect(entries.some((e) => e.event === 'listening')).toBe(true);
   });
 });

@@ -6,6 +6,7 @@
  * defaults, so the same image runs on a developer laptop, in CI, and on the
  * machine physically wired to the car.
  */
+import { LogLevel } from './logger';
 
 export interface ServerConfig {
   /** WebSocket port the app connects to. Matches WS_PORT in the app's .env. */
@@ -18,6 +19,16 @@ export interface ServerConfig {
   serialPath: string;
   /** Serial baud rate for the real car. */
   serialBaud: number;
+  /** Minimum log level (debug/info/warn/error). */
+  logLevel: LogLevel;
+  /** Directory for JSON-lines log files; null disables file logging. */
+  logDir: string | null;
+}
+
+function envLogLevel(value: string | undefined): LogLevel {
+  const allowed: LogLevel[] = ['debug', 'info', 'warn', 'error'];
+  const found = allowed.find((level) => level === value?.trim().toLowerCase());
+  return found ?? 'info';
 }
 
 function envInt(value: string | undefined, fallback: number): number {
@@ -61,5 +72,8 @@ export function loadConfig(
     simulate: envBool(env.SIMULATE, true),
     serialPath: env.SERIAL_PATH ?? defaultSerialPath(platform),
     serialBaud: envInt(env.SERIAL_BAUD, 19200),
+    logLevel: envLogLevel(env.LOG_LEVEL),
+    // LOG_DIR='' disables file logging; otherwise defaults to ./logs.
+    logDir: env.LOG_DIR === '' ? null : (env.LOG_DIR ?? 'logs'),
   };
 }

@@ -14,6 +14,7 @@ export const WS_STATUS_EVENT = 'wsStatus';
 
 let socket: WebSocket | null = null;
 let status: WsStatus = 'idle';
+let lastIp = '';
 
 function emit(next: WsStatus): void {
   status = next;
@@ -24,7 +25,13 @@ export function getStatus(): WsStatus {
   return status;
 }
 
+/** The IP of the most recent connect attempt (for diagnostics). */
+export function getLastIp(): string {
+  return lastIp;
+}
+
 export function createSocket(ip: string): WebSocket {
+  lastIp = ip;
   // Drop any previous socket quietly before opening a new one.
   if (socket) {
     socket.onopen = null;

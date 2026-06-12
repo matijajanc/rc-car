@@ -72,6 +72,57 @@ SIMULATE=false SERIAL_PATH=/dev/ttyUSB0 SERIAL_BAUD=19200 npm start
 See `node_server/.env.example` for all options. The server is TypeScript, typed,
 and covered by tests (`npm test`) and CI.
 
+### Checking logs & monitoring connections
+
+Every connection event on **both** legs — the **app ↔ server** WebSocket and the
+**server ↔ car** serial link — is logged with a timestamp, so you can see *what*
+failed and *when*.
+
+**In the app:** a small **connection dot** sits in the top-left corner of every screen:
+
+| Colour | Meaning |
+| --- | --- |
+| ⚪ grey | not connected / opened offline |
+| 🟠 orange | connecting… |
+| 🟢 green | connected to the server |
+| 🔴 red | connection failed or dropped |
+
+**Tap the dot** to open the **Diagnostics** screen — a timestamped log of every
+connect/disconnect on the phone (persisted across restarts; "Clear" to reset).
+
+**On the server**, logs go three places:
+
+1. **Console** (pretty lines) — e.g. with Docker:
+   ```
+   docker compose logs -f rc-car-server
+   ```
+2. **JSON-lines files**, one per day, under `node_server/logs/` (set with `LOG_DIR`;
+   `LOG_DIR=` empty disables file logging). Query with standard tools:
+   ```
+   tail -f node_server/logs/bridge-$(date +%F).jsonl
+   grep -E '"level":"(warn|error)"' node_server/logs/*.jsonl | jq .   # only problems
+   ```
+3. **HTTP endpoints** on the same port as the WebSocket — check from a terminal,
+   a browser, or the phone:
+   ```
+   curl http://<server-ip>:8085/health
+   curl "http://<server-ip>:8085/logs?limit=100&level=warn"
+   ```
+   - `GET /health` → status, connected clients, uptime, and time since the last telemetry frame.
+   - `GET /logs?limit=N&level=info|warn|error` → the most recent structured log entries as JSON.
+
+Set verbosity with `LOG_LEVEL` (`debug` | `info` | `warn` | `error`; default `info`).
+
+**What to look for:**
+
+- `client_connected` / `client_disconnected` (with IP + close code) — the app ↔ server leg.
+- `link_error` / `link_closed` — the server ↔ car serial leg.
+- `telemetry_gap` — the car stopped sending data while someone was connected (off,
+  unplugged, or serial down); `telemetry_resumed` when it returns.
+
+> The `/health` and `/logs` endpoints are **unauthenticated and LAN-only**, like the
+> WebSocket itself — don't expose the server to the public internet.
+
 ### Upgrading the app
 
 The mobile app is still on React Native 0.54 (2018). A complete, step-by-step

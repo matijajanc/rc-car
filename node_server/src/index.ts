@@ -1,31 +1,33 @@
 import { loadConfig } from './config';
 import { CarLink } from './link';
+import { Logger } from './logger';
 import { SerialCarLink } from './serial';
 import { CarSimulator } from './simulator';
 import { startBridge } from './server';
 
 async function main(): Promise<void> {
   const config = loadConfig();
+  const logger = new Logger({ level: config.logLevel, dir: config.logDir });
 
   const link: CarLink = config.simulate
-    ? new CarSimulator()
+    ? new CarSimulator({ logger: (message) => logger.debug('sim', 'event', { msg: message }) })
     : new SerialCarLink({ path: config.serialPath, baudRate: config.serialBaud });
 
-  if (config.simulate) {
-    console.log('[server] SIMULATE mode — no hardware required.');
-  } else {
-    console.log(`[server] serial mode — ${config.serialPath} @ ${config.serialBaud} baud`);
-  }
+  logger.info('server', 'starting', {
+    simulate: config.simulate,
+    serialPath: config.simulate ? undefined : config.serialPath,
+    logDir: config.logDir,
+  });
 
-  const bridge = await startBridge(config, link);
+  const bridge = await startBridge(config, link, { logger });
 
   const shutdown = (signal: string): void => {
-    console.log(`\n[server] ${signal} received, shutting down...`);
+    logger.info('server', 'shutdown', { signal });
     bridge
       .close()
       .then(() => process.exit(0))
       .catch((error: unknown) => {
-        console.error('[server] error during shutdown:', error);
+        logger.error('server', 'shutdown_error', { msg: String(error) });
         process.exit(1);
       });
   };
@@ -35,6 +37,7 @@ async function main(): Promise<void> {
 }
 
 main().catch((error: unknown) => {
+  // The logger may not exist yet if config/instantiation failed.
   console.error('[server] failed to start:', error);
   process.exit(1);
 });
