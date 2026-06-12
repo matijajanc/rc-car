@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="R logo">
+  <!-- Vector recreation of the green "R" badge from logo.png.
+       Colour sampled from the original: circle #40B090.
+       The launcher icons (android/.../mipmap-*) additionally carry the
+       original's diagonal long-shadow; this is the clean vector mark.
+       The "R" is a <text> element for easy editing — outline it in a vector
+       editor if you need full font-independence. -->
+  <circle cx="256" cy="256" r="256" fill="#40B090"/>
+  <text x="256" y="256" text-anchor="middle" dominant-baseline="central"
+        font-family="'Avenir','Avenir Next','Century Gothic','Helvetica Neue',Arial,sans-serif"
+        font-weight="300" font-size="360" fill="#ffffff">R</text>
+</svg>
