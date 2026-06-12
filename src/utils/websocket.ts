@@ -12,6 +12,12 @@ import { EventRegister } from 'react-native-event-listeners';
 export type WsStatus = 'idle' | 'connecting' | 'connected' | 'disconnected';
 export const WS_STATUS_EVENT = 'wsStatus';
 
+// react-native-config returns no values when the app is built without an .env
+// file (e.g. in CI). Fall back to the bridge's documented default port so we
+// never build a malformed `ws://host:undefined` URL — that throws in the native
+// WebSocket the instant you press Connect and crashes the app.
+const DEFAULT_WS_PORT = '8085';
+
 let socket: WebSocket | null = null;
 let status: WsStatus = 'idle';
 let lastIp = '';
@@ -40,7 +46,8 @@ export function createSocket(ip: string): WebSocket {
     socket.close();
   }
 
-  const ws = new WebSocket(`ws://${ip}:${Config.WS_PORT}`);
+  const port = Config.WS_PORT || DEFAULT_WS_PORT;
+  const ws = new WebSocket(`ws://${ip}:${port}`);
   socket = ws;
   emit('connecting');
   ws.onopen = () => emit('connected');
