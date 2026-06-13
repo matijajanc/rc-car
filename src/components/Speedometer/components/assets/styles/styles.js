@@ -1,11 +1,12 @@
 import {StyleSheet} from "react-native";
 import { colors } from "../../../../../config/styles/colors";
+import { SPEEDOMETER_LEFT } from "../../../../../config/styles/dashboard";
 
 const styles = StyleSheet.create({
   speedometerBox: {
     flex:1,
     position:'absolute',
-    left:170,
+    left: SPEEDOMETER_LEFT,
     width:310,
     height:280,
     justifyContent:'center',

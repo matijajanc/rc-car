@@ -1,5 +1,6 @@
 import {StyleSheet} from "react-native"
 import { colors } from "../../../../../config/styles/colors";
+import { GAUGES_LEFT } from "../../../../../config/styles/dashboard";
 
 const styles = StyleSheet.create({
   container: {
@@ -59,9 +60,9 @@ const styles = StyleSheet.create({
   },
   carDataBox: {
     position:'absolute',
-    // Kept +50 in step with speedometerBox.left (120 -> 170) so the gauges
-    // stay nested at the speedometer's right edge instead of overlapping it.
-    left:440,
+    // Derived from SPEEDOMETER_LEFT (see config/styles/dashboard) so the gauges
+    // always track the speedometer and stay nested at its right edge.
+    left: GAUGES_LEFT,
     // Span the full height so the gauges' height:'50%' resolves (a flex:1 on an
     // absolute box with no top/bottom has no definite height to size against).
     top:0,
