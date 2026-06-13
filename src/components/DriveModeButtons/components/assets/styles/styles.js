@@ -59,7 +59,9 @@ const styles = StyleSheet.create({
   },
   carDataBox: {
     position:'absolute',
-    left:390,
+    // Kept +50 in step with speedometerBox.left (120 -> 170) so the gauges
+    // stay nested at the speedometer's right edge instead of overlapping it.
+    left:440,
     // Span the full height so the gauges' height:'50%' resolves (a flex:1 on an
     // absolute box with no top/bottom has no definite height to size against).
     top:0,
