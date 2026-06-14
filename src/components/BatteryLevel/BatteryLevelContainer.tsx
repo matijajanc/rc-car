@@ -722,5 +722,8 @@ export default function BatteryLevelContainer(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  box: { height: '50%', justifyContent: 'flex-end', alignItems: 'center' },
+  // Left-align (not centre): the battery SVG is narrower than the motor-temp
+  // SVG but both arcs sit at the same x within their viewBox, so centring the
+  // narrower one pushed its arc ~7.5px right and broke the continuous curve.
+  box: { height: '50%', justifyContent: 'flex-end', alignItems: 'flex-start' },
 });
