@@ -689,34 +689,36 @@ export default function BatteryLevelContainer(): React.JSX.Element {
 
   return (
     <View style={styles.box}>
-      <Svg width={87} height={145} viewBox={VIEW_BOX}>
-        {PATHS.map((p, i) => (
-          <Path key={`p${i}`} d={p.d} transform={p.transform} fill={p.fill} />
-        ))}
-        {CIRCLES.map((c, i) => (
-          <Circle key={`c${i}`} cx={c.cx} cy={c.cy} r={c.r} fill={c.fill} />
-        ))}
-        {SEGMENTS.map((s) => {
-          const on = s.id <= end;
-          return (
-            <Rect
-              key={s.id}
-              x={s.x}
-              y={s.y}
-              width={s.width}
-              height={s.height}
-              transform={s.transform}
-              fill={on ? color : '#fff'}
-              opacity={on ? 1 : 0.7}
-            />
-          );
-        })}
-        {TEXTS.map((t, i) => (
-          <SvgText key={`t${i}`} transform={t.transform} fill={t.fill} fontSize={10}>
-            {t.content}
-          </SvgText>
-        ))}
-      </Svg>
+      <View style={styles.tilt}>
+        <Svg width={87} height={145} viewBox={VIEW_BOX}>
+          {PATHS.map((p, i) => (
+            <Path key={`p${i}`} d={p.d} transform={p.transform} fill={p.fill} />
+          ))}
+          {CIRCLES.map((c, i) => (
+            <Circle key={`c${i}`} cx={c.cx} cy={c.cy} r={c.r} fill={c.fill} />
+          ))}
+          {SEGMENTS.map((s) => {
+            const on = s.id <= end;
+            return (
+              <Rect
+                key={s.id}
+                x={s.x}
+                y={s.y}
+                width={s.width}
+                height={s.height}
+                transform={s.transform}
+                fill={on ? color : '#fff'}
+                opacity={on ? 1 : 0.7}
+              />
+            );
+          })}
+          {TEXTS.map((t, i) => (
+            <SvgText key={`t${i}`} transform={t.transform} fill={t.fill} fontSize={10}>
+              {t.content}
+            </SvgText>
+          ))}
+        </Svg>
+      </View>
     </View>
   );
 }
@@ -726,4 +728,7 @@ const styles = StyleSheet.create({
   // SVG but both arcs sit at the same x within their viewBox, so centring the
   // narrower one pushed its arc ~7.5px right and broke the continuous curve.
   box: { height: '50%', justifyContent: 'flex-end', alignItems: 'flex-start' },
+  // Tilt the gauge so its arc follows the speedometer dial's curve; motor-temp
+  // uses the opposite sign so the bottom of the combined arc also wraps in.
+  tilt: { transform: [{ rotate: '0deg' }] },
 });

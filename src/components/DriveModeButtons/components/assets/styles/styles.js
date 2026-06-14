@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     // absolute box with no top/bottom has no definite height to size against).
     top:0,
     bottom:0,
+    transform: [{ translateY: 15 }],
   }
 });
 

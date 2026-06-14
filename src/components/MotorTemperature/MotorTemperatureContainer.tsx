@@ -681,34 +681,36 @@ export default function MotorTemperatureContainer(): React.JSX.Element {
 
   return (
     <View style={styles.box}>
-      <Svg width={102} height={145} viewBox={VIEW_BOX}>
-        {PATHS.map((p, i) => (
-          <Path key={`p${i}`} d={p.d} transform={p.transform} fill={p.fill} />
-        ))}
-        {CIRCLES.map((c, i) => (
-          <Circle key={`c${i}`} cx={c.cx} cy={c.cy} r={c.r} fill={c.fill} />
-        ))}
-        {SEGMENTS.map((s) => {
-          const on = s.id <= end;
-          return (
-            <Rect
-              key={s.id}
-              x={s.x}
-              y={s.y}
-              width={s.width}
-              height={s.height}
-              transform={s.transform}
-              fill={on ? color : '#fff'}
-              opacity={on ? 1 : 0.7}
-            />
-          );
-        })}
-        {TEXTS.map((t, i) => (
-          <SvgText key={`t${i}`} transform={t.transform} fill={t.fill} fontSize={10}>
-            {t.content}
-          </SvgText>
-        ))}
-      </Svg>
+      <View style={styles.tilt}>
+        <Svg width={102} height={145} viewBox={VIEW_BOX}>
+          {PATHS.map((p, i) => (
+            <Path key={`p${i}`} d={p.d} transform={p.transform} fill={p.fill} />
+          ))}
+          {CIRCLES.map((c, i) => (
+            <Circle key={`c${i}`} cx={c.cx} cy={c.cy} r={c.r} fill={c.fill} />
+          ))}
+          {SEGMENTS.map((s) => {
+            const on = s.id <= end;
+            return (
+              <Rect
+                key={s.id}
+                x={s.x}
+                y={s.y}
+                width={s.width}
+                height={s.height}
+                transform={s.transform}
+                fill={on ? color : '#fff'}
+                opacity={on ? 1 : 0.7}
+              />
+            );
+          })}
+          {TEXTS.map((t, i) => (
+            <SvgText key={`t${i}`} transform={t.transform} fill={t.fill} fontSize={10}>
+              {t.content}
+            </SvgText>
+          ))}
+        </Svg>
+      </View>
     </View>
   );
 }
@@ -718,4 +720,7 @@ const styles = StyleSheet.create({
   // meet at the vertical centre. alignItems flex-start (left) keeps both arcs
   // at the same x so they form one continuous curve (see BatteryLevel note).
   box: { height: '50%', justifyContent: 'flex-start', alignItems: 'flex-start' },
+  // Opposite tilt to the battery gauge so the bottom of the combined arc also
+  // wraps toward the speedometer dial (see BatteryLevel note).
+  tilt: { transform: [{ rotate: '0deg' }] },
 });
