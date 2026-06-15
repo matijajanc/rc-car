@@ -3,6 +3,16 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!--
+      LAN-only tool: the app's only network activity is a cleartext WebSocket
+      (ws://) to the bridge server on the local network. Android blocks cleartext
+      by default in release builds — the React Native Gradle plugin sets
+      usesCleartextTraffic=false for `release` (see AgpConfiguratorUtils.kt) — which
+      silently stops the CI release APK from connecting at all (the WebSocket fails
+      inside the app before any packet leaves the phone). We force it true so the
+      app can reach the LAN bridge. Safe because the traffic never leaves the local
+      network; never point this app at a public host.
+    -->
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -10,7 +20,7 @@
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme"
-      android:usesCleartextTraffic="${usesCleartextTraffic}"
+      android:usesCleartextTraffic="true"
       android:supportsRtl="true">
       <activity
         android:name=".MainActivity"

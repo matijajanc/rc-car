@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build:
-    name: Build debug APK
+    name: Build release APK
     # ubuntu runners are x86_64, so aapt2/NDK run natively (no arm64/emulation
     # issue that blocks the Docker build on Apple Silicon).
     runs-on: ubuntu-latest
