@@ -14,11 +14,13 @@ interface Props {
 }
 
 const Section = ({ data }: Props): React.JSX.Element => (
-  <View>
+  <View style={styles.section}>
     <Text style={styles.sectionHeader}>{data.title}</Text>
-    {data.data.map((item, index) => (
-      <Pin key={index} item={item} />
-    ))}
+    <View style={styles.card}>
+      {data.data.map((item, index) => (
+        <Pin key={index} item={item} divider={index > 0} />
+      ))}
+    </View>
   </View>
 );
 

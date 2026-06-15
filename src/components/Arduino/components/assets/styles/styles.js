@@ -1,54 +1,79 @@
-import {StyleSheet} from "react-native"
-import { colors } from "../../../../../config/styles/colors";
+import { StyleSheet } from 'react-native';
+import { colors, spacing, radius, fontSize, fontWeight, screenPad } from '../../../../../config/styles/theme';
 
 export const styles = StyleSheet.create({
-  container: {
-    position: 'relative',
-    //flex: 1,
+  screen: {
+    flex: 1,
     backgroundColor: colors.background,
-    justifyContent: 'flex-start',
-    paddingBottom:25
+  },
+  scroll: {
+    paddingHorizontal: screenPad,
+    paddingBottom: spacing.xxxl,
+  },
+  imageWrap: {
+    alignItems: 'center',
+    marginTop: spacing.sm,
+    marginBottom: spacing.lg,
   },
   image: {
-    marginTop:25,
-    marginBottom:20,
-    alignSelf: 'center'
+    alignSelf: 'center',
+  },
+  section: {
+    marginTop: spacing.xl,
   },
   sectionHeader: {
-    color:'#fff',
-    marginTop:20,
-    paddingTop:10,
-    paddingBottom:10,
-    paddingLeft:15,
-    paddingRight:15,
-    backgroundColor:'rgba(0,0,0,0.8)'
+    color: colors.textMuted,
+    fontSize: fontSize.overline,
+    fontWeight: fontWeight.semibold,
+    letterSpacing: 1.6,
+    marginLeft: spacing.xs,
+    marginBottom: spacing.md,
+  },
+  card: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.lg,
+    overflow: 'hidden',
   },
   listItem: {
     flexDirection: 'row',
-    paddingTop:8,
-    paddingBottom:8,
-    paddingLeft:15,
-    paddingRight:15,
+    alignItems: 'center',
+    gap: spacing.md,
+    paddingVertical: 11,
+    paddingHorizontal: spacing.lg,
+  },
+  rowDivider: {
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
   },
   pin: {
-    color:'#fff',
-    marginRight:15,
-    backgroundColor:colors.blue,
-    paddingTop:2,
-    paddingBottom:2,
-    paddingRight:8,
-    paddingLeft:8
+    minWidth: 30,
+    textAlign: 'center',
+    color: colors.textPrimary,
+    fontSize: fontSize.caption,
+    fontWeight: fontWeight.semibold,
+    fontVariant: ['tabular-nums'],
+    backgroundColor: colors.surfaceElevated,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    paddingVertical: 3,
+    paddingHorizontal: 7,
+    overflow: 'hidden',
   },
   text: {
-    color:'#fff',
-    flexGrow:2
-  },
-  type: {
-    color:'#fff',
+    flex: 1,
+    color: colors.textPrimary,
+    fontSize: fontSize.label,
   },
   color: {
-    color:'#fff',
-    justifyContent:'flex-end',
-    marginRight:10
-  }
+    color: colors.textMuted,
+    fontSize: fontSize.caption,
+  },
+  type: {
+    color: colors.textSecondary,
+    fontSize: fontSize.caption,
+    fontWeight: fontWeight.medium,
+  },
 });

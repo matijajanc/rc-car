@@ -40,8 +40,10 @@ export default function ConnectionDot(): React.JSX.Element {
   return (
     <Pressable
       onPress={openDiagnostics}
-      hitSlop={8}
-      style={[styles.dot, { top: insets.top + 10, backgroundColor: DOT_COLOR[status] }]}
+      hitSlop={12}
+      // Top-right corner so it never collides with the back button / titles
+      // that sit at the top-left of every screen.
+      style={[styles.dot, { top: insets.top + 12, backgroundColor: DOT_COLOR[status] }]}
     />
   );
 }
@@ -49,11 +51,11 @@ export default function ConnectionDot(): React.JSX.Element {
 const styles = StyleSheet.create({
   dot: {
     position: 'absolute',
-    left: 14,
-    width: 12,
-    height: 12,
+    right: 16,
+    width: 11,
+    height: 11,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.45)',
+    borderColor: 'rgba(255,255,255,0.35)',
   },
 });

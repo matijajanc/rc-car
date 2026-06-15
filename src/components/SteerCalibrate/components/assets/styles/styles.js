@@ -1,52 +1,67 @@
-import {StyleSheet} from "react-native"
-import { colors } from "../../../../../config/styles/colors";
+import { StyleSheet } from 'react-native';
+import { colors, spacing, radius, fontSize, fontWeight, screenPad } from '../../../../../config/styles/theme';
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'relative',
-    flex: 1,
-    justifyContent: 'flex-start',
-    paddingTop:50
-  },
-  contentBox: {
-    flexDirection:'row',
-    justifyContent:'center',
-    alignItems:'center',
-    paddingLeft:15,
-    paddingRight:15
+  container: { flex: 1 },
+  body: { paddingHorizontal: screenPad, paddingTop: spacing.lg },
+  card: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.xl,
+    paddingVertical: spacing.xxl,
+    paddingHorizontal: spacing.xl,
+    alignItems: 'center',
   },
   tyreBox: {
-    alignItems:'center',
-    marginLeft:'auto',
-    marginRight:'auto'
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.xl,
   },
   tyre: {
-    justifyContent:'center'
+    justifyContent: 'center',
+  },
+  stepper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
   },
   button: {
-    // borderWidth:1,
-    // borderColor:'rgba(0,0,0,0.2)',
-    alignItems:'center',
-    justifyContent:'center',
-    width:50,
-    height:50,
-    backgroundColor:colors.blue,
-    borderRadius:100,
+    width: 68,
+    height: 68,
+    borderRadius: radius.lg,
+    backgroundColor: colors.surfaceElevated,
+    borderWidth: 1,
+    borderColor: colors.border,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  arrow: {
-  },
-  right: {
-    transform: [{ rotate: '180deg'}]
-  },
-  angleBg: {
-    flexDirection:'row',
-    marginTop:50,
-    justifyContent:'center'
+  angleBox: {
+    alignItems: 'center',
   },
   angle: {
-    color:'#fff',
-    fontSize:28,
-  }
+    color: colors.textPrimary,
+    fontSize: fontSize.display,
+    fontWeight: fontWeight.bold,
+    letterSpacing: -1,
+    fontVariant: ['tabular-nums'],
+  },
+  angleLabel: {
+    color: colors.textMuted,
+    fontSize: fontSize.overline,
+    fontWeight: fontWeight.semibold,
+    letterSpacing: 2,
+    marginTop: spacing.xs,
+  },
+  hint: {
+    color: colors.textMuted,
+    fontSize: fontSize.label,
+    lineHeight: 20,
+    marginTop: spacing.xl,
+    paddingHorizontal: spacing.xs,
+    textAlign: 'center',
+  },
 });
 
 export default styles;

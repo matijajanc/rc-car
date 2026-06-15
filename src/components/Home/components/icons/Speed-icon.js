@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import Svg,{G, Path} from 'react-native-svg';
 import {styles} from '../assets/styles/styles';
-import {colors} from "../../../../config/styles/colors";
 
 const SpeedIcon = props =>
   <View style={[styles.svgBox, {'backgroundColor': props.bgColor}]}>
-    <Svg width={15} height={15} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 166.98 166.09">
-      <G fill={colors.background}>
+    <Svg width={22} height={22} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 166.98 166.09">
+      <G fill={'#fff'}>
         <Path class="a" d="M384,661.71h0a2,2,0,0,1-2-2l0-12.53a2,2,0,0,1,2-2h0a2,2,0,0,1,2,2l0,12.53A2,2,0,0,1,384,661.71Z" transform="translate(-300.43 -599.53)"/>
         <Path class="a" d="M429.74,688.15a2,2,0,0,1-1-3.73l10.86-6.23a2,2,0,0,1,2,3.47l-10.86,6.23A2,2,0,0,1,429.74,688.15Z" transform="translate(-300.43 -599.53)"/>
         <Path class="a" d="M449.35,714.62h0l-12.53,0a2,2,0,0,1,0-4h0l12.53,0a2,2,0,0,1,0,4Z" transform="translate(-300.43 -599.53)"/>

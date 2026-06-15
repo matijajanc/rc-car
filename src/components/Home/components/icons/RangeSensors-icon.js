@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import Svg,{G, Path} from 'react-native-svg';
 import {styles} from '../assets/styles/styles';
-import {colors} from "../../../../config/styles/colors";
 
 const RangeSensorsIcon = props =>
   <View style={[styles.svgBox, {'backgroundColor': props.bgColor}]}>
-    <Svg width={18} height={11} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 172.61 106.03">
-      <G fill={colors.background}>
+    <Svg width={24} height={15} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 172.61 106.03">
+      <G fill={'#fff'}>
         <Path d="M442,720.31a2,2,0,0,1-1.42-3.41,30.35,30.35,0,0,0,0-42.89,2,2,0,0,1,2.83-2.83,34.36,34.36,0,0,1,0,48.55A2,2,0,0,1,442,720.31Z" transform="translate(-300.22 -630.18)"/>
         <Path d="M455.68,734a2,2,0,0,1-1.41-3.42,49.73,49.73,0,0,0,0-70.32,2,2,0,0,1,2.83-2.82,53.73,53.73,0,0,1,0,76A2,2,0,0,1,455.68,734Z" transform="translate(-300.22 -630.18)"/>
         <Path d="M376.38,736.22a21.39,21.39,0,1,1,21.38-21.39A21.41,21.41,0,0,1,376.38,736.22Zm0-38.77a17.39,17.39,0,1,0,17.38,17.38A17.41,17.41,0,0,0,376.38,697.45Z" transform="translate(-300.22 -630.18)"/>

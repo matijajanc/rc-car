@@ -36,14 +36,15 @@ export default class OnOffSetting extends React.Component<Props, State> {
   };
 
   render(): React.JSX.Element {
+    const { enabled } = this.state;
     return (
       <Switch
         style={this.props.style}
-        value={this.state.enabled}
+        value={enabled}
         onValueChange={this.setSetting}
-        trackColor={{ false: colors.blue, true: colors.blue }}
-        thumbColor={colors.switchThumbTintColor}
-        ios_backgroundColor={colors.blue}
+        trackColor={{ false: colors.switchTrackOff, true: colors.accent }}
+        thumbColor={enabled ? colors.onAccent : colors.textPrimary}
+        ios_backgroundColor={colors.switchTrackOff}
       />
     );
   }

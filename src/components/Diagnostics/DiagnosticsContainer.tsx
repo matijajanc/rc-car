@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Orientation from 'react-native-orientation-locker';
 import { EventRegister } from 'react-native-event-listeners';
-import { colors } from '../../config/styles/colors';
+import ScreenHeader from '../Common/ScreenHeader/ScreenHeader';
+import { colors, spacing, radius, fontSize, fontWeight, screenPad } from '../../config/styles/theme';
 import { DIAG_EVENT, clearEvents, getEvents } from '../../utils/diagnostics';
 import type { DiagEvent } from '../../utils/diagnostics';
 import type { WsStatus } from '../../utils/websocket';
 
 const STATUS_COLOR: Record<WsStatus, string> = {
-  idle: '#777',
-  connecting: colors.orange,
-  connected: colors.green,
-  disconnected: colors.red,
+  idle: colors.textMuted,
+  connecting: colors.warnUI,
+  connected: colors.successUI,
+  disconnected: colors.dangerUI,
 };
 
 const STATUS_LABEL: Record<WsStatus, string> = {
@@ -24,7 +24,6 @@ const STATUS_LABEL: Record<WsStatus, string> = {
 };
 
 export default function DiagnosticsContainer(): React.JSX.Element {
-  const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const [events, setEvents] = useState<DiagEvent[]>(getEvents());
 
@@ -39,23 +38,17 @@ export default function DiagnosticsContainer(): React.JSX.Element {
   const rows = [...events].reverse(); // newest first
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 8 }]}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Connection log</Text>
-        <View style={styles.actions}>
-          <TouchableOpacity
-            onPress={() => {
-              clearEvents();
-            }}
-            style={styles.action}
-          >
-            <Text style={styles.actionText}>Clear</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.action}>
-            <Text style={styles.actionText}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+    <View style={styles.container}>
+      <ScreenHeader
+        title="Connection log"
+        right={
+          rows.length > 0 ? (
+            <TouchableOpacity onPress={() => clearEvents()} style={styles.action} activeOpacity={0.7}>
+              <Text style={styles.actionText}>Clear</Text>
+            </TouchableOpacity>
+          ) : null
+        }
+      />
 
       {rows.length === 0 ? (
         <Text style={styles.empty}>No connection events yet.</Text>
@@ -63,6 +56,8 @@ export default function DiagnosticsContainer(): React.JSX.Element {
         <FlatList
           data={rows}
           keyExtractor={(item, index) => `${item.ts}-${index}`}
+          contentContainerStyle={[styles.list, { paddingBottom: insets.bottom + spacing.xl }]}
+          showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
             <View style={styles.row}>
               <View style={[styles.dot, { backgroundColor: STATUS_COLOR[item.status] }]} />
@@ -70,7 +65,7 @@ export default function DiagnosticsContainer(): React.JSX.Element {
                 <Text style={styles.status}>{STATUS_LABEL[item.status]}</Text>
                 <Text style={styles.meta}>
                   {new Date(item.ts).toLocaleString()}
-                  {item.ip ? `  •  ${item.ip}` : ''}
+                  {item.ip ? `  ·  ${item.ip}` : ''}
                 </Text>
               </View>
             </View>
@@ -82,33 +77,27 @@ export default function DiagnosticsContainer(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, paddingHorizontal: 16 },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  title: { color: '#fff', fontSize: 20, fontWeight: '600' },
-  actions: { flexDirection: 'row' },
+  container: { flex: 1, backgroundColor: colors.background },
   action: {
-    backgroundColor: '#222',
-    paddingVertical: 6,
-    paddingHorizontal: 14,
-    borderRadius: 8,
-    marginLeft: 8,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radius.pill,
   },
-  actionText: { color: colors.lightBlue, fontSize: 14 },
-  empty: { color: '#777', fontSize: 15, marginTop: 40, textAlign: 'center' },
+  actionText: { color: colors.textSecondary, fontSize: fontSize.label, fontWeight: fontWeight.medium },
+  empty: { color: colors.textMuted, fontSize: fontSize.body, marginTop: spacing.xxxl, textAlign: 'center' },
+  list: { paddingHorizontal: screenPad, paddingTop: spacing.sm },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#222',
+    paddingVertical: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.hairline,
   },
-  dot: { width: 10, height: 10, borderRadius: 5, marginRight: 12 },
+  dot: { width: 10, height: 10, borderRadius: 5, marginRight: spacing.md },
   rowText: { flex: 1 },
-  status: { color: '#fff', fontSize: 15 },
-  meta: { color: '#888', fontSize: 12, marginTop: 2 },
+  status: { color: colors.textPrimary, fontSize: fontSize.body, fontWeight: fontWeight.medium },
+  meta: { color: colors.textMuted, fontSize: fontSize.caption, marginTop: 2 },
 });

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableWithoutFeedback } from 'react-native';
+import { Pressable } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 import styles from '../assets/styles/styles';
 
@@ -16,11 +16,12 @@ const DriveButton = ({
   additionalStyles,
   arrow,
 }: Props): React.JSX.Element => (
-  <TouchableWithoutFeedback
+  <Pressable
     onPressIn={() => callbackBtnPress()}
-    onPressOut={() => callbackBtnRelease()}>
-    <View style={[styles.button, additionalStyles]}>{arrow}</View>
-  </TouchableWithoutFeedback>
+    onPressOut={() => callbackBtnRelease()}
+    style={({ pressed }) => [styles.button, additionalStyles, pressed && styles.buttonActive]}>
+    {arrow}
+  </Pressable>
 );
 
 export default DriveButton;

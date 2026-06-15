@@ -1,5 +1,6 @@
 import {StyleSheet} from "react-native"
 import { colors } from "../../../../../config/styles/colors";
+import { radius } from "../../../../../config/styles/theme";
 import { GAUGES_LEFT } from "../../../../../config/styles/dashboard";
 
 const styles = StyleSheet.create({
@@ -30,14 +31,18 @@ const styles = StyleSheet.create({
   button: {
     width:100,
     height:100,
-    //borderColor:'rgba(255,255,255,.1)',
-    //borderColor:'rgba(255,255,255,.5)',
-    borderColor:'#000',
+    borderColor: colors.border,
     borderWidth:1,
     alignItems:'center',
     justifyContent: 'center',
-    borderRadius:8,
-    backgroundColor:'#131313'
+    borderRadius: radius.xl,
+    backgroundColor: colors.surfaceElevated,
+  },
+  // Pressed state: a clear monochrome highlight (colour stays reserved for the
+  // gauges these buttons sit beside).
+  buttonActive: {
+    borderColor: colors.accentBorder,
+    backgroundColor: colors.accentSoft,
   },
   buttonArrow: {
     color:'transparent'
