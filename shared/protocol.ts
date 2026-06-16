@@ -62,6 +62,28 @@ export const TELEMETRY_CODES = {
 
 export type TelemetryCode = (typeof TELEMETRY_CODES)[keyof typeof TELEMETRY_CODES];
 
+/** code -> human name, e.g. 'dm' -> 'DRIVE_MODE'. Built once from the maps above. */
+const COMMAND_NAMES: Readonly<Record<string, string>> = Object.fromEntries(
+  Object.entries(COMMAND_CODES).map(([name, code]) => [code, name]),
+);
+const TELEMETRY_NAMES: Readonly<Record<string, string>> = Object.fromEntries(
+  Object.entries(TELEMETRY_CODES).map(([name, code]) => [code, name]),
+);
+
+/**
+ * Human-readable name for an app->car command code (e.g. 'cl' -> 'CAR_LIGHTS'),
+ * or undefined if the code is unknown. Direction-specific so the `rs`/`sp`
+ * codes that mean different things each way resolve correctly.
+ */
+export function commandName(code: string): string | undefined {
+  return COMMAND_NAMES[code];
+}
+
+/** Human-readable name for a car->app telemetry code (e.g. 'bv' -> 'BATTERY_VOLTAGE'). */
+export function telemetryName(code: string): string | undefined {
+  return TELEMETRY_NAMES[code];
+}
+
 /** A decoded telemetry frame: a two-character code plus its raw string value. */
 export interface Telemetry {
   code: string;

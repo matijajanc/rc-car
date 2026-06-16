@@ -2,12 +2,26 @@ import { once } from 'node:events';
 import { createServer, IncomingMessage, ServerResponse } from 'node:http';
 import { AddressInfo } from 'node:net';
 import { RawData, WebSocket, WebSocketServer } from 'ws';
+import {
+  CODE_LENGTH,
+  COMMAND_CODES,
+  commandName,
+  parseCommandStream,
+  parseTelemetryStream,
+  telemetryName,
+} from '../../shared/protocol';
 import { ServerConfig } from './config';
 import { CarLink } from './link';
 import { Logger, LogLevel } from './logger';
 
 export interface BridgeOptions {
   logger?: Logger;
+  /**
+   * Trace every frame on both legs at debug level: each app->car command
+   * (labelled with which client sent it) and each car->app telemetry frame,
+   * decoded to its human-readable name. Off by default.
+   */
+  verbose?: boolean;
 }
 
 export interface Bridge {
@@ -22,6 +36,12 @@ export interface Bridge {
 /** Warn if no telemetry arrives for this long while an app is connected. */
 const TELEMETRY_GAP_MS = 3000;
 const LOG_LEVELS: readonly LogLevel[] = ['debug', 'info', 'warn', 'error'];
+
+/**
+ * Keep-alive ('kp') is a 10Hz heartbeat. In verbose mode we coalesce it to at
+ * most one line per client per this window so it doesn't bury real commands.
+ */
+const KEEP_ALIVE_LOG_INTERVAL_MS = 2000;
 
 /** ws delivers messages as Buffer | ArrayBuffer | Buffer[]; normalise to text. */
 function rawDataToString(data: RawData): string {
@@ -47,10 +67,29 @@ export async function startBridge(
   options: BridgeOptions = {},
 ): Promise<Bridge> {
   const log = options.logger ?? new Logger({ level: config.logLevel, dir: config.logDir });
+  const verbose = options.verbose ?? config.verbose;
 
   const startedAt = Date.now();
   let lastDataAt = Date.now();
   let gapWarned = false;
+
+  // Monotonic id per connection so verbose logs say which app sent each command.
+  let clientSeq = 0;
+
+  // Verbose car->app tracing. Telemetry can split across chunks, so we buffer
+  // the tail between calls exactly like the app's receiver does.
+  let telemetryRest = '';
+  function traceTelemetry(chunk: string): void {
+    const { items, rest } = parseTelemetryStream(telemetryRest + chunk);
+    telemetryRest = rest;
+    for (const { code, value } of items) {
+      log.debug('serial', 'car_to_app', {
+        msg: `car -> apps   ${code}${value}  (${telemetryName(code) ?? 'unknown'})`,
+        code,
+        value,
+      });
+    }
+  }
 
   await link.open();
   log.info('server', 'link_open', { simulate: config.simulate });
@@ -95,6 +134,9 @@ export async function startBridge(
       gapWarned = false;
       log.info('serial', 'telemetry_resumed');
     }
+    if (verbose) {
+      traceTelemetry(chunk);
+    }
     for (const client of wss.clients) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(chunk);
@@ -107,11 +149,62 @@ export async function startBridge(
   // Apps -> car: forward every message verbatim to the car link.
   wss.on('connection', (client, req) => {
     const ip = req.socket.remoteAddress ?? 'unknown';
-    log.info('ws', 'client_connected', { ip, clients: wss.clients.size });
-    client.on('message', (data) => link.write(rawDataToString(data)));
-    client.on('error', (error) => log.warn('ws', 'client_error', { ip, msg: error.message }));
+    // A stable label per connection: #1 192.168.1.5:54213. The port
+    // disambiguates two apps behind the same IP (NAT / phone + emulator).
+    const clientId = `#${++clientSeq} ${ip}:${req.socket.remotePort ?? '?'}`;
+    log.info('ws', 'client_connected', { client: clientId, ip, clients: wss.clients.size });
+
+    // Per-connection verbose state: a partial-frame buffer plus keep-alive
+    // coalescing, both naturally torn down when this closure goes out of scope.
+    let cmdRest = '';
+    let kpSince = 0;
+    let kpLoggedAt = 0;
+
+    client.on('message', (data) => {
+      const raw = rawDataToString(data);
+      if (verbose) {
+        traceCommands(clientId, raw);
+      }
+      link.write(raw);
+    });
+
+    /** Decode and log each command in `raw`, coalescing the keep-alive flood. */
+    function traceCommands(who: string, raw: string): void {
+      const { items, rest } = parseCommandStream(cmdRest + raw);
+      cmdRest = rest;
+      for (const body of items) {
+        const code = body.slice(0, CODE_LENGTH);
+        const value = body.slice(CODE_LENGTH);
+        if (code === COMMAND_CODES.KEEP_ALIVE) {
+          kpSince += 1;
+          const now = Date.now();
+          if (now - kpLoggedAt >= KEEP_ALIVE_LOG_INTERVAL_MS) {
+            log.debug('ws', 'app_to_car', {
+              msg: `${who} -> car   kp  (KEEP_ALIVE x${kpSince})`,
+              client: who,
+              code,
+              count: kpSince,
+            });
+            kpLoggedAt = now;
+            kpSince = 0;
+          }
+          continue;
+        }
+        log.debug('ws', 'app_to_car', {
+          msg: `${who} -> car   ${code}${value}  (${commandName(code) ?? 'unknown'})`,
+          client: who,
+          code,
+          value,
+        });
+      }
+    }
+
+    client.on('error', (error) =>
+      log.warn('ws', 'client_error', { client: clientId, ip, msg: error.message }),
+    );
     client.on('close', (code: number, reason: Buffer) =>
       log.info('ws', 'client_disconnected', {
+        client: clientId,
         ip,
         code,
         reason: reason.toString(),

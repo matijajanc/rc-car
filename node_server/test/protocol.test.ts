@@ -4,12 +4,14 @@ import {
   COMMAND_TERMINATOR,
   TELEMETRY_CODES,
   TELEMETRY_TERMINATOR,
+  commandName,
   decodeTelemetryFrame,
   encodeCommand,
   formatSettingValue,
   frameCommand,
   parseCommandStream,
   parseTelemetryStream,
+  telemetryName,
 } from '../../shared/protocol';
 
 describe('code tables', () => {
@@ -101,6 +103,27 @@ describe('parseCommandStream', () => {
     const { items, rest } = parseCommandStream('kp\n\nst\ndb');
     expect(items).toEqual(['kp', 'st']);
     expect(rest).toBe('db');
+  });
+});
+
+describe('commandName / telemetryName', () => {
+  it('maps codes back to their human-readable names', () => {
+    expect(commandName(COMMAND_CODES.DRIVE_MODE)).toBe('DRIVE_MODE');
+    expect(commandName(COMMAND_CODES.CAR_LIGHTS)).toBe('CAR_LIGHTS');
+    expect(commandName(COMMAND_CODES.KEEP_ALIVE)).toBe('KEEP_ALIVE');
+    expect(telemetryName(TELEMETRY_CODES.SPEED)).toBe('SPEED');
+    expect(telemetryName(TELEMETRY_CODES.BATTERY_VOLTAGE)).toBe('BATTERY_VOLTAGE');
+  });
+
+  it('resolves the shared codes per direction', () => {
+    // 'rs' means RANGE_SENSORS as a command but RANGE_SENSOR_PROBLEM as telemetry.
+    expect(commandName('rs')).toBe('RANGE_SENSORS');
+    expect(telemetryName('rs')).toBe('RANGE_SENSOR_PROBLEM');
+  });
+
+  it('returns undefined for unknown codes', () => {
+    expect(commandName('zz')).toBeUndefined();
+    expect(telemetryName('zz')).toBeUndefined();
   });
 });
 

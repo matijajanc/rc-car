@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "dev:verbose": "tsx watch src/index.ts --verbose",
     "start": "tsx src/index.ts",
     "typecheck": "tsc --noEmit",
     "test": "jest",

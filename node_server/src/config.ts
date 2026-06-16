@@ -23,6 +23,12 @@ export interface ServerConfig {
   logLevel: LogLevel;
   /** Directory for JSON-lines log files; null disables file logging. */
   logDir: string | null;
+  /**
+   * Trace every frame on both legs (each app->car command, labelled with which
+   * client sent it, and each car->app telemetry frame), decoded to its
+   * human-readable name. Also forced on by the --verbose CLI flag; see index.ts.
+   */
+  verbose: boolean;
 }
 
 function envLogLevel(value: string | undefined): LogLevel {
@@ -75,5 +81,6 @@ export function loadConfig(
     logLevel: envLogLevel(env.LOG_LEVEL),
     // LOG_DIR='' disables file logging; otherwise defaults to ./logs.
     logDir: env.LOG_DIR === '' ? null : (env.LOG_DIR ?? 'logs'),
+    verbose: envBool(env.VERBOSE, false),
   };
 }

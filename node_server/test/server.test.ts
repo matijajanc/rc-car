@@ -138,6 +138,42 @@ describe('bridge', () => {
     expect(bridge.clientCount()).toBe(1);
   });
 
+  it('verbose mode traces decoded commands (per client) and telemetry', async () => {
+    const link = new MockLink();
+    const logger = new Logger({ dir: null, toConsole: false, level: 'debug' });
+    bridge = await startBridge(testConfig(), link, { logger, verbose: true });
+
+    client = new WebSocket(`ws://127.0.0.1:${bridge.port}`);
+    await once(client, 'open');
+
+    // app -> car: a real command is traced with its decoded name and client id.
+    client.send('cl1\n');
+    await waitFor(() => logger.recent().some((e) => e.event === 'app_to_car' && e.code === 'cl'));
+    const cmd = logger.recent().find((e) => e.event === 'app_to_car' && e.code === 'cl');
+    expect(cmd?.value).toBe('1');
+    expect(typeof cmd?.client).toBe('string');
+    expect(String(cmd?.client)).toMatch(/^#\d+ /); // "#1 <ip>:<port>"
+
+    // car -> app: telemetry is traced too, with its decoded code.
+    link.pushTelemetry('bv550X');
+    await waitFor(() => logger.recent().some((e) => e.event === 'car_to_app' && e.code === 'bv'));
+    const tel = logger.recent().find((e) => e.event === 'car_to_app' && e.code === 'bv');
+    expect(tel?.value).toBe('550');
+  });
+
+  it('does not trace per-frame when verbose is off', async () => {
+    const link = new MockLink();
+    const logger = new Logger({ dir: null, toConsole: false, level: 'debug' });
+    bridge = await startBridge(testConfig(), link, { logger });
+
+    client = new WebSocket(`ws://127.0.0.1:${bridge.port}`);
+    await once(client, 'open');
+
+    client.send('cl1\n');
+    await waitFor(() => link.writes.includes('cl1\n'));
+    expect(logger.recent().some((e) => e.event === 'app_to_car')).toBe(false);
+  });
+
   it('serves /health and /logs over HTTP on the same port', async () => {
     bridge = await startBridge(testConfig(), new MockLink(), { logger: quietLogger() });
     const base = `http://127.0.0.1:${bridge.port}`;

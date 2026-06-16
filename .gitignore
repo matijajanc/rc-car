@@ -41,6 +41,9 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# bridge server runtime logs (daily JSON-lines files)
+node_server/logs/
+
 # fastlane
 #
 # It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the

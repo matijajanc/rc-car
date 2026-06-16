@@ -113,6 +113,40 @@ connect/disconnect on the phone (persisted across restarts; "Clear" to reset).
 
 Set verbosity with `LOG_LEVEL` (`debug` | `info` | `warn` | `error`; default `info`).
 
+**Verbose tracing.** To watch *every* command and telemetry frame as it crosses
+both legs — and see **which app** sent each command — run the server in verbose
+mode. From the `node_server` sub-folder:
+
+```
+npm run dev:verbose          # recommended: hot-reload + full frame tracing
+```
+
+Other ways to switch it on (all equivalent):
+
+```
+npm run dev -- --verbose     # ad-hoc flag
+npm run dev --verbose        # also works (noisier: npm prints its own logs too)
+VERBOSE=true npm run dev      # via env / .env
+VERBOSE=true npm start        # no hot reload
+```
+
+Verbose forces `LOG_LEVEL=debug` and adds one decoded line per frame:
+
+```
+DEBUG [ws]     app_to_car — #1 192.168.1.5:54213 -> car   cl1   (CAR_LIGHTS)
+DEBUG [ws]     app_to_car — #2 192.168.1.5:54880 -> car   bl1   (BLINKERS)
+DEBUG [serial] car_to_app — car -> apps   sp42  (SPEED)
+```
+
+- Each client is labelled `#N <ip>:<port>`, so two connected apps are easy to tell apart.
+- Codes are decoded to names from `shared/protocol.ts` (`cl` → `CAR_LIGHTS`, `sp` → `SPEED`, …).
+- The `kp` keep-alive heartbeat (10 Hz) is coalesced to one line every ~2s
+  (`KEEP_ALIVE x21`) so it doesn't bury real commands.
+
+> `LOG_LEVEL=debug` on its own does **not** show these per-frame traces — they are
+> only generated in verbose mode. `LOG_LEVEL` sets the severity threshold;
+> `--verbose` turns on the frame-by-frame tracing (and bumps the level to `debug`).
+
 **What to look for:**
 
 - `client_connected` / `client_disconnected` (with IP + close code) — the app ↔ server leg.
