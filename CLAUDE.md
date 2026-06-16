@@ -62,7 +62,7 @@ Codes are exported as `COMMAND_CODES` and `TELEMETRY_CODES`:
 - Commands: `dm` drive mode, `ad`/`ab`/`as` accelerometer drive/backward/steer, `db` drive buttons, `kp` keep-alive, `sc` steer calibrate, `st` stop, `sf` speed factor; Arduino options `rs` range sensors, `rc` range-sensor servo angle, `cl` car lights, `bl` blinkers, `b4` all-4 blinkers, `cm` camera, `ll` long lights.
 - Telemetry: `mt` motor temperature, `sp` car speed, `bv` battery voltage, `rs` range-sensor problem.
 
-> Known discrepancy to verify against the firmware: the legacy app sends `sp<value>` for the speed *setting*, but `sp` is also the incoming speed telemetry code and the documented speed-factor command is `sf`. See the warning in [ANDROID_UPGRADE.md](ANDROID_UPGRADE.md) §4.3.
+> Resolved: `SpeedContainer` sends the speed setting as `sf<value>` (`SPEED_FACTOR`) and persists it under `setting-sf`. It previously used `sp` by mistake — a typo, since `sp` is the *incoming* speed telemetry code. See [ANDROID_UPGRADE.md](ANDROID_UPGRADE.md) §4.3.
 
 ## Architecture & conventions
 

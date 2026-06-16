@@ -262,12 +262,11 @@ export function send(code: string, value?: string | number): void {
 Call sites become self-documenting, e.g.
 `Transmitter.send('sp' + value)` → `send(COMMAND_CODES.SPEED_FACTOR, value)`.
 
-> ⚠️ **Verify against the firmware.** The old `SpeedContainer` sent `sp<value>`
-> for the speed *setting*, but `sp` is also the *incoming speed telemetry* code,
-> and the documented command for speed factor is `sf`. Confirm which the Arduino
-> expects before standardising — don't blindly switch `sp`→`sf` or you may change
-> car behaviour. [`shared/protocol.ts`](shared/protocol.ts) defines `SPEED_FACTOR = 'sf'`
-> per the legacy comments; adjust if the firmware says otherwise.
+> ✅ **Resolved.** The old `SpeedContainer` sent `sp<value>` for the speed
+> *setting* — a typo, since `sp` is the *incoming speed telemetry* code. It now
+> sends `sf<value>` (`SPEED_FACTOR`) and persists it under `setting-sf`, so
+> `settings.sendAll()` replays it correctly on connect.
+> [`shared/protocol.ts`](shared/protocol.ts) defines `SPEED_FACTOR = 'sf'`.
 
 **`src/utils/keep-alive.ts`**:
 
@@ -454,7 +453,7 @@ Run `npx react-native doctor` to catch toolchain gaps before building.
 - [ ] Install replacement deps (§3) and run autolinking
 - [ ] `react-native-orientation-locker`: `MainActivity.onConfigurationChanged` + manifest `configChanges`
 - [ ] Port `index.js`, `App.tsx` (navigation v7), delete `src/config/routes.js`
-- [ ] Migrate `src/utils/*` to TS + `shared/protocol` (and **verify `sp` vs `sf`**)
+- [ ] Migrate `src/utils/*` to TS + `shared/protocol` (**`sp`→`sf` resolved**, see §4.3)
 - [ ] Convert all containers to function components + hooks
 - [ ] Rename presentational components to `.tsx`, type their props
 - [ ] App `tsconfig` includes `shared`; `tsc --noEmit` clean
