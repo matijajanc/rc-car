@@ -79,10 +79,17 @@ export async function startBridge(
   // Verbose car->app tracing. Telemetry can split across chunks, so we buffer
   // the tail between calls exactly like the app's receiver does.
   let telemetryRest = '';
+  // Last value logged per telemetry code, so steady-state repeats (e.g. sp0
+  // every 500ms while parked) collapse to one line until the value changes.
+  const lastTelemetry = new Map<string, string>();
   function traceTelemetry(chunk: string): void {
     const { items, rest } = parseTelemetryStream(telemetryRest + chunk);
     telemetryRest = rest;
     for (const { code, value } of items) {
+      if (lastTelemetry.get(code) === value) {
+        continue;
+      }
+      lastTelemetry.set(code, value);
       log.debug('serial', 'car_to_app', {
         msg: `car -> apps   ${code}${value}  (${telemetryName(code) ?? 'unknown'})`,
         code,

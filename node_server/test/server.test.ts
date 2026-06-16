@@ -161,6 +161,26 @@ describe('bridge', () => {
     expect(tel?.value).toBe('550');
   });
 
+  it('verbose mode collapses repeated identical telemetry frames', async () => {
+    const link = new MockLink();
+    const logger = new Logger({ dir: null, toConsole: false, level: 'debug' });
+    bridge = await startBridge(testConfig(), link, { logger, verbose: true });
+
+    client = new WebSocket(`ws://127.0.0.1:${bridge.port}`);
+    await once(client, 'open');
+
+    link.pushTelemetry('sp0X'); // logged
+    link.pushTelemetry('sp0X'); // identical -> suppressed
+    link.pushTelemetry('sp0X'); // identical -> suppressed
+    link.pushTelemetry('sp5X'); // value changed -> logged again
+
+    const speeds = logger
+      .recent()
+      .filter((e) => e.event === 'car_to_app' && e.code === 'sp')
+      .map((e) => e.value);
+    expect(speeds).toEqual(['0', '5']);
+  });
+
   it('does not trace per-frame when verbose is off', async () => {
     const link = new MockLink();
     const logger = new Logger({ dir: null, toConsole: false, level: 'debug' });

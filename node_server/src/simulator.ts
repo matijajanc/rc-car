@@ -146,7 +146,11 @@ export class CarSimulator implements CarLink {
   /** React to a decoded command body the way a real car roughly would. */
   private handleCommand(command: string): void {
     const code = command.slice(0, 2);
-    this.logger(`[simulator] <- ${command}`);
+    // The keep-alive is a 10Hz heartbeat; echoing each one floods debug logs
+    // (the server already coalesces keep-alives in its verbose trace).
+    if (code !== COMMAND_CODES.KEEP_ALIVE) {
+      this.logger(`[simulator] <- ${command}`);
+    }
     switch (code) {
       case COMMAND_CODES.KEEP_ALIVE:
         this.lastKeepAlive = this.now();
