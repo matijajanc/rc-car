@@ -11,38 +11,45 @@ Here you can read more on [this](https://medium.com/@dan_abramov/smart-and-dumb-
 
 | Connection Screen | Home Screen | Steer Calibrate | Arduino Settings |
 | --- | --- | --- | --- |
-| ![alt text](https://github.com/matijajanc/rc-car/blob/master/github-images/screen1.png "Connect Screen") | ![alt text](https://github.com/matijajanc/rc-car/blob/master/github-images/screen2.png "Home Screen") | ![alt text](https://github.com/matijajanc/rc-car/blob/master/github-images/screen3.png "Steer Calibrate") | ![alt text](https://github.com/matijajanc/rc-car/blob/master/github-images/screen4.png "Arduino Settings") |
+| ![Connect Screen](github-images/screen1.png "Connect Screen") | ![Home Screen](github-images/screen2.png "Home Screen") | ![Steer Calibrate](github-images/screen3.png "Steer Calibrate") | ![Arduino Settings](github-images/screen4.png "Arduino Settings") |
 | First you need to insert an IP address depending on where the NodeJs server is running. | Here from your home screen you can set additional setting for your RC car. | For this RC car I'm using a servo motor for left/right steering, and sometimes you need to calibrate the steering so that it goes perfectly straight. | Just some Arduino info for myself which helps me to know which wire is which. |
  
 | Dashboard Drive Mode |
 | --- |
-| ![alt text](https://github.com/matijajanc/rc-car/blob/master/github-images/dashboard_rotated.gif "Dashboard") |
+| ![Dashboard](github-images/dashboard.png "Dashboard") |
 | In the main driving mode, you drive with buttons. Here you have buttons for going forward/backward and from left/right, plus you have speedometer. |
 
 ## Getting Started
 
-First you need to install React Native with dependencies, in order to do this follow instructions in this [link](https://facebook.github.io/react-native/docs/getting-started.html )
+The app runs on **React Native 0.86**. Set up the RN toolchain (Android SDK / JDK)
+by following the official [environment setup](https://reactnative.dev/docs/set-up-your-environment) guide.
 
-Run
+Install the JS dependencies — a couple of legacy libs (`react-native-circular-progress`,
+`react-native-event-listeners`) declare stale peer ranges, so this needs `--legacy-peer-deps`:
 ```
-npm install
-```
-
-Rename .env.example to .env and correct Server IP and Port
-
-### Run app in simulator or on a physical device
-
-Android
-
-```
-react-native run-android
+npm install --legacy-peer-deps
 ```
 
-iOS
+Copy `.env.example` to `.env` and set `WS_SERVER_IP` / `WS_PORT` to point at the
+NodeJS bridge. The `.env` file is read at **build time** (via `ENVFILE=`), so
+changing a value means a rebuild, not just a Metro reload (`.env.prod` is the
+production config).
+
+### Run the app
+
+Start the Metro bundler, then build onto a device or emulator. The `android-*`
+scripts pick the env file for you:
 
 ```
-react-native run-ios
+npm start                    # Metro bundler
+npm run android-dev          # debug build (uses .env)
+npm run android-prod         # build with .env.prod
+npm run build-android-prod   # assemble a release APK
 ```
+
+> The app is developed and shipped for **Android** (see [ANDROID_UPGRADE.md](ANDROID_UPGRADE.md)
+> and the APK build in CI). An `npm run ios` script exists, but iOS is not part of
+> the current toolchain or CI.
 
 ### NodeJS server (websocket bridge + simulator)
 
@@ -78,7 +85,7 @@ Every connection event on **both** legs — the **app ↔ server** WebSocket and
 **server ↔ car** serial link — is logged with a timestamp, so you can see *what*
 failed and *when*.
 
-**In the app:** a small **connection dot** sits in the top-left corner of every screen:
+**In the app:** a small **connection dot** sits in the top-right corner of every screen:
 
 | Colour | Meaning |
 | --- | --- |
@@ -157,8 +164,9 @@ DEBUG [serial] car_to_app — car -> apps   sp42  (SPEED)
 > The `/health` and `/logs` endpoints are **unauthenticated and LAN-only**, like the
 > WebSocket itself — don't expose the server to the public internet.
 
-### Upgrading the app
+### The React Native upgrade
 
-The mobile app is still on React Native 0.54 (2018). A complete, step-by-step
-upgrade to the latest React Native (TypeScript + hooks + React Navigation v7)
+The app was upgraded from React Native 0.54 (2018) to **React Native 0.86**
+(TypeScript + hooks + React Navigation v7). The complete, step-by-step migration
+record — including the Apple-Silicon `aapt2` caveat for building the APK locally —
 is documented in [ANDROID_UPGRADE.md](ANDROID_UPGRADE.md).

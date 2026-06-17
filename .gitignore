@@ -80,3 +80,4 @@ node_server/logs/
 # react-native-config env (.env.example/.dist/.prod stay tracked)
 .env
 .env.production
+design-preview/
