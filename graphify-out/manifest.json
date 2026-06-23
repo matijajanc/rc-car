@@ -1,0 +1,792 @@
+{
+  "/Users/matija.janc/projects/rc-car/.claude/settings.local.json": {
+    "mtime": 1781168205.2728107,
+    "ast_hash": "b292cb274da9aa138b095dc75f788b31",
+    "semantic_hash": "b292cb274da9aa138b095dc75f788b31"
+  },
+  "/Users/matija.janc/projects/rc-car/.eslintrc.js": {
+    "mtime": 1781611367.1901014,
+    "ast_hash": "7f94ddd2e552f8e276acd02c97f652ae",
+    "semantic_hash": "7f94ddd2e552f8e276acd02c97f652ae"
+  },
+  "/Users/matija.janc/projects/rc-car/.prettierrc.json": {
+    "mtime": 1781611367.1916695,
+    "ast_hash": "0b24008a5aa030e01a44df51531f9b44",
+    "semantic_hash": "0b24008a5aa030e01a44df51531f9b44"
+  },
+  "/Users/matija.janc/projects/rc-car/App.tsx": {
+    "mtime": 1781611367.1928024,
+    "ast_hash": "6d44dc829bf584afd7d4e0e96893ac14",
+    "semantic_hash": "6d44dc829bf584afd7d4e0e96893ac14"
+  },
+  "/Users/matija.janc/projects/rc-car/__tests__/diagnostics.test.ts": {
+    "mtime": 1781611367.1939945,
+    "ast_hash": "586e9e5e889ab23ac0ba5eb76f97d135",
+    "semantic_hash": "586e9e5e889ab23ac0ba5eb76f97d135"
+  },
+  "/Users/matija.janc/projects/rc-car/__tests__/gauges.test.ts": {
+    "mtime": 1781611367.1941977,
+    "ast_hash": "818ad2a125c4777683c72baa3852078f",
+    "semantic_hash": "818ad2a125c4777683c72baa3852078f"
+  },
+  "/Users/matija.janc/projects/rc-car/__tests__/protocol.test.ts": {
+    "mtime": 1781611367.1946647,
+    "ast_hash": "a1e3d831cb5c627709ed397bc9bc3424",
+    "semantic_hash": "a1e3d831cb5c627709ed397bc9bc3424"
+  },
+  "/Users/matija.janc/projects/rc-car/android/app/build.gradle": {
+    "mtime": 1781611367.1954718,
+    "ast_hash": "31a599b57d7d13b9fc0a6f9481968825",
+    "semantic_hash": "31a599b57d7d13b9fc0a6f9481968825"
+  },
+  "/Users/matija.janc/projects/rc-car/android/app/src/main/java/com/rccarapp/MainActivity.kt": {
+    "mtime": 1781611367.196932,
+    "ast_hash": "3419728c36751169dac1dbbee383218e",
+    "semantic_hash": "3419728c36751169dac1dbbee383218e"
+  },
+  "/Users/matija.janc/projects/rc-car/android/app/src/main/java/com/rccarapp/MainApplication.kt": {
+    "mtime": 1781611367.1972501,
+    "ast_hash": "ed5cc50cddef32eec81b02d410274fe4",
+    "semantic_hash": "ed5cc50cddef32eec81b02d410274fe4"
+  },
+  "/Users/matija.janc/projects/rc-car/android/build.gradle": {
+    "mtime": 1781611367.2026973,
+    "ast_hash": "357800d8b3d10bdb8746d2c869a3f39a",
+    "semantic_hash": "357800d8b3d10bdb8746d2c869a3f39a"
+  },
+  "/Users/matija.janc/projects/rc-car/android/gradlew": {
+    "mtime": 1781611367.204984,
+    "ast_hash": "780b1d3e23a3b82154795f73df943a14",
+    "semantic_hash": "780b1d3e23a3b82154795f73df943a14"
+  },
+  "/Users/matija.janc/projects/rc-car/android/settings.gradle": {
+    "mtime": 1781611367.2055902,
+    "ast_hash": "297616e3e618c475158d7d500b0a2018",
+    "semantic_hash": "297616e3e618c475158d7d500b0a2018"
+  },
+  "/Users/matija.janc/projects/rc-car/app.json": {
+    "mtime": 1781611367.205871,
+    "ast_hash": "60411e8504d31b7c674d42284f572aa7",
+    "semantic_hash": "60411e8504d31b7c674d42284f572aa7"
+  },
+  "/Users/matija.janc/projects/rc-car/babel.config.js": {
+    "mtime": 1781611367.2060995,
+    "ast_hash": "21de76e1dac94cc04e86bc7eca16e321",
+    "semantic_hash": "21de76e1dac94cc04e86bc7eca16e321"
+  },
+  "/Users/matija.janc/projects/rc-car/index.js": {
+    "mtime": 1781611367.2081637,
+    "ast_hash": "ade3b5e3abc75237f168c020a9a63176",
+    "semantic_hash": "ade3b5e3abc75237f168c020a9a63176"
+  },
+  "/Users/matija.janc/projects/rc-car/ios/rcCarApp/AppDelegate.swift": {
+    "mtime": 1781611367.2100244,
+    "ast_hash": "ea6b5bb4ff5d5326346ea51f8be2e0ca",
+    "semantic_hash": "ea6b5bb4ff5d5326346ea51f8be2e0ca"
+  },
+  "/Users/matija.janc/projects/rc-car/ios/rcCarApp/Images.xcassets/AppIcon.appiconset/Contents.json": {
+    "mtime": 1781611367.210397,
+    "ast_hash": "e168fc63a8e2444657c26fc5b29ddc7a",
+    "semantic_hash": "e168fc63a8e2444657c26fc5b29ddc7a"
+  },
+  "/Users/matija.janc/projects/rc-car/ios/rcCarApp/Images.xcassets/Contents.json": {
+    "mtime": 1781611367.2104728,
+    "ast_hash": "ed9be3f0744043070dbefb43e20bfb75",
+    "semantic_hash": "ed9be3f0744043070dbefb43e20bfb75"
+  },
+  "/Users/matija.janc/projects/rc-car/jest.config.js": {
+    "mtime": 1781611367.2114484,
+    "ast_hash": "c510eae8b0229546dac89a9bf88a7ddf",
+    "semantic_hash": "c510eae8b0229546dac89a9bf88a7ddf"
+  },
+  "/Users/matija.janc/projects/rc-car/metro.config.js": {
+    "mtime": 1781611367.2115905,
+    "ast_hash": "0783b3967cccd36a5178af469efd5e1e",
+    "semantic_hash": "0783b3967cccd36a5178af469efd5e1e"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/eslint.config.mjs": {
+    "mtime": 1781611367.2126265,
+    "ast_hash": "fdcdf0946a4a465110ff96d07ecc984e",
+    "semantic_hash": "fdcdf0946a4a465110ff96d07ecc984e"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/jest.config.js": {
+    "mtime": 1781611367.2128253,
+    "ast_hash": "7faa366b5798aa94f1d3a95696939d0f",
+    "semantic_hash": "7faa366b5798aa94f1d3a95696939d0f"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/package.json": {
+    "mtime": 1781612694.3398724,
+    "ast_hash": "11c3e9193c73c4a66cd18569b576d37f",
+    "semantic_hash": "11c3e9193c73c4a66cd18569b576d37f"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/src/config.ts": {
+    "mtime": 1781612694.3401668,
+    "ast_hash": "7dd1c4716a764ca68de1cfb0c2e38e7d",
+    "semantic_hash": "7dd1c4716a764ca68de1cfb0c2e38e7d"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/src/index.ts": {
+    "mtime": 1781612694.340427,
+    "ast_hash": "83c976c6ddc7c8615cd7dfbbea19e153",
+    "semantic_hash": "83c976c6ddc7c8615cd7dfbbea19e153"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/src/link.ts": {
+    "mtime": 1781611367.214904,
+    "ast_hash": "add1b11b2dad661d0adf76b52a4193e3",
+    "semantic_hash": "add1b11b2dad661d0adf76b52a4193e3"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/src/logger.ts": {
+    "mtime": 1781611367.2152932,
+    "ast_hash": "13feff3fee7c5420cdec0c31d606ea01",
+    "semantic_hash": "13feff3fee7c5420cdec0c31d606ea01"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/src/serial.ts": {
+    "mtime": 1781611367.215621,
+    "ast_hash": "eb2c62c26a4063c6cfa12bd277ce96bd",
+    "semantic_hash": "eb2c62c26a4063c6cfa12bd277ce96bd"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/src/server.ts": {
+    "mtime": 1781612694.3409345,
+    "ast_hash": "a404f232b1177e858ce54a22741079e6",
+    "semantic_hash": "a404f232b1177e858ce54a22741079e6"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/src/simulator.ts": {
+    "mtime": 1781612694.3414698,
+    "ast_hash": "ea167882f63a76c76aacd5a05df6a774",
+    "semantic_hash": "ea167882f63a76c76aacd5a05df6a774"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/test/logger.test.ts": {
+    "mtime": 1781611367.2166474,
+    "ast_hash": "a4eb4d88d7d059e7c60813f95e69c353",
+    "semantic_hash": "a4eb4d88d7d059e7c60813f95e69c353"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/test/protocol.test.ts": {
+    "mtime": 1781612694.3419585,
+    "ast_hash": "da6eb23673c0418c6f3e024325b85ded",
+    "semantic_hash": "da6eb23673c0418c6f3e024325b85ded"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/test/serial.test.ts": {
+    "mtime": 1781611367.2171926,
+    "ast_hash": "fd6a0387e9410434d70497767f219a72",
+    "semantic_hash": "fd6a0387e9410434d70497767f219a72"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/test/server.test.ts": {
+    "mtime": 1781612694.3425333,
+    "ast_hash": "6947c8903ae9d4c0af172399d38f1b6a",
+    "semantic_hash": "6947c8903ae9d4c0af172399d38f1b6a"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/test/simulator.test.ts": {
+    "mtime": 1781612694.343043,
+    "ast_hash": "af2bc7fe197614805e5d04441a557bb4",
+    "semantic_hash": "af2bc7fe197614805e5d04441a557bb4"
+  },
+  "/Users/matija.janc/projects/rc-car/node_server/tsconfig.json": {
+    "mtime": 1781611367.2181978,
+    "ast_hash": "692cf81bff4ae8a7270dfc9228e3dac2",
+    "semantic_hash": "692cf81bff4ae8a7270dfc9228e3dac2"
+  },
+  "/Users/matija.janc/projects/rc-car/package.json": {
+    "mtime": 1781611367.2199326,
+    "ast_hash": "9927a7153dfce0cc2cb08710615e7d14",
+    "semantic_hash": "9927a7153dfce0cc2cb08710615e7d14"
+  },
+  "/Users/matija.janc/projects/rc-car/shared/protocol.ts": {
+    "mtime": 1781612694.3439584,
+    "ast_hash": "1e6cddf159b91afeec71cef89905d102",
+    "semantic_hash": "1e6cddf159b91afeec71cef89905d102"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Arduino/ArduinoContainer.tsx": {
+    "mtime": 1781611367.2209837,
+    "ast_hash": "29b6b65722c113d0fdeb4482a7b069ae",
+    "semantic_hash": "29b6b65722c113d0fdeb4482a7b069ae"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Arduino/components/Arduino.tsx": {
+    "mtime": 1781611367.2213483,
+    "ast_hash": "ce99665223c57f63f0b9ded5fc71ef08",
+    "semantic_hash": "ce99665223c57f63f0b9ded5fc71ef08"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Arduino/components/Pin.tsx": {
+    "mtime": 1781611367.2216003,
+    "ast_hash": "6b75298b2c32a2afe189ca62225cc0b1",
+    "semantic_hash": "6b75298b2c32a2afe189ca62225cc0b1"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Arduino/components/Section.tsx": {
+    "mtime": 1781611367.222153,
+    "ast_hash": "c3d4b123bf521780158e9b41397e7cac",
+    "semantic_hash": "c3d4b123bf521780158e9b41397e7cac"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Arduino/components/assets/styles/styles.js": {
+    "mtime": 1781611367.222516,
+    "ast_hash": "0f35843504da9c49682f7b5c305a8949",
+    "semantic_hash": "0f35843504da9c49682f7b5c305a8949"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Arduino/data/sectionListData.js": {
+    "mtime": 1781611367.2229125,
+    "ast_hash": "1e1b3447b811b161516a5b21b8f39104",
+    "semantic_hash": "1e1b3447b811b161516a5b21b8f39104"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/BatteryLevel/BatteryLevelContainer.tsx": {
+    "mtime": 1781611367.2233887,
+    "ast_hash": "5bf293200d36e87f45bc323cdb9ee095",
+    "semantic_hash": "5bf293200d36e87f45bc323cdb9ee095"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/BatteryLevel/components/assets/styles/styles.js": {
+    "mtime": 1781611367.2237115,
+    "ast_hash": "95be821e0143e79df0474f8743924d40",
+    "semantic_hash": "95be821e0143e79df0474f8743924d40"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/ConnectionDot/ConnectionDot.tsx": {
+    "mtime": 1781611367.2240174,
+    "ast_hash": "84b59805451da080c530ec7db11dd349",
+    "semantic_hash": "84b59805451da080c530ec7db11dd349"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/Container/ContainerComponent.tsx": {
+    "mtime": 1781611367.2242663,
+    "ast_hash": "f1a27263e6b20828ea0b9221ea3aa516",
+    "semantic_hash": "f1a27263e6b20828ea0b9221ea3aa516"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/Container/assets/styles/styles.js": {
+    "mtime": 1781611367.2245755,
+    "ast_hash": "1586ca58b2b9f5085b964e04cf70e308",
+    "semantic_hash": "1586ca58b2b9f5085b964e04cf70e308"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/DashboardOption/DashboardOption.tsx": {
+    "mtime": 1781611367.224968,
+    "ast_hash": "3f35c68b5ae54d8ac9b7e94888487604",
+    "semantic_hash": "3f35c68b5ae54d8ac9b7e94888487604"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/DashboardOption/components/Blinkers/Blinkers.tsx": {
+    "mtime": 1781611367.225194,
+    "ast_hash": "5bc7f41311f06c5f72adefe3c5d4a4eb",
+    "semantic_hash": "5bc7f41311f06c5f72adefe3c5d4a4eb"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/DashboardOption/components/Blinkers/assets/styles/styles.js": {
+    "mtime": 1781611367.2255867,
+    "ast_hash": "bc1be60f6955b3d91af5bf011e60a13b",
+    "semantic_hash": "bc1be60f6955b3d91af5bf011e60a13b"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/DashboardOption/components/Lights/Lights.tsx": {
+    "mtime": 1781611367.2258306,
+    "ast_hash": "0d661216f47019b3f0f89406cfe103fd",
+    "semantic_hash": "0d661216f47019b3f0f89406cfe103fd"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/DashboardOption/components/Lights/assets/styles/styles.js": {
+    "mtime": 1781611367.2261696,
+    "ast_hash": "4d014d38e310b81844c2e9d0c3e589e9",
+    "semantic_hash": "4d014d38e310b81844c2e9d0c3e589e9"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/DashboardOption/components/Long-lights/Long-lights.tsx": {
+    "mtime": 1781611367.2264998,
+    "ast_hash": "b76f432d59bbe49b02ff4520bb239b1f",
+    "semantic_hash": "b76f432d59bbe49b02ff4520bb239b1f"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/DashboardOption/components/Long-lights/assets/styles/styles.js": {
+    "mtime": 1781611367.2267976,
+    "ast_hash": "a68a094b1840ea839a4b1487d20db55d",
+    "semantic_hash": "a68a094b1840ea839a4b1487d20db55d"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/DashboardOption/components/assets/styles/styles.js": {
+    "mtime": 1781611367.2274382,
+    "ast_hash": "fba3a3161c14d22636f7e2f7aac94d4a",
+    "semantic_hash": "fba3a3161c14d22636f7e2f7aac94d4a"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/Onoff-setting/OnOffSetting.tsx": {
+    "mtime": 1781611367.2277696,
+    "ast_hash": "7f10c4cad80f68593e5606c6fbd151e5",
+    "semantic_hash": "7f10c4cad80f68593e5606c6fbd151e5"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/ScreenHeader/ScreenHeader.tsx": {
+    "mtime": 1781611367.2280834,
+    "ast_hash": "3acd828fcadff6a672eac88650afa8ea",
+    "semantic_hash": "3acd828fcadff6a672eac88650afa8ea"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Connection/ConnectionContainer.tsx": {
+    "mtime": 1781611367.22848,
+    "ast_hash": "f13a71dc10a9dd07572226104bfc63ce",
+    "semantic_hash": "f13a71dc10a9dd07572226104bfc63ce"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Connection/components/Connection.tsx": {
+    "mtime": 1781611367.2287118,
+    "ast_hash": "55d627a97696c50a57bdc8293fc336cc",
+    "semantic_hash": "55d627a97696c50a57bdc8293fc336cc"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Connection/components/assets/styles/styles.js": {
+    "mtime": 1781611367.2293391,
+    "ast_hash": "555a27b61037d202d947816efcaa0cc1",
+    "semantic_hash": "555a27b61037d202d947816efcaa0cc1"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Diagnostics/DiagnosticsContainer.tsx": {
+    "mtime": 1781611367.229639,
+    "ast_hash": "c2b0e6a5460c2017a305ebd498872bf1",
+    "semantic_hash": "c2b0e6a5460c2017a305ebd498872bf1"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/DriveModeButtons/DriveModeButtonsContainer.tsx": {
+    "mtime": 1781611367.2299263,
+    "ast_hash": "3cff87680a424132e3f05f8386cb5366",
+    "semantic_hash": "3cff87680a424132e3f05f8386cb5366"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/DriveModeButtons/components/DriveButton/Arrow-icon.js": {
+    "mtime": 1781611367.2302988,
+    "ast_hash": "10db76372e7d5b3acb66d41ee1a11242",
+    "semantic_hash": "10db76372e7d5b3acb66d41ee1a11242"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/DriveModeButtons/components/DriveButton/DriveButton.tsx": {
+    "mtime": 1781611367.230553,
+    "ast_hash": "96f17aa9dadea93578a18529cca75e27",
+    "semantic_hash": "96f17aa9dadea93578a18529cca75e27"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/DriveModeButtons/components/DriveModeButtons.tsx": {
+    "mtime": 1781611367.2308307,
+    "ast_hash": "0f4d9bc2690a16a939816dc1178ab978",
+    "semantic_hash": "0f4d9bc2690a16a939816dc1178ab978"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/DriveModeButtons/components/assets/styles/styles.js": {
+    "mtime": 1781611367.2311425,
+    "ast_hash": "16b8eb44c2c8aac3b71f09060430e562",
+    "semantic_hash": "16b8eb44c2c8aac3b71f09060430e562"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/HomeContainer.tsx": {
+    "mtime": 1781611367.231447,
+    "ast_hash": "759c56f01cec5b1eeabe325d19620a55",
+    "semantic_hash": "759c56f01cec5b1eeabe325d19620a55"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/Home.tsx": {
+    "mtime": 1781611367.231685,
+    "ast_hash": "9e923636449d7313c8a9a71775bf5cc7",
+    "semantic_hash": "9e923636449d7313c8a9a71775bf5cc7"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/Link.tsx": {
+    "mtime": 1781611367.2319543,
+    "ast_hash": "38ec43783efe0473c8834fcb75d22655",
+    "semantic_hash": "38ec43783efe0473c8834fcb75d22655"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/OnOff.tsx": {
+    "mtime": 1781611367.2321656,
+    "ast_hash": "e6fed994ecb1fd1d06a35f58e015647f",
+    "semantic_hash": "e6fed994ecb1fd1d06a35f58e015647f"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/assets/styles/styles.js": {
+    "mtime": 1781611367.23264,
+    "ast_hash": "2cda9e4daf6589e5e1ebd5bfb5880458",
+    "semantic_hash": "2cda9e4daf6589e5e1ebd5bfb5880458"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/icons/Arduino-icon.js": {
+    "mtime": 1781611367.2330468,
+    "ast_hash": "957aa424a02664a320efcaeb26d0cf9f",
+    "semantic_hash": "957aa424a02664a320efcaeb26d0cf9f"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/icons/Blinkers-icon.js": {
+    "mtime": 1781611367.2332983,
+    "ast_hash": "eb77c1f403d4b45b7fcdd6b97447092b",
+    "semantic_hash": "eb77c1f403d4b45b7fcdd6b97447092b"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/icons/Chevron-icon.tsx": {
+    "mtime": 1781611367.2336078,
+    "ast_hash": "f4c92608fcf5da0cab22c7d58d4d3934",
+    "semantic_hash": "f4c92608fcf5da0cab22c7d58d4d3934"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/icons/RangeSensors-icon.js": {
+    "mtime": 1781611367.2340772,
+    "ast_hash": "069e42cf758347cdb1c07b0e6199d26c",
+    "semantic_hash": "069e42cf758347cdb1c07b0e6199d26c"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/icons/Speed-icon.js": {
+    "mtime": 1781611367.2343643,
+    "ast_hash": "00c8ec1067eda5b37c189a340234cb3b",
+    "semantic_hash": "00c8ec1067eda5b37c189a340234cb3b"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/icons/SteerCalibrate-icon.js": {
+    "mtime": 1781611367.2349498,
+    "ast_hash": "6876432f3066b2a3eae3075ea74b232d",
+    "semantic_hash": "6876432f3066b2a3eae3075ea74b232d"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/icons/TabletScreen-icon.tsx": {
+    "mtime": 1781611367.2352777,
+    "ast_hash": "74905e84e16a49a0cdb9edd6ccbb7795",
+    "semantic_hash": "74905e84e16a49a0cdb9edd6ccbb7795"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/MotorTemperature/MotorTemperatureContainer.tsx": {
+    "mtime": 1781611367.2355735,
+    "ast_hash": "e87bbfef08fc9b2f051500e51d6f5047",
+    "semantic_hash": "e87bbfef08fc9b2f051500e51d6f5047"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/MotorTemperature/components/assets/styles/styles.js": {
+    "mtime": 1781611367.2359476,
+    "ast_hash": "9855134436c9ef564a29712c1eb96801",
+    "semantic_hash": "9855134436c9ef564a29712c1eb96801"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Speed/SpeedContainer.tsx": {
+    "mtime": 1781612694.3443024,
+    "ast_hash": "122eb16cbd005feca42bab20733eb6bc",
+    "semantic_hash": "122eb16cbd005feca42bab20733eb6bc"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Speed/components/Speed.tsx": {
+    "mtime": 1781611367.2364726,
+    "ast_hash": "7f2461c9465abaebbcd8fb46dfb4b06b",
+    "semantic_hash": "7f2461c9465abaebbcd8fb46dfb4b06b"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Speed/components/assets/styles/styles.js": {
+    "mtime": 1781611367.2367163,
+    "ast_hash": "a7198dc4a1ef2d8ee17dede96991151e",
+    "semantic_hash": "a7198dc4a1ef2d8ee17dede96991151e"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Speedometer/SpeedometerContainer.tsx": {
+    "mtime": 1781611367.2370713,
+    "ast_hash": "ab928276e2ed022a776762ab1521f6cc",
+    "semantic_hash": "ab928276e2ed022a776762ab1521f6cc"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Speedometer/components/Speedometer.tsx": {
+    "mtime": 1781611367.2373323,
+    "ast_hash": "cc60d6404940c7a8fe544ee573c5a11f",
+    "semantic_hash": "cc60d6404940c7a8fe544ee573c5a11f"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Speedometer/components/assets/styles/styles.js": {
+    "mtime": 1781611367.237684,
+    "ast_hash": "dc5d56e47031324e8be7dabeeec51d4c",
+    "semantic_hash": "dc5d56e47031324e8be7dabeeec51d4c"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/SteerCalibrate/SteerCalibrateContainer.tsx": {
+    "mtime": 1781611367.237938,
+    "ast_hash": "12f080ebb2122decab5ebfcc7297e911",
+    "semantic_hash": "12f080ebb2122decab5ebfcc7297e911"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/SteerCalibrate/components/CalibrateButton/CalibrateButton.tsx": {
+    "mtime": 1781611367.2382176,
+    "ast_hash": "9a1149ab8ea7433e6ec1de0674651804",
+    "semantic_hash": "9a1149ab8ea7433e6ec1de0674651804"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/SteerCalibrate/components/SteerCalibrate.tsx": {
+    "mtime": 1781611367.2384632,
+    "ast_hash": "498b499f5f172ea9d0df9cb1e4818fc1",
+    "semantic_hash": "498b499f5f172ea9d0df9cb1e4818fc1"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/SteerCalibrate/components/assets/styles/styles.js": {
+    "mtime": 1781611367.2388365,
+    "ast_hash": "8c4327b3815b2929c1b3ba9125e08e1a",
+    "semantic_hash": "8c4327b3815b2929c1b3ba9125e08e1a"
+  },
+  "/Users/matija.janc/projects/rc-car/src/config/styles/colors.js": {
+    "mtime": 1781611367.239045,
+    "ast_hash": "a78aa25d25ceb0c6660916a598213fb9",
+    "semantic_hash": "a78aa25d25ceb0c6660916a598213fb9"
+  },
+  "/Users/matija.janc/projects/rc-car/src/config/styles/dashboard.js": {
+    "mtime": 1781611367.2392576,
+    "ast_hash": "208b43846dd8784a8935e21ca6d2906e",
+    "semantic_hash": "208b43846dd8784a8935e21ca6d2906e"
+  },
+  "/Users/matija.janc/projects/rc-car/src/config/styles/main.js": {
+    "mtime": 1754749718.4667475,
+    "ast_hash": "b2143795c82d33f013ad3b7bad585a90",
+    "semantic_hash": "b2143795c82d33f013ad3b7bad585a90"
+  },
+  "/Users/matija.janc/projects/rc-car/src/config/styles/theme.ts": {
+    "mtime": 1781611367.2394881,
+    "ast_hash": "1997c918c08357f6e2be504d17605118",
+    "semantic_hash": "1997c918c08357f6e2be504d17605118"
+  },
+  "/Users/matija.janc/projects/rc-car/src/navigation/navigationRef.ts": {
+    "mtime": 1781611367.2398226,
+    "ast_hash": "a7ef65c7417358edc03f2dcbf6891de2",
+    "semantic_hash": "a7ef65c7417358edc03f2dcbf6891de2"
+  },
+  "/Users/matija.janc/projects/rc-car/src/types/modules.d.ts": {
+    "mtime": 1781611367.2401414,
+    "ast_hash": "d571b3f313623b7af3f711430d3ba821",
+    "semantic_hash": "d571b3f313623b7af3f711430d3ba821"
+  },
+  "/Users/matija.janc/projects/rc-car/src/utils/diagnostics.ts": {
+    "mtime": 1781611367.240376,
+    "ast_hash": "3e9468043239d74852cc1fab0b083cd8",
+    "semantic_hash": "3e9468043239d74852cc1fab0b083cd8"
+  },
+  "/Users/matija.janc/projects/rc-car/src/utils/gauges.ts": {
+    "mtime": 1781611367.2406301,
+    "ast_hash": "2c796a33810d7b4f96876219df1f5f90",
+    "semantic_hash": "2c796a33810d7b4f96876219df1f5f90"
+  },
+  "/Users/matija.janc/projects/rc-car/src/utils/keep-alive.ts": {
+    "mtime": 1781611367.2408223,
+    "ast_hash": "bd79fa9e21b6f1ff6e5a0cd85a233f6e",
+    "semantic_hash": "bd79fa9e21b6f1ff6e5a0cd85a233f6e"
+  },
+  "/Users/matija.janc/projects/rc-car/src/utils/receiver.ts": {
+    "mtime": 1781611367.241109,
+    "ast_hash": "33209484e34fb2c28ffe842346e18b65",
+    "semantic_hash": "33209484e34fb2c28ffe842346e18b65"
+  },
+  "/Users/matija.janc/projects/rc-car/src/utils/settings.ts": {
+    "mtime": 1781611367.2413511,
+    "ast_hash": "720eed8c6106fb98a892c326b6027769",
+    "semantic_hash": "720eed8c6106fb98a892c326b6027769"
+  },
+  "/Users/matija.janc/projects/rc-car/src/utils/transmitter.ts": {
+    "mtime": 1781611367.241731,
+    "ast_hash": "c5d0b4a134904d966f10ab9da77252dd",
+    "semantic_hash": "c5d0b4a134904d966f10ab9da77252dd"
+  },
+  "/Users/matija.janc/projects/rc-car/src/utils/vibrate.ts": {
+    "mtime": 1781611367.2420409,
+    "ast_hash": "e19196672d2c3085344c68e9fea29810",
+    "semantic_hash": "e19196672d2c3085344c68e9fea29810"
+  },
+  "/Users/matija.janc/projects/rc-car/src/utils/websocket.ts": {
+    "mtime": 1781611367.2424998,
+    "ast_hash": "c22081f755fa8bec780ef7bdc0d28a5f",
+    "semantic_hash": "c22081f755fa8bec780ef7bdc0d28a5f"
+  },
+  "/Users/matija.janc/projects/rc-car/tsconfig.base.json": {
+    "mtime": 1781611367.2440538,
+    "ast_hash": "009406c6caf965a93cc23fef54ce5566",
+    "semantic_hash": "009406c6caf965a93cc23fef54ce5566"
+  },
+  "/Users/matija.janc/projects/rc-car/tsconfig.json": {
+    "mtime": 1781611367.244333,
+    "ast_hash": "badb414b0bcb4f72465cfc26d0ad364f",
+    "semantic_hash": "badb414b0bcb4f72465cfc26d0ad364f"
+  },
+  "/Users/matija.janc/projects/rc-car/.github/workflows/android.yml": {
+    "mtime": 1781611367.1904807,
+    "ast_hash": "73f43f5d42c1e10720d3c9583cf7fbcb",
+    "semantic_hash": "73f43f5d42c1e10720d3c9583cf7fbcb"
+  },
+  "/Users/matija.janc/projects/rc-car/.github/workflows/ci.yml": {
+    "mtime": 1781611367.1907647,
+    "ast_hash": "2de217625271f1d9515d4b5bba27126a",
+    "semantic_hash": "2de217625271f1d9515d4b5bba27126a"
+  },
+  "/Users/matija.janc/projects/rc-car/ANDROID_UPGRADE.md": {
+    "mtime": 1781612694.3384507,
+    "ast_hash": "ce9357b8c4b21c5c06c9da664a8c4e81",
+    "semantic_hash": "ce9357b8c4b21c5c06c9da664a8c4e81"
+  },
+  "/Users/matija.janc/projects/rc-car/CLAUDE.md": {
+    "mtime": 1781612694.3389404,
+    "ast_hash": "1a8604fc4d0fe3753bb3d1e6d7a48bb8",
+    "semantic_hash": "1a8604fc4d0fe3753bb3d1e6d7a48bb8"
+  },
+  "/Users/matija.janc/projects/rc-car/docker-compose.yml": {
+    "mtime": 1781611367.206342,
+    "ast_hash": "b6eb6a9a9640e626aed436f1125bd2e2",
+    "semantic_hash": "b6eb6a9a9640e626aed436f1125bd2e2"
+  },
+  "/Users/matija.janc/projects/rc-car/readme.md": {
+    "mtime": 1781684738.7556078,
+    "ast_hash": "b20e7c2de139ea5d7d3010e09dff0cb6",
+    "semantic_hash": "b20e7c2de139ea5d7d3010e09dff0cb6"
+  },
+  "/Users/matija.janc/projects/rc-car/android/app/src/main/res/mipmap-hdpi/ic_launcher.png": {
+    "mtime": 1781611367.198229,
+    "ast_hash": "975f689b4f463388cab89cc3a347489c",
+    "semantic_hash": "975f689b4f463388cab89cc3a347489c"
+  },
+  "/Users/matija.janc/projects/rc-car/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.png": {
+    "mtime": 1781611367.1983361,
+    "ast_hash": "975f689b4f463388cab89cc3a347489c",
+    "semantic_hash": "975f689b4f463388cab89cc3a347489c"
+  },
+  "/Users/matija.janc/projects/rc-car/android/app/src/main/res/mipmap-mdpi/ic_launcher.png": {
+    "mtime": 1781611367.1986,
+    "ast_hash": "2f616ccb8043e83faee3a7cc880d1178",
+    "semantic_hash": "2f616ccb8043e83faee3a7cc880d1178"
+  },
+  "/Users/matija.janc/projects/rc-car/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.png": {
+    "mtime": 1781611367.1987133,
+    "ast_hash": "2f616ccb8043e83faee3a7cc880d1178",
+    "semantic_hash": "2f616ccb8043e83faee3a7cc880d1178"
+  },
+  "/Users/matija.janc/projects/rc-car/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png": {
+    "mtime": 1781611367.199126,
+    "ast_hash": "ae1978ddaa8a9c7e08083a5f7adee9d1",
+    "semantic_hash": "ae1978ddaa8a9c7e08083a5f7adee9d1"
+  },
+  "/Users/matija.janc/projects/rc-car/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png": {
+    "mtime": 1781611367.1994047,
+    "ast_hash": "ae1978ddaa8a9c7e08083a5f7adee9d1",
+    "semantic_hash": "ae1978ddaa8a9c7e08083a5f7adee9d1"
+  },
+  "/Users/matija.janc/projects/rc-car/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png": {
+    "mtime": 1781611367.1998842,
+    "ast_hash": "4d20731ea4b81d1a017836e051e158dd",
+    "semantic_hash": "4d20731ea4b81d1a017836e051e158dd"
+  },
+  "/Users/matija.janc/projects/rc-car/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png": {
+    "mtime": 1781611367.2003431,
+    "ast_hash": "4d20731ea4b81d1a017836e051e158dd",
+    "semantic_hash": "4d20731ea4b81d1a017836e051e158dd"
+  },
+  "/Users/matija.janc/projects/rc-car/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png": {
+    "mtime": 1781611367.200781,
+    "ast_hash": "61e6204cff108f1b9ca3cb6b582d9070",
+    "semantic_hash": "61e6204cff108f1b9ca3cb6b582d9070"
+  },
+  "/Users/matija.janc/projects/rc-car/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png": {
+    "mtime": 1781611367.201133,
+    "ast_hash": "61e6204cff108f1b9ca3cb6b582d9070",
+    "semantic_hash": "61e6204cff108f1b9ca3cb6b582d9070"
+  },
+  "/Users/matija.janc/projects/rc-car/github-images/dashboard.png": {
+    "mtime": 1781684738.7512548,
+    "ast_hash": "afaf69a91de277f3a6c158845f35056e",
+    "semantic_hash": "afaf69a91de277f3a6c158845f35056e"
+  },
+  "/Users/matija.janc/projects/rc-car/github-images/screen1.png": {
+    "mtime": 1781684738.7518356,
+    "ast_hash": "e936cc9217b187b39a8ed9d9cbc3fdfb",
+    "semantic_hash": "e936cc9217b187b39a8ed9d9cbc3fdfb"
+  },
+  "/Users/matija.janc/projects/rc-car/github-images/screen2.png": {
+    "mtime": 1781684738.752439,
+    "ast_hash": "ab10f6e58f21e10a4d8fb6448cedb4be",
+    "semantic_hash": "ab10f6e58f21e10a4d8fb6448cedb4be"
+  },
+  "/Users/matija.janc/projects/rc-car/github-images/screen3.png": {
+    "mtime": 1781684738.7536871,
+    "ast_hash": "f8f5761908ca3bd25ff3e88e82e05c22",
+    "semantic_hash": "f8f5761908ca3bd25ff3e88e82e05c22"
+  },
+  "/Users/matija.janc/projects/rc-car/github-images/screen4.png": {
+    "mtime": 1781684738.755186,
+    "ast_hash": "10533ac1dd9052e5026d7616ec7ce0e0",
+    "semantic_hash": "10533ac1dd9052e5026d7616ec7ce0e0"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Arduino/components/assets/images/arduinoUno.png": {
+    "mtime": 1754749718.4546945,
+    "ast_hash": "eeb786b1b13c197c90819d40d353be6c",
+    "semantic_hash": "eeb786b1b13c197c90819d40d353be6c"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/BatteryLevel/components/assets/images/battery-level.png": {
+    "mtime": 1754749718.4556868,
+    "ast_hash": "d909f961d2dc7042c8cff8e9214a9266",
+    "semantic_hash": "d909f961d2dc7042c8cff8e9214a9266"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/BatteryLevel/components/assets/images/battery-level.svg": {
+    "mtime": 1754749718.4558744,
+    "ast_hash": "520044641c4caa9ce467d72de29d569a",
+    "semantic_hash": "520044641c4caa9ce467d72de29d569a"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/DashboardOption/components/Blinkers/assets/images/blinkers.png": {
+    "mtime": 1754749718.457019,
+    "ast_hash": "3d036db075775f9356cc449b44657501",
+    "semantic_hash": "3d036db075775f9356cc449b44657501"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/DashboardOption/components/Blinkers/assets/images/blinkers.svg": {
+    "mtime": 1754749718.4570975,
+    "ast_hash": "ab92096b78baf1332b4eafd747937f53",
+    "semantic_hash": "ab92096b78baf1332b4eafd747937f53"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/DashboardOption/components/Lights/assets/images/lights.png": {
+    "mtime": 1754749718.4576178,
+    "ast_hash": "7a1a638094a996b503eccfdc7a87345c",
+    "semantic_hash": "7a1a638094a996b503eccfdc7a87345c"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/DashboardOption/components/Lights/assets/images/lights.svg": {
+    "mtime": 1754749718.4576957,
+    "ast_hash": "40b294d7d021534ecdef5f5ed417ace2",
+    "semantic_hash": "40b294d7d021534ecdef5f5ed417ace2"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/DashboardOption/components/Long-lights/assets/images/long-lights.png": {
+    "mtime": 1754749718.4581382,
+    "ast_hash": "c6b7d395fdc96492d645f42ec6a99214",
+    "semantic_hash": "c6b7d395fdc96492d645f42ec6a99214"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Common/DashboardOption/components/Long-lights/assets/images/long-lights.svg": {
+    "mtime": 1754749718.4582183,
+    "ast_hash": "5b49ea98e07a12036358aaccfd8575f9",
+    "semantic_hash": "5b49ea98e07a12036358aaccfd8575f9"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Connection/components/assets/images/logo.png": {
+    "mtime": 1754749718.459196,
+    "ast_hash": "035fe8a8f7ba470ff022279e375ef10a",
+    "semantic_hash": "035fe8a8f7ba470ff022279e375ef10a"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Connection/components/assets/images/logo.svg": {
+    "mtime": 1781611367.2290096,
+    "ast_hash": "d4348701a7cec6e9ac71a9f644fc8934",
+    "semantic_hash": "d4348701a7cec6e9ac71a9f644fc8934"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/DriveModeButtons/components/assets/images/arrows.svg": {
+    "mtime": 1754749718.4601426,
+    "ast_hash": "990204b597cce02806bf2898eca4e48f",
+    "semantic_hash": "990204b597cce02806bf2898eca4e48f"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/DriveModeButtons/components/assets/images/right-arrow.svg": {
+    "mtime": 1754749718.4602537,
+    "ast_hash": "2a67e97a563f915c72ea13de26868f5d",
+    "semantic_hash": "2a67e97a563f915c72ea13de26868f5d"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/assets/images/blinkers-left-right.svg": {
+    "mtime": 1754749718.4611406,
+    "ast_hash": "346b477396a7216bd1c87aff07957df8",
+    "semantic_hash": "346b477396a7216bd1c87aff07957df8"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/assets/images/range-sensors.svg": {
+    "mtime": 1754749718.4612217,
+    "ast_hash": "5b5edfc7cd52d5bce1b148fd230d3189",
+    "semantic_hash": "5b5edfc7cd52d5bce1b148fd230d3189"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/assets/images/speed-icon.svg": {
+    "mtime": 1754749718.461314,
+    "ast_hash": "72b7dd40f5b6c43c4557bb24a37ded4e",
+    "semantic_hash": "72b7dd40f5b6c43c4557bb24a37ded4e"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/assets/images/steer-calibrate.svg": {
+    "mtime": 1754749718.4613967,
+    "ast_hash": "a29dda2659ecb818a41b84dcc2abac9b",
+    "semantic_hash": "a29dda2659ecb818a41b84dcc2abac9b"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/assets/images/steer-calibrate2.svg": {
+    "mtime": 1754749718.4614947,
+    "ast_hash": "0e1460d05907f419fbf77c85e065d724",
+    "semantic_hash": "0e1460d05907f419fbf77c85e065d724"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/assets/images/steer-calibrate3.svg": {
+    "mtime": 1754749718.4615927,
+    "ast_hash": "cd1c65591031376f4e93f6cca7347608",
+    "semantic_hash": "cd1c65591031376f4e93f6cca7347608"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/assets/images/tablet-screen-128.png": {
+    "mtime": 1754749718.461685,
+    "ast_hash": "395029e0407a83f6738c0cb078af8e04",
+    "semantic_hash": "395029e0407a83f6738c0cb078af8e04"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/assets/images/tablet-screen.png": {
+    "mtime": 1754749718.4617712,
+    "ast_hash": "94dd9c82283ab0b06e19b28dd2044a9f",
+    "semantic_hash": "94dd9c82283ab0b06e19b28dd2044a9f"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Home/components/assets/images/tablet-screen.svg": {
+    "mtime": 1754749718.4619114,
+    "ast_hash": "0506790bbab1e72ae2f6e70b633a975e",
+    "semantic_hash": "0506790bbab1e72ae2f6e70b633a975e"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/MotorTemperature/components/assets/images/motor-temperature.png": {
+    "mtime": 1754749718.4634652,
+    "ast_hash": "81ac6f770e0b589ae146f565071ad0b6",
+    "semantic_hash": "81ac6f770e0b589ae146f565071ad0b6"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/MotorTemperature/components/assets/images/motor-temperature.svg": {
+    "mtime": 1754749718.4636316,
+    "ast_hash": "48e31be1c490f2ee20880cfa02df7fcf",
+    "semantic_hash": "48e31be1c490f2ee20880cfa02df7fcf"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/Speedometer/components/assets/images/speedometer.png": {
+    "mtime": 1754749718.4648757,
+    "ast_hash": "2c40a90ab50d59846afc2ba72142ebb3",
+    "semantic_hash": "2c40a90ab50d59846afc2ba72142ebb3"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/SteerCalibrate/components/assets/images/arrow.png": {
+    "mtime": 1754749718.4656763,
+    "ast_hash": "429ea1c0b7695e0603459cdd8a4bb30d",
+    "semantic_hash": "429ea1c0b7695e0603459cdd8a4bb30d"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/SteerCalibrate/components/assets/images/right-arrow-white-steer.png": {
+    "mtime": 1754749718.4657676,
+    "ast_hash": "f251f54051b30273dea155ad3a62247c",
+    "semantic_hash": "f251f54051b30273dea155ad3a62247c"
+  },
+  "/Users/matija.janc/projects/rc-car/src/components/SteerCalibrate/components/assets/images/tyre.png": {
+    "mtime": 1754749718.4659274,
+    "ast_hash": "7737a058fd6b2221d12017edadebb7fb",
+    "semantic_hash": "7737a058fd6b2221d12017edadebb7fb"
+  }
+}
