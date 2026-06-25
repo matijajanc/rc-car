@@ -82,7 +82,7 @@ Codes are exported as `COMMAND_CODES` and `TELEMETRY_CODES`:
 
 **Utils are TS modules** (`src/utils/*.ts`) built on the shared protocol: `transmitter.send()`, `receiver.receive()`, `settings.sendAll()`, `keep-alive.start/stop()`, `websocket.createSocket/getSocket()`, `vibrate()`. Each also keeps a backward-compatible default export (e.g. `Transmitter.send`) so the older `.js` presentational components keep working unchanged.
 
-**Incoming data uses an event bus, not props.** `receiver.ts` decodes telemetry with `parseTelemetryStream` (buffering partial frames) and emits `EventRegister.emit('wsReceive', {code, value})`. Dashboard widgets (Speedometer, BatteryLevel, MotorTemperature) subscribe in a `useEffect`, filter by `code`, and remove the listener in the effect's cleanup.
+**Incoming data uses an event bus, not props.** `receiver.ts` decodes telemetry with `parseTelemetryStream` (buffering partial frames) and emits `EventRegister.emit('wsReceive', {code, value})`. Dashboard widgets (Speedometer, BatteryLevel, MotorTemperature) subscribe in a `useEffect`, filter by `code`, and remove the listener in the effect's cleanup. `DriveModeButtons/components/CarAlert.tsx` is the same pattern: it watches `rs` (front obstacle brake) and `mt` (≥ `MOTOR_TEMP_CUTOFF_C`, which must match the firmware's `criticalTemp`) and overlays a banner telling the driver *why* the car stopped/braked. It's a `pointerEvents="none"` overlay, so it never interferes with the drive gestures.
 
 **Keep-alive is a safety mechanism.** `keep-alive.start()` sends `kp` every 100ms after connect; the car stops itself if it misses the signal 3× in a row. Do not throttle it without understanding the safety implication.
 

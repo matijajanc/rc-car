@@ -6,6 +6,7 @@ import BatteryLevelContainer from '../../BatteryLevel/BatteryLevelContainer';
 import MotorTemperatureContainer from '../../MotorTemperature/MotorTemperatureContainer';
 import DriveButton from './DriveButton/DriveButton';
 import ArrowIcon from './DriveButton/Arrow-icon';
+import CarAlert from './CarAlert';
 
 interface Props {
   callbackBtnPress: (command: string) => void;
@@ -23,6 +24,7 @@ const DriveModeButton = ({
 }: Props): React.JSX.Element => (
   <View style={styles.container}>
     <StatusBar hidden />
+    <CarAlert />
     <View style={styles.upDownBox}>
       <DriveButton
         callbackBtnPress={() => callbackBtnPress('dbw')}

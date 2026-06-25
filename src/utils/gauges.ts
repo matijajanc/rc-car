@@ -31,3 +31,10 @@ export function batteryZone(pct: number): Zone {
 export function motorZone(temp: number): Zone {
   return temp < 40 ? 0 : temp < 80 ? 1 : 2;
 }
+
+/**
+ * Motor-temperature cutoff (°C). The firmware stops the car at this temperature
+ * (`criticalTemp` in arduino/rc-car/rc-car.ino) — keep the two in sync. Used by
+ * the drive-dashboard safety banner to explain why the car stopped.
+ */
+export const MOTOR_TEMP_CUTOFF_C = 50;
