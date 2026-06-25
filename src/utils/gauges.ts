@@ -38,3 +38,21 @@ export function motorZone(temp: number): Zone {
  * the drive-dashboard safety banner to explain why the car stopped.
  */
 export const MOTOR_TEMP_CUTOFF_C = 50;
+
+/**
+ * Speed-factor (`sf`) slider bounds — the raw throttle value the app sends to
+ * the car — and the real-world top speed each end maps to. The ESC response is
+ * treated as linear across the range, so km/h is a straight interpolation:
+ * 95 → 5 km/h, 165 → 45 km/h.
+ */
+export const SPEED_FACTOR_MIN = 95;
+export const SPEED_FACTOR_MAX = 165;
+const SPEED_KMH_AT_MIN = 5;
+const SPEED_KMH_AT_MAX = 45;
+
+/** Approximate top speed in km/h for a raw speed factor, rounded to a whole number. */
+export function speedFactorToKmh(factor: number): number {
+  const clamped = Math.max(SPEED_FACTOR_MIN, Math.min(SPEED_FACTOR_MAX, factor));
+  const ratio = (clamped - SPEED_FACTOR_MIN) / (SPEED_FACTOR_MAX - SPEED_FACTOR_MIN);
+  return Math.round(SPEED_KMH_AT_MIN + ratio * (SPEED_KMH_AT_MAX - SPEED_KMH_AT_MIN));
+}

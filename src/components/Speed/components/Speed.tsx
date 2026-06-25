@@ -3,6 +3,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import Slider from '@react-native-community/slider';
 import ScreenHeader from '../../Common/ScreenHeader/ScreenHeader';
 import { colors, spacing, radius, fontSize, fontWeight, screenPad } from '../../../config/styles/theme';
+import { speedFactorToKmh } from '../../../utils/gauges';
 
 interface Props {
   settings: { minimumValue: number; maximumValue: number; step: number };
@@ -11,16 +12,18 @@ interface Props {
 }
 
 export default function Speed({ settings, value, callback }: Props): React.JSX.Element {
+  const kmh = speedFactorToKmh(value);
+
   return (
     <View style={styles.container}>
       <ScreenHeader title="Speed" />
 
       <View style={styles.body}>
         <View style={styles.card}>
-          <Text style={styles.readoutLabel}>POWER LIMIT</Text>
+          <Text style={styles.readoutLabel}>MAX SPEED</Text>
           <View style={styles.readoutRow}>
-            <Text style={styles.value}>{value}</Text>
-            <Text style={styles.max}>/ {settings.maximumValue}</Text>
+            <Text style={styles.value}>{kmh}</Text>
+            <Text style={styles.max}>km/h · factor {value}</Text>
           </View>
 
           <Slider
@@ -42,7 +45,7 @@ export default function Speed({ settings, value, callback }: Props): React.JSX.E
         </View>
 
         <Text style={styles.hint}>
-          Sets the car's maximum motor power. Saved automatically and sent to the car.
+          Sets the car's top speed (≈ 5–45 km/h). Saved automatically and sent to the car.
         </Text>
       </View>
     </View>

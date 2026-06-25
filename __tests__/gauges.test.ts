@@ -4,6 +4,7 @@ import {
   clampPercent,
   motorZone,
   segmentsLit,
+  speedFactorToKmh,
 } from '../src/utils/gauges';
 
 describe('gauge math', () => {
@@ -42,5 +43,17 @@ describe('gauge math', () => {
     expect(clampPercent(-5)).toBe(0);
     expect(clampPercent(150)).toBe(100);
     expect(clampPercent(42)).toBe(42);
+  });
+
+  it('maps the speed factor to km/h (95→5, 165→45, linear between)', () => {
+    expect(speedFactorToKmh(95)).toBe(5);
+    expect(speedFactorToKmh(165)).toBe(45);
+    expect(speedFactorToKmh(130)).toBe(25); // midpoint
+    expect(speedFactorToKmh(120)).toBe(19); // 19.28 rounded
+  });
+
+  it('clamps speed factors outside the slider range', () => {
+    expect(speedFactorToKmh(50)).toBe(5);
+    expect(speedFactorToKmh(200)).toBe(45);
   });
 });
