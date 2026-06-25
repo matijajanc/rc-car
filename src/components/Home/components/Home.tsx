@@ -62,6 +62,12 @@ const Home = ({ navigate }: Props): React.JSX.Element => {
           icon={<SteerCalibrateIcon bgColor={colors.catSteer} />}
           divider
         />
+        <Link
+          text={'Range Calibrate'}
+          navigate={() => navigate('RangeCalibrate')}
+          icon={<RangeSensorsIcon bgColor={colors.catSensors} />}
+          divider
+        />
         <OnOff
           text={'Range Sensors'}
           setting={'rs'}

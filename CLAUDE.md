@@ -14,6 +14,8 @@ The app never talks to the car directly. It opens a WebSocket to the NodeJS brid
 
 **Both halves are modernised.** The **backend** (`node_server/` + `shared/`): TypeScript, env-driven config, a hardware-free **car simulator**, Docker, tests, CI — all verified. The **app** (`src/`, `App.tsx`, `index.js`) was upgraded from RN 0.54 (2018) to **React Native 0.86** with **TypeScript + hooks + React Navigation v7**. The JS layer is verified (typecheck, lint, Jest, Metro bundle); the native APK is built in CI on x86 (see [ANDROID_UPGRADE.md](ANDROID_UPGRADE.md) for the migration record and the Apple-Silicon `aapt2` caveat).
 
+**The third tier — the car firmware — is now in-repo** at [`arduino/rc-car/rc-car.ino`](arduino/rc-car/rc-car.ino) (Arduino Uno, `SimpleTimer`/`Servo`/`NewPing`). It was reconciled with `shared/protocol.ts`: dead accelerometer/camera codes removed, telemetry framing switched off the Arduino `String` class, and the front-obstacle `rs` telemetry implemented. **There is no toolchain in this repo to compile or flash it** — changes are C++-compile-checked at most, and must be flashed and bench-tested on the car (it drives a physical vehicle; the keep-alive stop, motor-temp cutoff and obstacle brake are real safety mechanisms).
+
 ## Commands
 
 **Backend — bridge server + simulator** (run from `node_server/`, this is the modern, tested part):
@@ -59,8 +61,10 @@ App↔car messages are short ASCII strings: a **2-character code** followed by a
 - **Incoming (car → app):** terminated with `TELEMETRY_TERMINATOR` = `'X'`. Parsed with `parseTelemetryStream()` (buffers partial frames) or `decodeTelemetryFrame()`.
 
 Codes are exported as `COMMAND_CODES` and `TELEMETRY_CODES`:
-- Commands: `dm` drive mode, `ad`/`ab`/`as` accelerometer drive/backward/steer, `db` drive buttons, `kp` keep-alive, `sc` steer calibrate, `st` stop, `sf` speed factor; Arduino options `rs` range sensors, `rc` range-sensor servo angle, `cl` car lights, `bl` blinkers, `b4` all-4 blinkers, `cm` camera, `ll` long lights.
-- Telemetry: `mt` motor temperature, `sp` car speed, `bv` battery voltage, `rs` range-sensor problem.
+- Commands: `db` drive buttons, `kp` keep-alive, `sc` steer calibrate, `st` stop, `sf` speed factor; Arduino options `rs` range sensors on/off, `rc` range-sensor servo trim, `cl` car lights, `bl` blinkers, `b4` all-4 blinkers, `ll` long lights.
+- Telemetry: `mt` motor temperature, `sp` car speed, `bv` battery voltage, `rs` front-obstacle (the firmware emits `rs1`/`rs0` edge-triggered when the front brake engages/clears).
+
+> Reconciled with the firmware (`feature/arduino`): the 2018 accelerometer drive mode (`dm`/`ad`/`as`) and the never-implemented `cm` camera + phantom `ab` codes were removed from the protocol, the firmware, and the simulator — the app drives only via the on-screen buttons (`db`). `rc` (range-servo trim) gained an app screen (see Range Calibrate below); it had been firmware-only.
 
 > Resolved: `SpeedContainer` sends the speed setting as `sf<value>` (`SPEED_FACTOR`) and persists it under `setting-sf`. It previously used `sp` by mistake — a typo, since `sp` is the *incoming* speed telemetry code. See [ANDROID_UPGRADE.md](ANDROID_UPGRADE.md) §4.3.
 
@@ -83,6 +87,8 @@ Codes are exported as `COMMAND_CODES` and `TELEMETRY_CODES`:
 **Keep-alive is a safety mechanism.** `keep-alive.start()` sends `kp` every 100ms after connect; the car stops itself if it misses the signal 3× in a row. Do not throttle it without understanding the safety implication.
 
 **Settings persistence.** Stored in `AsyncStorage` (`@react-native-async-storage/async-storage`) under `setting-<code>` keys; `settings.sendAll()` replays them to the car on connect (booleans → 1/0). `OnOffSetting` is the reusable persisted toggle.
+
+**Calibration screens (`sc`, `rc`).** `SteerCalibrate` (steering trim, `sc`) and `RangeCalibrate` (front range-sensor servo trim, `rc`) are the same ±15° stepper pattern: a `Container` persists `setting-sc`/`setting-rc` and sends `sc<n>`/`rc<n>`, the presentational screen reuses the shared `CalibrateButton`. Add a new trim the same way.
 
 **Navigation.** `@react-navigation/native` v7 native-stack in `App.tsx`, `headerShown: false`, initial route `Connect`; route names are typed via the exported `RootStackParamList`. Screens read navigation from `useNavigation<NativeStackNavigationProp<RootStackParamList>>()`.
 

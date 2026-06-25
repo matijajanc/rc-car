@@ -8,6 +8,7 @@ import ConnectionContainer from './src/components/Connection/ConnectionContainer
 import HomeContainer from './src/components/Home/HomeContainer';
 import SpeedContainer from './src/components/Speed/SpeedContainer';
 import SteerCalibrateContainer from './src/components/SteerCalibrate/SteerCalibrateContainer';
+import RangeCalibrateContainer from './src/components/RangeCalibrate/RangeCalibrateContainer';
 import ArduinoContainer from './src/components/Arduino/ArduinoContainer';
 import DriveModeButtonsContainer from './src/components/DriveModeButtons/DriveModeButtonsContainer';
 import DiagnosticsContainer from './src/components/Diagnostics/DiagnosticsContainer';
@@ -21,6 +22,7 @@ export type RootStackParamList = {
   Home: undefined;
   Speed: undefined;
   SteerCalibrate: undefined;
+  RangeCalibrate: undefined;
   Arduino: undefined;
   DriveWithButtons: undefined;
   Diagnostics: undefined;
@@ -45,6 +47,7 @@ export default function App(): React.JSX.Element {
             <Stack.Screen name="Home" component={HomeContainer} />
             <Stack.Screen name="Speed" component={SpeedContainer} />
             <Stack.Screen name="SteerCalibrate" component={SteerCalibrateContainer} />
+            <Stack.Screen name="RangeCalibrate" component={RangeCalibrateContainer} />
             <Stack.Screen name="Arduino" component={ArduinoContainer} />
             <Stack.Screen name="DriveWithButtons" component={DriveModeButtonsContainer} />
             <Stack.Screen name="Diagnostics" component={DiagnosticsContainer} />

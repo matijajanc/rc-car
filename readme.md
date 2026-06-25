@@ -79,6 +79,84 @@ SIMULATE=false SERIAL_PATH=/dev/ttyUSB0 SERIAL_BAUD=19200 npm start
 See `node_server/.env.example` for all options. The server is TypeScript, typed,
 and covered by tests (`npm test`) and CI.
 
+### The car firmware (Arduino)
+
+This is the **third tier** — the code that actually runs on the car. It lives in
+[`arduino/rc-car/rc-car.ino`](arduino/rc-car/rc-car.ino) and targets an **Arduino Uno**.
+The bridge server (above) relays every WebSocket message to it over the serial port,
+so the Arduino never talks to the app directly.
+
+> **You can't build or flash this from the repo** — there's no Arduino toolchain here
+> (the project's `npm` scripts are for the app/server only). Flash it with the
+> **Arduino IDE, on the machine that's physically wired to the car.** The previous
+> version of this sketch is preserved in git history as a fallback if a change
+> misbehaves on real hardware.
+
+**1. Install the libraries** (Arduino IDE → *Tools → Manage Libraries…*):
+
+| Library | Source |
+| --- | --- |
+| `Servo` | bundled with the Arduino IDE (no install) |
+| `Wire` | bundled with the Arduino IDE (no install) |
+| `SimpleTimer` | install via Library Manager |
+| `NewPing` | install via Library Manager |
+
+**2. Flash it:** open `arduino/rc-car/rc-car.ino`, set *Board → Arduino Uno* and
+*Port →* the Uno's port, then **Upload**. The car communicates at **19200 baud** —
+the same value the bridge uses as `SERIAL_BAUD`.
+
+**3. Point the bridge at it:** on the wired machine, run the server with the
+simulator off (see the section above):
+```
+SIMULATE=false SERIAL_PATH=/dev/ttyUSB0 SERIAL_BAUD=19200 npm start
+```
+
+**Pin map** (matches the in-app *Arduino Settings* screen — "which wire is which"):
+
+| Digital | Role |
+| --- | --- |
+| D2 | Speed pulse — INT0 interrupt, counts RPM |
+| D3 | Direction sense (forward / reverse) |
+| D4 | High beams (long lights) |
+| D5 | Underbody light, red (PWM) |
+| D6 | Underbody light, blue (PWM) |
+| D7 | Left blinker |
+| D8 | Right blinker |
+| D9 | Steering servo (left / right) |
+| D10 | Front range-sensor sweep servo |
+| D11 | Drive servo / ESC (forward / backward) |
+| D12 | Headlights |
+| D13 | Brake / stop lights |
+
+| Analog | Role |
+| --- | --- |
+| A0 | Motor temperature (LM35) |
+| A1 | Battery voltage (divider) |
+| A2 | Front ultrasonic — echo |
+| A3 | Front ultrasonic — trig |
+| A4 | Rear ultrasonic — echo |
+| A5 | Rear ultrasonic — trig |
+
+**The wire protocol** is the 2-character-code scheme defined in
+[`shared/protocol.ts`](shared/protocol.ts) (app → car ends in `\n`, car → app ends in `X`).
+The app drives via the on-screen **buttons** (`db`); `sc`/`rc` trim the steering and
+range-sensor servos; the car streams `sp`/`bv`/`mt` telemetry plus `rs` when the front
+obstacle brake engages. *(The old accelerometer drive mode `dm`/`ad`/`as` was removed —
+the firmware and protocol now match what the app actually sends.)*
+
+**Safety mechanisms baked into the firmware** — understand these before changing them:
+
+- **Keep-alive stop** — the app sends `kp` every 100 ms; if the car misses it for
+  ~300 ms (3 beats) it stops itself. This is the main safety net.
+- **Motor-temperature cutoff** — the car stops if the LM35 (A0) reads ≥ 50 °C.
+- **Obstacle brake** — the front ultrasonic brakes when something is within
+  `speedFactor × 2.4` cm while moving forward; the rear ultrasonic blocks reversing.
+
+> **Calibration is car-specific.** The servo angles (90 = neutral, `sf` = forward
+> throttle, 15 = reverse, ± steer/range trim) and the speed scaling
+> (`rpm × 0.245 × 0.06`) were tuned to *this* physical car. Re-measure on the bench
+> if you change them, and re-test the safety stops after every flash.
+
 ### Checking logs & monitoring connections
 
 Every connection event on **both** legs — the **app ↔ server** WebSocket and the

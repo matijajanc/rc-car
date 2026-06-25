@@ -25,13 +25,8 @@ export const CODE_LENGTH = 2;
 
 /**
  * Commands the app sends to the car (app -> car).
- * Mirrors the legacy comment block in src/utils/transmitter.js.
  */
 export const COMMAND_CODES = {
-  DRIVE_MODE: 'dm',
-  ACCEL_DRIVE: 'ad',
-  ACCEL_BACKWARD: 'ab',
-  ACCEL_STEER: 'as',
   DRIVE_BUTTONS: 'db',
   KEEP_ALIVE: 'kp',
   STEER_CALIBRATE: 'sc',
@@ -43,7 +38,6 @@ export const COMMAND_CODES = {
   CAR_LIGHTS: 'cl',
   BLINKERS: 'bl',
   ALL_BLINKERS: 'b4',
-  CAMERA: 'cm',
   LONG_LIGHTS: 'll',
 } as const;
 
@@ -51,7 +45,13 @@ export type CommandCode = (typeof COMMAND_CODES)[keyof typeof COMMAND_CODES];
 
 /**
  * Telemetry the car streams back to the app (car -> app).
- * Mirrors the legacy comment block in src/utils/receiver.js.
+ *
+ * `rs` (RANGE_SENSOR_PROBLEM) is the one telemetry code that shares its two
+ * letters with a command (`rs` = RANGE_SENSORS app->car); the direction-aware
+ * name maps below keep them distinct. The firmware emits `rs1` when the front
+ * obstacle brake engages and `rs0` when the path clears (edge-triggered, so it
+ * does not flood the link); it streams on the same `wsReceive` bus as the
+ * gauges for any indicator that wants to subscribe.
  */
 export const TELEMETRY_CODES = {
   MOTOR_TEMP: 'mt',
@@ -62,7 +62,7 @@ export const TELEMETRY_CODES = {
 
 export type TelemetryCode = (typeof TELEMETRY_CODES)[keyof typeof TELEMETRY_CODES];
 
-/** code -> human name, e.g. 'dm' -> 'DRIVE_MODE'. Built once from the maps above. */
+/** code -> human name, e.g. 'cl' -> 'CAR_LIGHTS'. Built once from the maps above. */
 const COMMAND_NAMES: Readonly<Record<string, string>> = Object.fromEntries(
   Object.entries(COMMAND_CODES).map(([name, code]) => [code, name]),
 );

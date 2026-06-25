@@ -108,7 +108,7 @@ describe('parseCommandStream', () => {
 
 describe('commandName / telemetryName', () => {
   it('maps codes back to their human-readable names', () => {
-    expect(commandName(COMMAND_CODES.DRIVE_MODE)).toBe('DRIVE_MODE');
+    expect(commandName(COMMAND_CODES.SPEED_FACTOR)).toBe('SPEED_FACTOR');
     expect(commandName(COMMAND_CODES.CAR_LIGHTS)).toBe('CAR_LIGHTS');
     expect(commandName(COMMAND_CODES.KEEP_ALIVE)).toBe('KEEP_ALIVE');
     expect(telemetryName(TELEMETRY_CODES.SPEED)).toBe('SPEED');

@@ -14,6 +14,12 @@ export interface SimulatorOptions {
   /** How often a motor-temperature frame is emitted (ms). */
   tempIntervalMs?: number;
   /**
+   * How often the virtual car re-rolls whether the front range sensor sees an
+   * obstacle. It emits an `rs` frame only when that state flips (edge-triggered,
+   * like the firmware). 0 disables range-sensor telemetry.
+   */
+  rangeProblemIntervalMs?: number;
+  /**
    * If no keep-alive ('kp') arrives within this window the virtual car stops,
    * mirroring the real car's safety behaviour. 0 disables the check.
    */
@@ -30,6 +36,7 @@ const DEFAULTS: Required<Omit<SimulatorOptions, 'random' | 'now' | 'logger'>> = 
   speedIntervalMs: 500,
   batteryIntervalMs: 5000,
   tempIntervalMs: 7000,
+  rangeProblemIntervalMs: 4000,
   keepAliveTimeoutMs: 400,
 };
 
@@ -58,6 +65,7 @@ export class CarSimulator implements CarLink {
   private timers: ReturnType<typeof setInterval>[] = [];
   private commandBuffer = '';
   private speed = 0;
+  private rangeProblem = false;
   private lastKeepAlive = 0;
   private running = false;
 
@@ -66,6 +74,7 @@ export class CarSimulator implements CarLink {
       speedIntervalMs: options.speedIntervalMs ?? DEFAULTS.speedIntervalMs,
       batteryIntervalMs: options.batteryIntervalMs ?? DEFAULTS.batteryIntervalMs,
       tempIntervalMs: options.tempIntervalMs ?? DEFAULTS.tempIntervalMs,
+      rangeProblemIntervalMs: options.rangeProblemIntervalMs ?? DEFAULTS.rangeProblemIntervalMs,
       keepAliveTimeoutMs: options.keepAliveTimeoutMs ?? DEFAULTS.keepAliveTimeoutMs,
     };
     this.random = options.random ?? Math.random;
@@ -88,6 +97,11 @@ export class CarSimulator implements CarLink {
         this.opts.tempIntervalMs,
       ),
     );
+    if (this.opts.rangeProblemIntervalMs > 0) {
+      this.timers.push(
+        setInterval(() => this.emitRangeProblem(), this.opts.rangeProblemIntervalMs),
+      );
+    }
     // Don't let these timers keep the process alive on their own.
     this.timers.forEach((timer) => timer.unref?.());
     this.logger('[simulator] virtual car online');
@@ -143,6 +157,19 @@ export class CarSimulator implements CarLink {
     this.send(TELEMETRY_CODES.SPEED, this.speed);
   }
 
+  /**
+   * Re-roll the virtual front-obstacle state and emit an `rs` frame only when it
+   * changes, the same edge-triggered way the firmware reports its brake state.
+   */
+  private emitRangeProblem(): void {
+    const present = this.random() < 0.25;
+    if (present === this.rangeProblem) {
+      return;
+    }
+    this.rangeProblem = present;
+    this.send(TELEMETRY_CODES.RANGE_SENSOR_PROBLEM, present ? 1 : 0);
+  }
+
   /** React to a decoded command body the way a real car roughly would. */
   private handleCommand(command: string): void {
     const code = command.slice(0, 2);
@@ -159,12 +186,8 @@ export class CarSimulator implements CarLink {
         this.speed = 0;
         break;
       case COMMAND_CODES.DRIVE_BUTTONS:
-      case COMMAND_CODES.ACCEL_DRIVE:
         // Any drive input nudges the virtual speed up to a cruising value.
         this.speed = Math.min(45, this.speed + 5);
-        break;
-      case COMMAND_CODES.ACCEL_BACKWARD:
-        this.speed = Math.min(45, this.speed + 3);
         break;
       default:
         // Settings/calibration commands have no effect on telemetry.
