@@ -23,6 +23,7 @@
     "react-native-circular-progress": "^1.4.1",
     "react-native-config": "^1.5.5",
     "react-native-event-listeners": "^1.0.7",
+    "react-native-gesture-handler": "^3.0.2",
     "react-native-orientation-locker": "^1.7.0",
     "react-native-safe-area-context": "^5.5.2",
     "react-native-screens": "^4.11.1",

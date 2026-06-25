@@ -461,3 +461,40 @@ Run `npx react-native doctor` to catch toolchain gaps before building.
 - [ ] `react-native run-android` boots; dashboard shows simulator telemetry
 - [ ] Build a signed release (`./gradlew assembleRelease`) with a real keystore
 ```
+
+---
+
+## 8. Post-upgrade fix: simultaneous throttle + steer (gesture-handler)
+
+Real-car testing surfaced a control bug the simulator can't reproduce: holding
+the throttle and pressing a steer button **at the same time** did nothing — the
+second press was swallowed.
+
+**Cause — not the server or the Arduino, the app's touch layer.** The four drive
+buttons were `Pressable`s, and React Native's JS gesture responder system grants
+the "responder" role to a single view at a time. Once the throttle button became
+the responder on the first touch, a second finger on a steer button could not
+claim its own responder, so its `onPressIn` never fired and the steer command
+(`dba`/`dbd`) was never sent. The bridge forwards every WebSocket message
+verbatim (`link.write(raw)` in `server.ts`), so the second command provably
+never left the phone — app-side, not the wire or the car.
+
+**Fix — `react-native-gesture-handler` 3.x** (new runtime dependency). RNGH
+recognises each gesture independently on the native thread, so multiple buttons
+can be held at once and a press registers even while the JS thread is busy
+animating the gauges. Changes:
+- `index.js`: `import 'react-native-gesture-handler';` as the first import.
+- `App.tsx`: wrap the tree in `<GestureHandlerRootView style={{ flex: 1 }}>`.
+- `DriveButton.tsx`: replace `Pressable` with a `GestureDetector` running
+  `Gesture.LongPress().minDuration(0)`; press on `onBegin`, release on
+  `onFinalize` (RNGH guarantees they pair, so the throttle can't stick on).
+  Reanimated is **not** installed, so the gesture callbacks run on the JS thread
+  and call `send()` directly — no `runOnJS` needed.
+
+**Verify on-device** (Jest/the simulator can't exercise native multi-touch): run
+the bridge with `LOG_LEVEL=debug npm run dev -- --verbose`, hold gas, then press
+steer — the log should now show both `dbw`/`dbs` **and** `dba`/`dbd` arriving
+together (before the fix, only the throttle codes appeared). Autolinking pulls in
+the native module, so this needs an **APK rebuild** (same Apple-Silicon `aapt2`
+caveat as the rest of the native build — build via CI/x86 or a local SDK).
+

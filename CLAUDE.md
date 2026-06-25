@@ -88,6 +88,8 @@ Codes are exported as `COMMAND_CODES` and `TELEMETRY_CODES`:
 
 **Orientation locking.** Each container locks orientation in a `useEffect` via `react-native-orientation-locker` — portrait for menus, landscape for the driving dashboard (`DriveModeButtonsContainer`).
 
+**Drive controls — multi-touch.** The four drive buttons (`DriveButton`) use `react-native-gesture-handler`, **not** `Pressable`/`Touchable`. RN's JS responder system only lets one Touchable be held at a time, so throttle + steer together was silently dropped (the second `onPressIn` never fired); RNGH recognises each button's gesture independently on the native thread, so several can be held at once. Press fires on `onBegin`, release on `onFinalize` (RNGH guarantees they pair, so the throttle can't stick on). `GestureHandlerRootView` wraps the app in `App.tsx`, and `index.js` imports `react-native-gesture-handler` first. See [ANDROID_UPGRADE.md](ANDROID_UPGRADE.md) §8.
+
 **Gauges.** Battery/Motor keep the **original segmented radial-arc SVG design**, re-implemented declaratively for react-native-svg v15 — each segment computes its `fill`/`opacity` in render (the legacy `extractBrush` + `setNativeProps` ref-fill was removed in v15). Speedometer uses `AnimatedCircularProgress` (unchanged from 2018).
 
 ## Gotchas
