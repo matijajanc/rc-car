@@ -39,6 +39,15 @@ export const COMMAND_CODES = {
   BLINKERS: 'bl',
   ALL_BLINKERS: 'b4',
   LONG_LIGHTS: 'll',
+  /**
+   * Bottom LED strip ("underglow") colour. Unlike every other command its value
+   * is compound — "<r>,<b>" (e.g. 'lc255,64') — because the strip is wired to
+   * only two PWM channels (red + blue; there is no green). The app owns the
+   * colour maths (src/utils/underglow.ts) and sends raw channel values; the
+   * firmware just analogWrites them. Pure red is reserved for the stop/brake
+   * alert, so the picker never produces it.
+   */
+  UNDERGLOW_COLOR: 'lc',
 } as const;
 
 export type CommandCode = (typeof COMMAND_CODES)[keyof typeof COMMAND_CODES];

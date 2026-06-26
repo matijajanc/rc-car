@@ -9,7 +9,8 @@
  * Telemetry the car streams:  mt motor temp · sp speed · bv battery · rs front obstacle
  * Commands the car accepts:   db drive buttons · kp keep-alive · st stop · sc steer trim ·
  *                             rc range-servo trim · sf speed factor · rs range sensors on/off ·
- *                             cl lights · ll long lights · bl blinkers · b4 hazards
+ *                             cl lights · ll long lights · bl blinkers · b4 hazards ·
+ *                             lc underglow colour ("lc<r>,<b>")
  *
  * The 2018 accelerometer drive mode (dm/ad/as) was removed when this firmware
  * was reconciled with the React Native app, which drives via on-screen buttons.
@@ -51,9 +52,14 @@ byte lightsState = 0;
 const int lightsLED = 12;
 byte longLightsState = 0;
 const int longLightLED = 4;
-// Bottom Lights
+// Bottom Lights ("underglow"). Only red+blue channels exist (no green wire),
+// so the reachable colours are the red↔blue mixes. The "normal" glow colour is
+// app-configurable via lc<r>,<b>; pure red is forced on as the stop/brake alert
+// (see stopCar() and frangeS()), so the app never sends it as a glow colour.
 const int redLED = 5;
 const int blueLED = 6;
+byte glowR = 0;     // current "normal" underglow red channel
+byte glowB = 255;   // current "normal" underglow blue channel (default: blue)
 
 // Car Blinkers
 byte blinkersState = 0;
@@ -220,8 +226,10 @@ void handleCommand(const char *line) {
   // Keep Alive — restart the safety-stop timer and show the "connected" LED.
   if (strncmp(line, "kp", 2) == 0) {
     timer.restartTimer(connectionT);
-    analogWrite(redLED, 0);
-    analogWrite(blueLED, 255);
+    // Repaint the configurable "normal" underglow (was hardcoded blue). The
+    // stop/brake handlers override this to red; the next keep-alive restores it.
+    analogWrite(redLED, glowR);
+    analogWrite(blueLED, glowB);
     return;
   }
 
@@ -268,6 +276,21 @@ void handleCommand(const char *line) {
   if (strncmp(line, "ll", 2) == 0) {
     longLightsState = value;
     digitalWrite(longLightLED, longLightsState == 1 ? HIGH : LOW);
+    return;
+  }
+
+  // Bottom strip ("underglow") colour ("lc<r>,<b>"). The strip has only red and
+  // blue channels, so the app does the colour maths and sends two raw PWM values
+  // (0..255) which we apply directly. We store them so each keep-alive repaints
+  // the same colour; pure red stays reserved for the stop/brake alert.
+  if (strncmp(line, "lc", 2) == 0) {
+    const char *comma = strchr(line + 2, ',');
+    if (comma != NULL) {
+      glowR = constrain(atoi(line + 2), 0, 255);
+      glowB = constrain(atoi(comma + 1), 0, 255);
+      analogWrite(redLED, glowR);
+      analogWrite(blueLED, glowB);
+    }
     return;
   }
 

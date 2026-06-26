@@ -47,6 +47,7 @@ export const colors = {
   catSensors: '#67952F',
   catBlinkers: '#F3781E',
   catArduino: '#AF4AD5',
+  catLights: '#3F6CF0',
 
   // --- misc ---
   overlay: 'rgba(0,0,0,0.6)',

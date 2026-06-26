@@ -11,6 +11,7 @@ import SteerCalibrateIcon from './icons/SteerCalibrate-icon';
 import ArduinoIcon from './icons/Arduino-icon';
 import RangeSensorsIcon from './icons/RangeSensors-icon';
 import BlinkersIcon from './icons/Blinkers-icon';
+import UnderglowIcon from './icons/Underglow-icon';
 import TabletScreenIcon from './icons/TabletScreen-icon';
 
 interface Props {
@@ -78,6 +79,12 @@ const Home = ({ navigate }: Props): React.JSX.Element => {
           text={'Blinkers'}
           setting={'bl'}
           icon={<BlinkersIcon bgColor={colors.catBlinkers} />}
+          divider
+        />
+        <Link
+          text={'Underglow'}
+          navigate={() => navigate('Underglow')}
+          icon={<UnderglowIcon bgColor={colors.catLights} />}
           divider
         />
         <Link

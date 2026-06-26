@@ -61,7 +61,7 @@ App↔car messages are short ASCII strings: a **2-character code** followed by a
 - **Incoming (car → app):** terminated with `TELEMETRY_TERMINATOR` = `'X'`. Parsed with `parseTelemetryStream()` (buffers partial frames) or `decodeTelemetryFrame()`.
 
 Codes are exported as `COMMAND_CODES` and `TELEMETRY_CODES`:
-- Commands: `db` drive buttons, `kp` keep-alive, `sc` steer calibrate, `st` stop, `sf` speed factor; Arduino options `rs` range sensors on/off, `rc` range-sensor servo trim, `cl` car lights, `bl` blinkers, `b4` all-4 blinkers, `ll` long lights.
+- Commands: `db` drive buttons, `kp` keep-alive, `sc` steer calibrate, `st` stop, `sf` speed factor; Arduino options `rs` range sensors on/off, `rc` range-sensor servo trim, `cl` car lights, `bl` blinkers, `b4` all-4 blinkers, `ll` long lights, `lc` underglow colour (bottom LED strip; value is compound `lc<r>,<b>` — the strip has only red+blue channels, so the app does the colour maths in `src/utils/underglow.ts` and sends raw PWM values; pure red stays reserved for the stop/brake alert).
 - Telemetry: `mt` motor temperature, `sp` car speed, `bv` battery voltage, `rs` front-obstacle (the firmware emits `rs1`/`rs0` edge-triggered when the front brake engages/clears).
 
 > Reconciled with the firmware (`feature/arduino`): the 2018 accelerometer drive mode (`dm`/`ad`/`as`) and the never-implemented `cm` camera + phantom `ab` codes were removed from the protocol, the firmware, and the simulator — the app drives only via the on-screen buttons (`db`). `rc` (range-servo trim) gained an app screen (see Range Calibrate below); it had been firmware-only.

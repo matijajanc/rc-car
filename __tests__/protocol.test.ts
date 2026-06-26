@@ -14,4 +14,8 @@ describe('app <-> car protocol', () => {
     const { items } = parseTelemetryStream('sp42X');
     expect(items).toEqual([{ code: TELEMETRY_CODES.SPEED, value: '42' }]);
   });
+
+  it('frames an underglow colour command with its compound "<r>,<b>" value', () => {
+    expect(frameCommand(COMMAND_CODES.UNDERGLOW_COLOR, '255,64')).toBe('lc255,64\n');
+  });
 });

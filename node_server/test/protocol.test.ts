@@ -127,6 +127,24 @@ describe('commandName / telemetryName', () => {
   });
 });
 
+describe('underglow colour command', () => {
+  it('frames and round-trips the compound "<r>,<b>" value through the wire', () => {
+    const wire = frameCommand(COMMAND_CODES.UNDERGLOW_COLOR, '255,64');
+    expect(wire).toBe('lc255,64\n');
+    const { items, rest } = parseCommandStream(wire);
+    expect(items).toEqual(['lc255,64']);
+    expect(rest).toBe('');
+  });
+
+  it('maps the code back to its name', () => {
+    expect(commandName(COMMAND_CODES.UNDERGLOW_COLOR)).toBe('UNDERGLOW_COLOR');
+  });
+
+  it('survives settings replay (the comma value passes through unchanged)', () => {
+    expect(formatSettingValue('255,64')).toBe('255,64');
+  });
+});
+
 describe('formatSettingValue', () => {
   it('maps booleans (and their string forms) to 1/0', () => {
     expect(formatSettingValue(true)).toBe(1);
