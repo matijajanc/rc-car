@@ -111,6 +111,10 @@ NewPing sonar(bcsTrig, bcsEcho, bcsDistance);
 
 void setup() {
   Serial.begin(19200);
+  // A half-received command line during an RF glitch must not stall the loop:
+  // cap how long readBytesUntil() blocks waiting for the '\n' (default is 1s).
+  // A full command is ~4ms at 19200 baud, so 20ms leaves ample margin.
+  Serial.setTimeout(20);
   // Drive
   driveSrv.attach(drivePin);
   driveSrv.write(90);
@@ -167,6 +171,13 @@ void setup() {
 
   // read RPM
   attachInterrupt(0, car_rpm, FALLING);
+
+  // Announce a (re)boot so the app can re-send the saved settings. A brown-out
+  // reset silently reverts the options (range sensors, speed factor, underglow)
+  // to their power-on defaults, and the app<->server socket never drops to
+  // trigger the usual on-connect replay — so without this the car would keep
+  // running defaults until the next reconnect.
+  sendTelemetry("rb", 1);
 }
 
 void loop() {

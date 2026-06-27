@@ -67,6 +67,13 @@ export const TELEMETRY_CODES = {
   SPEED: 'sp',
   BATTERY_VOLTAGE: 'bv',
   RANGE_SENSOR_PROBLEM: 'rs',
+  /**
+   * Boot beacon. The firmware emits `rb1` once at the end of `setup()`, i.e. on
+   * every (re)boot. A brown-out reset reverts the car to its power-on defaults
+   * but the app<->server socket never drops, so this is the app's only reliable
+   * signal that the car restarted and its saved settings need replaying.
+   */
+  CAR_BOOT: 'rb',
 } as const;
 
 export type TelemetryCode = (typeof TELEMETRY_CODES)[keyof typeof TELEMETRY_CODES];

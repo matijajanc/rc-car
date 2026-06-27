@@ -7,6 +7,7 @@ import Config from 'react-native-config';
 import { WS_STATUS_EVENT, createSocket, getSocket } from '../../utils/websocket';
 import type { WsStatus } from '../../utils/websocket';
 import { start as startKeepAlive } from '../../utils/keep-alive';
+import { start as startCarLink } from '../../utils/car-link';
 import { sendAll } from '../../utils/settings';
 import { receive } from '../../utils/receiver';
 import { vibrate } from '../../utils/vibrate';
@@ -47,6 +48,7 @@ export default function ConnectionContainer(): React.JSX.Element {
         attemptingRef.current = false;
         clearTimer();
         startKeepAlive();
+        startCarLink();
         void sendAll();
         receive();
         setStatus('idle');
