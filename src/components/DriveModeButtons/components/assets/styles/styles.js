@@ -16,7 +16,10 @@ const styles = StyleSheet.create({
   },
   upDownBox: {
     position:'absolute',
-    left: 15,
+    // Keep clear of the phone's landscape edge-swipe (back) gesture zone, which
+    // is ~20px from the screen edge — at left:15 a throttle press/drag was
+    // triggering swipe-back. 40 leaves the button fully outside that strip.
+    left: 40,
     bottom:15,
     zIndex:2
   },
