@@ -29,6 +29,8 @@ async function waitFor(predicate: () => boolean, timeoutMs = 2000): Promise<void
 /** A deterministic in-memory car for asserting the bridge's plumbing. */
 class MockLink implements CarLink {
   readonly writes: string[] = [];
+  /** Per-write timestamps, for asserting the keep-alive cadence. */
+  readonly writeLog: { frame: string; at: number }[] = [];
   private readonly dataListeners: ((chunk: string) => void)[] = [];
 
   open(): Promise<void> {
@@ -39,6 +41,7 @@ class MockLink implements CarLink {
   }
   write(frame: string): void {
     this.writes.push(frame);
+    this.writeLog.push({ frame, at: Date.now() });
   }
   onData(listener: (chunk: string) => void): void {
     this.dataListeners.push(listener);
@@ -209,5 +212,98 @@ describe('bridge', () => {
     const entries = (await logs.json()) as { event: string }[];
     expect(Array.isArray(entries)).toBe(true);
     expect(entries.some((e) => e.event === 'listening')).toBe(true);
+  });
+});
+
+describe('server-authoritative keep-alive', () => {
+  let bridge: Bridge | undefined;
+  let client: WebSocket | undefined;
+
+  afterEach(async () => {
+    client?.close();
+    if (bridge) {
+      await bridge.close();
+      bridge = undefined;
+    }
+  });
+
+  const kpCount = (link: MockLink): number => link.writes.filter((f) => f === 'kp\n').length;
+
+  it('does not keep-alive the car until a client connects', async () => {
+    const link = new MockLink();
+    bridge = await startBridge(testConfig(), link, { logger: quietLogger() });
+    await new Promise((resolve) => setTimeout(resolve, 250)); // a few generator ticks
+    expect(kpCount(link)).toBe(0);
+    expect(link.writes).not.toContain('st\n');
+  });
+
+  it('generates the car keep-alive itself, with the client sending nothing', async () => {
+    const link = new MockLink();
+    bridge = await startBridge(testConfig(), link, { logger: quietLogger() });
+
+    client = new WebSocket(`ws://127.0.0.1:${bridge.port}`);
+    await once(client, 'open');
+
+    // The app sends NOTHING — the server must keep the car alive on its own.
+    await waitFor(() => kpCount(link) > 0);
+    expect(kpCount(link)).toBeGreaterThan(0);
+  });
+
+  it('stops the car (explicit st) and ceases keep-alive when the last client leaves', async () => {
+    const link = new MockLink();
+    bridge = await startBridge(testConfig(), link, { logger: quietLogger() });
+
+    client = new WebSocket(`ws://127.0.0.1:${bridge.port}`);
+    await once(client, 'open');
+    await waitFor(() => kpCount(link) > 0); // armed
+
+    client.close();
+    await waitFor(() => link.writes.includes('st\n')); // stopped on disconnect
+
+    const after = kpCount(link);
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    expect(kpCount(link)).toBe(after); // keep-alive has ceased
+  });
+
+  it('stops the car when the app goes silent past the presence timeout', async () => {
+    const link = new MockLink();
+    // Tiny presence window (test-only override); the client's auto-pong keeps the
+    // transport alive, so only the app-presence path can trip here.
+    bridge = await startBridge(testConfig(), link, {
+      logger: quietLogger(),
+      timings: { presenceTimeoutMs: 300 },
+    });
+
+    client = new WebSocket(`ws://127.0.0.1:${bridge.port}`);
+    await once(client, 'open');
+    await waitFor(() => kpCount(link) > 0); // armed while freshly present
+
+    // The client stays connected but never speaks again → presence lapses.
+    await waitFor(() => link.writes.includes('st\n'), 3000);
+    const after = kpCount(link);
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    expect(kpCount(link)).toBe(after); // ceased once presence lapsed
+  });
+
+  it('holds a steady keep-alive cadence across ping cycles (no per-ping suppression)', async () => {
+    const link = new MockLink();
+    // Default 300ms ping interval. The regression we guard against dropped one
+    // keep-alive per ping round-trip (~200ms gaps); the cadence must stay ~100ms.
+    bridge = await startBridge(testConfig(), link, { logger: quietLogger() });
+
+    client = new WebSocket(`ws://127.0.0.1:${bridge.port}`);
+    await once(client, 'open');
+
+    await new Promise((resolve) => setTimeout(resolve, 1200)); // ~12 ticks, ~4 ping cycles
+
+    const kpTimes = link.writeLog.filter((w) => w.frame === 'kp\n').map((w) => w.at);
+    expect(kpTimes.length).toBeGreaterThan(6);
+    // Skip the first interval (connect/arming jitter); after that no gap may
+    // approach a full ping cycle.
+    let maxGap = 0;
+    for (let i = 2; i < kpTimes.length; i += 1) {
+      maxGap = Math.max(maxGap, (kpTimes[i] ?? 0) - (kpTimes[i - 1] ?? 0));
+    }
+    expect(maxGap).toBeLessThan(180);
   });
 });

@@ -85,4 +85,32 @@ describe('SerialCarLink auto-reconnect', () => {
 
     await link.close();
   });
+
+  it('write() is a safe no-op before open and after an unexpected disconnect', async () => {
+    const ports: FakePort[] = [];
+    const factory = (async () => {
+      const port = new FakePort();
+      ports.push(port);
+      return port;
+    }) as unknown as PortFactory;
+
+    const link = new SerialCarLink({
+      path: '/dev/fake',
+      baudRate: 19200,
+      portFactory: factory,
+      reconnect: false,
+    });
+
+    // Before open: the server's 100ms keep-alive starts writing immediately, so
+    // a write against an unopened port must not throw (it would crash the bridge).
+    expect(() => link.write('kp\n')).not.toThrow();
+
+    await link.open();
+    expect(() => link.write('kp\n')).not.toThrow(); // open: writes through
+
+    ports[0]?.fireClose(); // cable yanked
+    expect(() => link.write('kp\n')).not.toThrow(); // down: frame dropped, not thrown
+
+    await link.close();
+  });
 });

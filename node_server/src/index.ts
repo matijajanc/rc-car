@@ -56,6 +56,18 @@ async function main(): Promise<void> {
 
   process.on('SIGINT', () => shutdown('SIGINT'));
   process.on('SIGTERM', () => shutdown('SIGTERM'));
+
+  // Last-resort safety net. A physical car is being driven, so we favour staying
+  // up over fail-fast: log and continue rather than exit. The firmware's own
+  // 300ms keep-alive stop is the hardware fail-safe if the bridge ever wedges.
+  // (The always-on 100ms keep-alive is a new throw surface; serial.write()
+  // already no-ops while the port is down, but this covers the unforeseen.)
+  process.on('uncaughtException', (error) =>
+    logger.error('server', 'uncaught_exception', { msg: String(error?.stack ?? error) }),
+  );
+  process.on('unhandledRejection', (reason) =>
+    logger.error('server', 'unhandled_rejection', { msg: String(reason) }),
+  );
 }
 
 main().catch((error: unknown) => {

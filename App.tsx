@@ -3,6 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { EventRegister } from 'react-native-event-listeners';
 
 import ConnectionContainer from './src/components/Connection/ConnectionContainer';
 import HomeContainer from './src/components/Home/HomeContainer';
@@ -14,6 +15,13 @@ import DiagnosticsContainer from './src/components/Diagnostics/DiagnosticsContai
 import ConnectionDot from './src/components/Common/ConnectionDot/ConnectionDot';
 import { navigationRef } from './src/navigation/navigationRef';
 import { startDiagnostics } from './src/utils/diagnostics';
+import { WS_STATUS_EVENT } from './src/utils/websocket';
+import type { WsStatus } from './src/utils/websocket';
+import { receive } from './src/utils/receiver';
+import { sendAll } from './src/utils/settings';
+import { start as startPresence } from './src/utils/presence';
+import { start as startCarLink } from './src/utils/car-link';
+import { start as startAppLifecycle } from './src/utils/app-lifecycle';
 
 /** Route names + params. Screens get typed navigation from this. */
 export type RootStackParamList = {
@@ -31,6 +39,26 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function App(): React.JSX.Element {
   useEffect(() => {
     startDiagnostics();
+
+    // Wire the session on every (re)connect — not just the first manual connect
+    // (ConnectionContainer unmounts once you're driving, so it can't). This is
+    // what makes auto-reconnect after a drop transparent: receive() must rebind
+    // onmessage to the new socket, and sendAll() replays the car's persisted
+    // settings; the rest are idempotent. sendAll() sends settings only — never a
+    // drive command — so the car stays stopped until a deliberate press.
+    const sub = EventRegister.addEventListener(WS_STATUS_EVENT, (s: WsStatus) => {
+      if (s !== 'connected') {
+        return;
+      }
+      receive();
+      void sendAll();
+      startPresence();
+      startCarLink();
+      startAppLifecycle();
+    });
+    return () => {
+      EventRegister.removeEventListener(sub as string);
+    };
   }, []);
 
   return (

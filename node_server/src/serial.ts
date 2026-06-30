@@ -69,6 +69,11 @@ export class SerialCarLink implements CarLink {
   private readonly log: (event: string, fields?: Record<string, unknown>) => void;
 
   private closing = false;
+  // True only between a successful port.open and the next close/disconnect. The
+  // server's keep-alive calls write() every 100ms, so write() must be a safe
+  // no-op whenever the port isn't actually open (startup, mid-reconnect, car
+  // powered down) rather than throwing 10×/s and crashing the bridge.
+  private connected = false;
   private attempt = 0;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -96,6 +101,7 @@ export class SerialCarLink implements CarLink {
 
   close(): Promise<void> {
     this.closing = true;
+    this.connected = false;
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
@@ -109,8 +115,12 @@ export class SerialCarLink implements CarLink {
   }
 
   write(frame: string): void {
-    if (!this.port) {
-      throw new Error('Serial link is not open');
+    // Drop the frame when the link isn't open. The server pushes a keep-alive
+    // every 100ms; throwing here while the car is unplugged or mid-reconnect
+    // would crash the bridge. The car safety-stops on its own when it stops
+    // hearing keep-alives, and the reconnect lifecycle is logged separately.
+    if (!this.connected || !this.port) {
+      return;
     }
     this.port.write(frame, (error) => {
       if (error) {
@@ -143,10 +153,12 @@ export class SerialCarLink implements CarLink {
     await new Promise<void>((resolve, reject) => {
       port.open((error) => (error ? reject(error) : resolve()));
     });
+    this.connected = true;
     this.attempt = 0;
   }
 
   private handlePortClose(): void {
+    this.connected = false;
     this.closes.emit();
     if (!this.closing && this.reconnect) {
       this.scheduleReconnect();

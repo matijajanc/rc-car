@@ -4,11 +4,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { EventRegister } from 'react-native-event-listeners';
 import Orientation from 'react-native-orientation-locker';
 import Config from 'react-native-config';
-import { WS_STATUS_EVENT, createSocket, getSocket } from '../../utils/websocket';
+import { WS_STATUS_EVENT, createSocket, disconnect } from '../../utils/websocket';
 import type { WsStatus } from '../../utils/websocket';
-import { start as startKeepAlive } from '../../utils/keep-alive';
-import { sendAll } from '../../utils/settings';
-import { receive } from '../../utils/receiver';
 import { vibrate } from '../../utils/vibrate';
 import Container from '../Common/Container/ContainerComponent';
 import Connection from './components/Connection';
@@ -44,11 +41,10 @@ export default function ConnectionContainer(): React.JSX.Element {
         return;
       }
       if (s === 'connected') {
+        // Session wiring (receive/sendAll/presence/…) now lives in App.tsx so it
+        // re-fires on every reconnect; here we only resolve the manual attempt.
         attemptingRef.current = false;
         clearTimer();
-        startKeepAlive();
-        void sendAll();
-        receive();
         setStatus('idle');
         navigation.navigate('Home');
       } else if (s === 'disconnected') {
@@ -86,8 +82,10 @@ export default function ConnectionContainer(): React.JSX.Element {
       if (!attemptingRef.current) {
         return;
       }
+      // Give up on the initial connect: stop reconnecting (createSocket enabled
+      // it) and surface the error, rather than retrying a bad address forever.
       attemptingRef.current = false;
-      getSocket()?.close();
+      disconnect();
       setStatus('error');
     }, CONNECT_TIMEOUT_MS);
   };
