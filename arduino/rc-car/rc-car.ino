@@ -34,6 +34,7 @@ const int drivePin = 11;
 int speedFactor = 120;       // forward throttle servo angle (app sends 95..165)
 const int steer = 9;
 char cmd[16];                // serial command line buffer (replaces String inByte)
+const int keepAliveTimeoutMs = 600;
 int connectionT;
 int tempMotorT;
 int rangeT;
@@ -140,7 +141,7 @@ void setup() {
   pinMode(directionPin, INPUT);
 
   // Set Timer
-  connectionT = timer.setInterval(300, stopCar);
+  connectionT = timer.setInterval(keepAliveTimeoutMs, stopCar);
   tempMotorT = timer.setInterval(3000, tempMotor);
   rangeT = timer.setInterval(35, frangeS);
   batVolt = timer.setInterval(30000, battVoltage);
@@ -422,15 +423,9 @@ void sendTelemetry(const char *code, long value) {
 
 // Stop The Car
 void stopCar() {
-  if (carSpeed > 0 && speedDirection == 'f') {
-    driveSrv.write(15);
-    turnservo.write(90 + steerCalib);
-    preventNeutral = 1;
-  } else {
-    driveSrv.write(90);
-    turnservo.write(90 + steerCalib);
-    preventNeutral = 0;
-  }
+  driveSrv.write(90);
+  turnservo.write(90 + steerCalib);
+  preventNeutral = 0;
 
   analogWrite(redLED, 255);
   analogWrite(blueLED, 0);

@@ -84,7 +84,7 @@ Codes are exported as `COMMAND_CODES` and `TELEMETRY_CODES`:
 
 **Incoming data uses an event bus, not props.** `receiver.ts` decodes telemetry with `parseTelemetryStream` (buffering partial frames) and emits `EventRegister.emit('wsReceive', {code, value})`. Dashboard widgets (Speedometer, BatteryLevel, MotorTemperature) subscribe in a `useEffect`, filter by `code`, and remove the listener in the effect's cleanup. `DriveModeButtons/components/CarAlert.tsx` is the same pattern: it watches `rs` (front obstacle brake) and `mt` (≥ `MOTOR_TEMP_CUTOFF_C`, which must match the firmware's `criticalTemp`) and overlays a banner telling the driver *why* the car stopped/braked. It's a `pointerEvents="none"` overlay, so it never interferes with the drive gestures.
 
-**Keep-alive is a safety mechanism.** `keep-alive.start()` sends `kp` every 100ms after connect; the car stops itself if it misses the signal 3× in a row. Do not throttle it without understanding the safety implication.
+**Keep-alive is a safety mechanism.** `keep-alive.start()` sends `kp` every 100ms after connect; the car stops itself by commanding neutral throttle if it misses the signal for ~600ms. Do not throttle it without understanding the safety implication.
 
 **Settings persistence.** Stored in `AsyncStorage` (`@react-native-async-storage/async-storage`) under `setting-<code>` keys; `settings.sendAll()` replays them to the car on connect (booleans → 1/0). `OnOffSetting` is the reusable persisted toggle.
 

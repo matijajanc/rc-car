@@ -147,7 +147,8 @@ the firmware and protocol now match what the app actually sends.)*
 **Safety mechanisms baked into the firmware** — understand these before changing them:
 
 - **Keep-alive stop** — the app sends `kp` every 100 ms; if the car misses it for
-  ~300 ms (3 beats) it stops itself. This is the main safety net.
+  ~600 ms (6 beats) it stops itself by commanding neutral throttle. This is the
+  main safety net.
 - **Motor-temperature cutoff** — the car stops if the LM35 (A0) reads ≥ 50 °C.
 - **Obstacle brake** — the front ultrasonic brakes when something is within
   `speedFactor × 2.4` cm while moving forward; the rear ultrasonic blocks reversing.
