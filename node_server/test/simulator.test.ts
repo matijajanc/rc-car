@@ -1,16 +1,85 @@
 import { CarSimulator } from '../src/simulator';
 
 describe('simulator command logging', () => {
-  it('echoes real commands but not the keep-alive heartbeat', () => {
+  it('echoes state changes but coalesces the drive-state refresh stream', () => {
     const messages: string[] = [];
     const sim = new CarSimulator({ logger: (m) => messages.push(m) });
 
-    sim.write('kp\n'); // 10Hz heartbeat — must not be echoed
-    sim.write('dbd\n'); // a real drive command — should be echoed
-    sim.write('kp\n');
+    sim.write('dvfc\n'); // press forward — echoed
+    sim.write('dvfc\n'); // refresh of the same state — suppressed
+    sim.write('dvfc\n'); // refresh — suppressed
+    sim.write('dvnc\n'); // release — echoed
 
-    expect(messages.some((m) => m.includes('<- dbd'))).toBe(true);
-    expect(messages.some((m) => m.includes('<- kp'))).toBe(false);
+    expect(messages.filter((m) => m.includes('<- dvfc'))).toHaveLength(1);
+    expect(messages.filter((m) => m.includes('<- dvnc'))).toHaveLength(1);
+  });
+});
+
+describe('simulator motion lease', () => {
+  // Keep the battery/temp/range timers far out of the window so the only
+  // frames we capture are the speed ones under test.
+  const quiet = {
+    batteryIntervalMs: 1e7,
+    tempIntervalMs: 1e7,
+    rangeProblemIntervalMs: 0,
+    logger: () => {},
+  };
+
+  afterEach(() => jest.useRealTimers());
+
+  const lastSpeed = (frames: string[]): string | undefined =>
+    frames.filter((f) => f.startsWith('sp')).pop();
+
+  it('drives while dv frames stay fresh, coasts to 0 when they stop', () => {
+    jest.useFakeTimers();
+    const frames: string[] = [];
+    const sim = new CarSimulator({ ...quiet, speedIntervalMs: 100 });
+    sim.onData((c) => frames.push(c));
+    void sim.open();
+
+    // Hold forward, refreshing well inside the 600ms lease.
+    for (let i = 0; i < 6; i += 1) {
+      sim.write('dvfc\n');
+      jest.advanceTimersByTime(100);
+    }
+    expect(lastSpeed(frames)).not.toBe('sp0X');
+
+    // Stop refreshing: the lease expires and the car coasts down to 0.
+    jest.advanceTimersByTime(1500);
+    expect(lastSpeed(frames)).toBe('sp0X');
+    void sim.close();
+  });
+
+  it('stops immediately on an explicit st', () => {
+    jest.useFakeTimers();
+    const frames: string[] = [];
+    const sim = new CarSimulator({ ...quiet, speedIntervalMs: 100 });
+    sim.onData((c) => frames.push(c));
+    void sim.open();
+
+    sim.write('dvfc\n');
+    jest.advanceTimersByTime(300);
+    sim.write('st\n');
+    jest.advanceTimersByTime(100);
+    expect(lastSpeed(frames)).toBe('sp0X');
+    void sim.close();
+  });
+
+  it('a malformed dv frame does not extend the lease', () => {
+    jest.useFakeTimers();
+    const frames: string[] = [];
+    const sim = new CarSimulator({ ...quiet, speedIntervalMs: 100 });
+    sim.onData((c) => frames.push(c));
+    void sim.open();
+
+    sim.write('dvfc\n');
+    // Keep sending garbage past the lease window — it must not keep the car alive.
+    for (let i = 0; i < 12; i += 1) {
+      sim.write('dvzz\n');
+      jest.advanceTimersByTime(100);
+    }
+    expect(lastSpeed(frames)).toBe('sp0X');
+    void sim.close();
   });
 });
 

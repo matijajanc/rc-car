@@ -74,9 +74,9 @@ describe('bridge', () => {
     await once(client, 'open');
 
     // app -> car
-    client.send('kp\n');
-    await waitFor(() => link.writes.includes('kp\n'));
-    expect(link.writes).toContain('kp\n');
+    client.send('dvfc\n');
+    await waitFor(() => link.writes.includes('dvfc\n'));
+    expect(link.writes).toContain('dvfc\n');
 
     // car -> app
     const message = once(client, 'message');
@@ -103,10 +103,10 @@ describe('bridge', () => {
     expect(['sp', 'bv', 'mt']).toContain(items[0]?.code);
   });
 
-  it('lets the app drive the virtual car (drive command raises speed)', async () => {
+  it('lets the app drive the virtual car (drive state raises speed)', async () => {
     const simulator = new CarSimulator({
       speedIntervalMs: 20,
-      keepAliveTimeoutMs: 0, // don't auto-stop during the test
+      motionLeaseMs: 0, // don't coast during the test
       logger: silent,
     });
     bridge = await startBridge(testConfig(), simulator, { logger: quietLogger() });
@@ -123,9 +123,41 @@ describe('bridge', () => {
       }
     });
 
-    client.send('db\n'); // a drive-buttons press
+    client.send('dvfc\n'); // forward + straight
     await waitFor(() => maxSpeed > 0);
     expect(maxSpeed).toBeGreaterThan(0);
+  });
+
+  it('sends one explicit stop to the car when the last app disconnects', async () => {
+    const link = new MockLink();
+    bridge = await startBridge(testConfig(), link, { logger: quietLogger() });
+
+    client = new WebSocket(`ws://127.0.0.1:${bridge.port}`);
+    await once(client, 'open');
+    client.close();
+    await waitFor(() => link.writes.includes('st\n'));
+    expect(link.writes.filter((w) => w === 'st\n')).toHaveLength(1);
+  });
+
+  it('survives a car-link write failure (frame dropped, bridge stays up)', async () => {
+    // A serial port that is unplugged/mid-reconnect throws on write; the bridge
+    // must drop the frame (the car coasts out its motion lease) — not crash.
+    const link = new (class extends MockLink {
+      write(): void {
+        throw new Error('port not open');
+      }
+    })();
+    const logger = quietLogger();
+    bridge = await startBridge(testConfig(), link, { logger });
+
+    client = new WebSocket(`ws://127.0.0.1:${bridge.port}`);
+    await once(client, 'open');
+    client.send('dvfc\n');
+    await waitFor(() => logger.recent().some((e) => e.event === 'write_failed'));
+
+    // Still serving: the write failure was contained.
+    const health = await fetch(`http://127.0.0.1:${bridge.port}/health`);
+    expect(health.status).toBe(200);
   });
 
   it('reports and updates the connected client count', async () => {

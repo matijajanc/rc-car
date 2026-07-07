@@ -6,6 +6,7 @@ import {
   CODE_LENGTH,
   COMMAND_CODES,
   commandName,
+  frameCommand,
   parseCommandStream,
   parseTelemetryStream,
   telemetryName,
@@ -38,10 +39,12 @@ const TELEMETRY_GAP_MS = 3000;
 const LOG_LEVELS: readonly LogLevel[] = ['debug', 'info', 'warn', 'error'];
 
 /**
- * Keep-alive ('kp') is a 10Hz heartbeat. In verbose mode we coalesce it to at
- * most one line per client per this window so it doesn't bury real commands.
+ * The drive state ('dv') is re-asserted a few times a second while a control is
+ * held. In verbose mode we log a command only when its value CHANGES, plus a
+ * summary line per this window while it repeats, so the refresh stream doesn't
+ * bury real events.
  */
-const KEEP_ALIVE_LOG_INTERVAL_MS = 2000;
+const REPEAT_LOG_INTERVAL_MS = 2000;
 
 /** ws delivers messages as Buffer | ArrayBuffer | Buffer[]; normalise to text. */
 function rawDataToString(data: RawData): string {
@@ -100,6 +103,26 @@ export async function startBridge(
 
   await link.open();
   log.info('server', 'link_open', { simulate: config.simulate });
+
+  // The serial link can be down/reopening at any moment (car off, cable out,
+  // mid-reconnect) and its write() may throw. A crashed bridge is strictly
+  // worse than a dropped frame — the car's own motion lease coasts it to
+  // neutral within ~600ms when frames stop — so drop-and-warn (throttled)
+  // instead of letting a relay write take the process down.
+  let writeWarnedAt = 0;
+  function writeToCar(frame: string): void {
+    try {
+      link.write(frame);
+    } catch (error) {
+      const now = Date.now();
+      if (now - writeWarnedAt > 5000) {
+        writeWarnedAt = now;
+        log.warn('serial', 'write_failed', {
+          msg: `dropping frames — car link unavailable (${(error as Error).message})`,
+        });
+      }
+    }
+  }
 
   const httpServer = createServer((req, res) => handleHttp(req, res));
   const wss = new WebSocketServer({ server: httpServer });
@@ -161,42 +184,51 @@ export async function startBridge(
     const clientId = `#${++clientSeq} ${ip}:${req.socket.remotePort ?? '?'}`;
     log.info('ws', 'client_connected', { client: clientId, ip, clients: wss.clients.size });
 
-    // Per-connection verbose state: a partial-frame buffer plus keep-alive
-    // coalescing, both naturally torn down when this closure goes out of scope.
+    // Per-connection verbose state: a partial-frame buffer plus repeat
+    // coalescing, all naturally torn down when this closure goes out of scope.
     let cmdRest = '';
-    let kpSince = 0;
-    let kpLoggedAt = 0;
+    let lastCmdBody = '';
+    let cmdRepeats = 0;
+    let repeatLoggedAt = 0;
 
     client.on('message', (data) => {
       const raw = rawDataToString(data);
       if (verbose) {
         traceCommands(clientId, raw);
       }
-      link.write(raw);
+      writeToCar(raw);
     });
 
-    /** Decode and log each command in `raw`, coalescing the keep-alive flood. */
+    /**
+     * Decode and log each command in `raw`. A command identical to the previous
+     * one (the dv refresh stream re-asserting a held control) is coalesced into
+     * a periodic "xN" summary so state CHANGES stay easy to spot.
+     */
     function traceCommands(who: string, raw: string): void {
       const { items, rest } = parseCommandStream(cmdRest + raw);
       cmdRest = rest;
       for (const body of items) {
         const code = body.slice(0, CODE_LENGTH);
         const value = body.slice(CODE_LENGTH);
-        if (code === COMMAND_CODES.KEEP_ALIVE) {
-          kpSince += 1;
+        if (body === lastCmdBody) {
+          cmdRepeats += 1;
           const now = Date.now();
-          if (now - kpLoggedAt >= KEEP_ALIVE_LOG_INTERVAL_MS) {
+          if (now - repeatLoggedAt >= REPEAT_LOG_INTERVAL_MS) {
             log.debug('ws', 'app_to_car', {
-              msg: `${who} -> car   kp  (KEEP_ALIVE x${kpSince})`,
+              msg: `${who} -> car   ${body}  (${commandName(code) ?? 'unknown'} x${cmdRepeats})`,
               client: who,
               code,
-              count: kpSince,
+              value,
+              count: cmdRepeats,
             });
-            kpLoggedAt = now;
-            kpSince = 0;
+            repeatLoggedAt = now;
+            cmdRepeats = 0;
           }
           continue;
         }
+        lastCmdBody = body;
+        cmdRepeats = 0;
+        repeatLoggedAt = Date.now();
         log.debug('ws', 'app_to_car', {
           msg: `${who} -> car   ${code}${value}  (${commandName(code) ?? 'unknown'})`,
           client: who,
@@ -209,15 +241,24 @@ export async function startBridge(
     client.on('error', (error) =>
       log.warn('ws', 'client_error', { client: clientId, ip, msg: error.message }),
     );
-    client.on('close', (code: number, reason: Buffer) =>
+    client.on('close', (code: number, reason: Buffer) => {
       log.info('ws', 'client_disconnected', {
         client: clientId,
         ip,
         code,
         reason: reason.toString(),
         clients: wss.clients.size,
-      }),
-    );
+      });
+      // Nobody is controlling the car any more — stop it now rather than
+      // waiting out the motion lease. Event-driven (an actual socket close),
+      // never inferred: this is the only place the bridge speaks for the app.
+      if (wss.clients.size === 0) {
+        writeToCar(frameCommand(COMMAND_CODES.STOP));
+        log.info('server', 'car_stopped', {
+          msg: 'last app disconnected — sent explicit stop',
+        });
+      }
+    });
   });
   wss.on('error', (error) => log.error('ws', 'server_error', { msg: error.message }));
 
@@ -245,6 +286,9 @@ export async function startBridge(
     clientCount: () => wss.clients.size,
     close: async () => {
       clearInterval(gapTimer);
+      // Deliberate shutdown: stop the car immediately instead of leaving it to
+      // coast out its motion lease.
+      writeToCar(frameCommand(COMMAND_CODES.STOP));
       for (const client of wss.clients) {
         client.terminate();
       }

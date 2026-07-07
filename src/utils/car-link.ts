@@ -7,8 +7,8 @@ import { sendAll } from './settings';
  * server and the car — which is independent of the app↔server WebSocket.
  *
  * Why this exists: the WebSocket can stay happily "connected" while the car is
- * out of radio range or has powered down. When that happens the car stops
- * hearing keep-alives and safety-stops itself, but the app would otherwise
+ * out of radio range or has powered down. When that happens the car's motion
+ * lease expires and it coasts to a stop on its own, but the app would otherwise
  * still show green and give no hint why the car died. We can't observe the
  * radio hop directly, so we use telemetry as a proxy: the firmware streams `sp`
  * every ~500ms (even when stopped), so a few-second silence means the car link
@@ -25,8 +25,8 @@ export type CarLinkStatus = 'alive' | 'lost';
 export const CAR_LINK_EVENT = 'carLinkStatus';
 
 // The firmware streams `sp` every ~500ms; require several missed frames so
-// normal jitter never trips the alert. Comfortably above the car's own 300ms
-// keep-alive safety-stop window and under the server's 3s telemetry-gap log.
+// normal jitter never trips the alert. Comfortably above the car's own 600ms
+// motion-lease window and under the server's 3s telemetry-gap log.
 const CAR_LINK_TIMEOUT_MS = 2500;
 const CHECK_INTERVAL_MS = 500;
 // A car that reset after a >2.5s gap fires both paths at once (recovery + boot
@@ -73,9 +73,9 @@ export function getStatus(): CarLinkStatus {
 }
 
 /**
- * Begin watching telemetry liveness. Idempotent — call it on every connect
- * (alongside the keep-alive); a repeat call just refreshes the clock so a
- * reconnect can't immediately read as 'lost'.
+ * Begin watching telemetry liveness. Idempotent — call it on every connect;
+ * a repeat call just refreshes the clock so a reconnect can't immediately
+ * read as 'lost'.
  */
 export function start(): void {
   lastSeen = Date.now();

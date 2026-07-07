@@ -139,16 +139,18 @@ SIMULATE=false SERIAL_PATH=/dev/ttyUSB0 SERIAL_BAUD=19200 npm start
 
 **The wire protocol** is the 2-character-code scheme defined in
 [`shared/protocol.ts`](shared/protocol.ts) (app → car ends in `\n`, car → app ends in `X`).
-The app drives via the on-screen **buttons** (`db`); `sc`/`rc` trim the steering and
+The app drives via the on-screen **buttons** (`dv` drive state); `sc`/`rc` trim the steering and
 range-sensor servos; the car streams `sp`/`bv`/`mt` telemetry plus `rs` when the front
 obstacle brake engages. *(The old accelerometer drive mode `dm`/`ad`/`as` was removed —
 the firmware and protocol now match what the app actually sends.)*
 
 **Safety mechanisms baked into the firmware** — understand these before changing them:
 
-- **Keep-alive stop** — the app sends `kp` every 100 ms; if the car misses it for
-  ~600 ms (6 beats) it stops itself by commanding neutral throttle. This is the
-  main safety net.
+- **Motion lease** — the app streams the absolute drive state (`dv<throttle><steer>`)
+  every 150 ms while a control is held; a non-neutral throttle is only honoured for
+  ~600 ms since the last frame, then the car coasts to neutral. There is no
+  keep-alive: nothing can keep the car moving except the operator's finger,
+  restated a few times a second. This is the main safety net.
 - **Motor-temperature cutoff** — the car stops if the LM35 (A0) reads ≥ 50 °C.
 - **Obstacle brake** — the front ultrasonic brakes when something is within
   `speedFactor × 2.4` cm while moving forward; the rear ultrasonic blocks reversing.
@@ -226,8 +228,9 @@ DEBUG [serial] car_to_app — car -> apps   sp42  (SPEED)
 
 - Each client is labelled `#N <ip>:<port>`, so two connected apps are easy to tell apart.
 - Codes are decoded to names from `shared/protocol.ts` (`cl` → `CAR_LIGHTS`, `sp` → `SPEED`, …).
-- The `kp` keep-alive heartbeat (10 Hz) is coalesced to one line every ~2s
-  (`KEEP_ALIVE x21`) so it doesn't bury real commands.
+- The `dv` drive-state refresh (re-asserted several times a second while a control
+  is held) is logged only when the value changes, plus a periodic `(DRIVE_STATE xN)`
+  summary while it repeats, so state changes stay easy to spot.
 
 > `LOG_LEVEL=debug` on its own does **not** show these per-frame traces — they are
 > only generated in verbose mode. `LOG_LEVEL` sets the severity threshold;

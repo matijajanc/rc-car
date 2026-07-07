@@ -11,7 +11,7 @@ import { CAR_LINK_EVENT, CarLinkStatus } from '../../../utils/car-link';
  * car has stopped or is braking, derived from the telemetry the firmware
  * already streams:
  *   - link lost     -> no telemetry from the car (out of range / powered off);
- *                      it has stopped hearing keep-alives and safety-stopped
+ *                      its motion lease has expired and it coasted to neutral
  *   - rs1 / rs0     -> the front obstacle brake engaged / cleared
  *   - mt >= cutoff  -> the motor-temperature cutoff stopped the car
  *

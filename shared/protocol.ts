@@ -27,8 +27,20 @@ export const CODE_LENGTH = 2;
  * Commands the app sends to the car (app -> car).
  */
 export const COMMAND_CODES = {
-  DRIVE_BUTTONS: 'db',
-  KEEP_ALIVE: 'kp',
+  /**
+   * Absolute drive state ("motion lease") — value is "<throttle><steer>", e.g.
+   * 'dvfc' = forward + straight, 'dvnc' = fully idle. See DRIVE_THROTTLE /
+   * DRIVE_STEER and {@link encodeDriveState}. The app re-asserts the FULL state
+   * on every change and on a fixed cadence; the firmware treats a non-neutral
+   * throttle as valid only for MOTION_LEASE_MS since the last dv frame, then
+   * coasts to neutral. This replaces BOTH the old edge-triggered drive buttons
+   * ('db' press/release events — a lost release frame meant a runaway car) and
+   * the old 'kp' keep-alive (liveness inference that both false-tripped and
+   * kept a stale throttle alive). There is deliberately NO keep-alive concept
+   * anywhere in this protocol: the only thing that keeps the car moving is the
+   * operator's finger, restated a few times a second.
+   */
+  DRIVE_STATE: 'dv',
   STEER_CALIBRATE: 'sc',
   STOP: 'st',
   SPEED_FACTOR: 'sf',
@@ -51,6 +63,44 @@ export const COMMAND_CODES = {
 } as const;
 
 export type CommandCode = (typeof COMMAND_CODES)[keyof typeof COMMAND_CODES];
+
+/** Throttle component of a drive-state ('dv') frame. */
+export const DRIVE_THROTTLE = {
+  FORWARD: 'f',
+  NEUTRAL: 'n',
+  REVERSE: 'b',
+} as const;
+export type ThrottleState = (typeof DRIVE_THROTTLE)[keyof typeof DRIVE_THROTTLE];
+
+/** Steering component of a drive-state ('dv') frame. */
+export const DRIVE_STEER = {
+  LEFT: 'l',
+  CENTER: 'c',
+  RIGHT: 'r',
+} as const;
+export type SteerState = (typeof DRIVE_STEER)[keyof typeof DRIVE_STEER];
+
+/**
+ * Motion-lease timings (ms). These three numbers are a tuned set — change them
+ * together or not at all:
+ *  - MOTION_LEASE_MS: how long the firmware honours a non-neutral throttle
+ *    without a fresh dv frame before coasting to neutral. The firmware has its
+ *    own copy (`motionLeaseMs` in arduino/rc-car/rc-car.ino) that MUST match.
+ *  - ACTIVE refresh: dv cadence while any control is engaged — 4 consecutive
+ *    lost/late frames before the car coasts, and dense enough uplink traffic to
+ *    keep the phone's Wi-Fi radio out of power-save while driving.
+ *  - IDLE refresh: dv cadence while everything is neutral. Not a safety signal
+ *    (a parked car needs no lease) — it only keeps the radio awake through
+ *    driving pauses so the first press afterwards reacts instantly.
+ */
+export const MOTION_LEASE_MS = 600;
+export const DRIVE_STATE_ACTIVE_REFRESH_MS = 150;
+export const DRIVE_STATE_IDLE_REFRESH_MS = 1000;
+
+/** Build the body of a drive-state command, e.g. ('f','c') -> 'dvfc'. */
+export function encodeDriveState(throttle: ThrottleState, steer: SteerState): string {
+  return `${COMMAND_CODES.DRIVE_STATE}${throttle}${steer}`;
+}
 
 /**
  * Telemetry the car streams back to the app (car -> app).

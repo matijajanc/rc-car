@@ -2,11 +2,14 @@ import {
   CODE_LENGTH,
   COMMAND_CODES,
   COMMAND_TERMINATOR,
+  DRIVE_STEER,
+  DRIVE_THROTTLE,
   TELEMETRY_CODES,
   TELEMETRY_TERMINATOR,
   commandName,
   decodeTelemetryFrame,
   encodeCommand,
+  encodeDriveState,
   formatSettingValue,
   frameCommand,
   parseCommandStream,
@@ -27,7 +30,7 @@ describe('code tables', () => {
 
 describe('encodeCommand', () => {
   it('returns the bare code when there is no value', () => {
-    expect(encodeCommand(COMMAND_CODES.KEEP_ALIVE)).toBe('kp');
+    expect(encodeCommand(COMMAND_CODES.STOP)).toBe('st');
     expect(encodeCommand('st', undefined)).toBe('st');
   });
 
@@ -40,7 +43,7 @@ describe('encodeCommand', () => {
 
 describe('frameCommand', () => {
   it('appends exactly one command terminator', () => {
-    expect(frameCommand('kp')).toBe(`kp${COMMAND_TERMINATOR}`);
+    expect(frameCommand('st')).toBe(`st${COMMAND_TERMINATOR}`);
     expect(frameCommand('sp', 95)).toBe(`sp95${COMMAND_TERMINATOR}`);
   });
 
@@ -100,9 +103,28 @@ describe('parseTelemetryStream', () => {
 
 describe('parseCommandStream', () => {
   it('splits on the newline terminator and drops empty segments', () => {
-    const { items, rest } = parseCommandStream('kp\n\nst\ndb');
-    expect(items).toEqual(['kp', 'st']);
-    expect(rest).toBe('db');
+    const { items, rest } = parseCommandStream('dvfc\n\nst\ndv');
+    expect(items).toEqual(['dvfc', 'st']);
+    expect(rest).toBe('dv');
+  });
+});
+
+describe('drive state (dv)', () => {
+  it('encodes the absolute throttle+steer state', () => {
+    expect(encodeDriveState(DRIVE_THROTTLE.FORWARD, DRIVE_STEER.CENTER)).toBe('dvfc');
+    expect(encodeDriveState(DRIVE_THROTTLE.NEUTRAL, DRIVE_STEER.LEFT)).toBe('dvnl');
+    expect(encodeDriveState(DRIVE_THROTTLE.REVERSE, DRIVE_STEER.RIGHT)).toBe('dvbr');
+  });
+
+  it('round-trips through the command wire format', () => {
+    const wire = frameCommand(encodeDriveState(DRIVE_THROTTLE.FORWARD, DRIVE_STEER.RIGHT));
+    expect(wire).toBe('dvfr\n');
+    const { items } = parseCommandStream(wire);
+    expect(items).toEqual(['dvfr']);
+  });
+
+  it('maps the code back to its name', () => {
+    expect(commandName(COMMAND_CODES.DRIVE_STATE)).toBe('DRIVE_STATE');
   });
 });
 
@@ -110,7 +132,7 @@ describe('commandName / telemetryName', () => {
   it('maps codes back to their human-readable names', () => {
     expect(commandName(COMMAND_CODES.SPEED_FACTOR)).toBe('SPEED_FACTOR');
     expect(commandName(COMMAND_CODES.CAR_LIGHTS)).toBe('CAR_LIGHTS');
-    expect(commandName(COMMAND_CODES.KEEP_ALIVE)).toBe('KEEP_ALIVE');
+    expect(commandName(COMMAND_CODES.DRIVE_STATE)).toBe('DRIVE_STATE');
     expect(telemetryName(TELEMETRY_CODES.SPEED)).toBe('SPEED');
     expect(telemetryName(TELEMETRY_CODES.BATTERY_VOLTAGE)).toBe('BATTERY_VOLTAGE');
   });

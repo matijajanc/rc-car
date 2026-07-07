@@ -7,10 +7,24 @@
  *   Car -> app : "<2-char code><value>X"    (X-terminated)
  *
  * Telemetry the car streams:  mt motor temp · sp speed · bv battery · rs front obstacle
- * Commands the car accepts:   db drive buttons · kp keep-alive · st stop · sc steer trim ·
+ * Commands the car accepts:   dv drive state · st stop · sc steer trim ·
  *                             rc range-servo trim · sf speed factor · rs range sensors on/off ·
  *                             cl lights · ll long lights · bl blinkers · b4 hazards ·
  *                             lc underglow colour ("lc<r>,<b>")
+ *
+ * Safety model — the "motion lease". There is NO keep-alive. The app streams
+ * the ABSOLUTE drive state ("dv<throttle><steer>", throttle f/n/b, steer l/c/r)
+ * on every change and on a fixed cadence while any control is engaged. A
+ * non-neutral throttle is honoured only for motionLeaseMs since the last dv
+ * frame; after that the car coasts to neutral and waits. Consequences:
+ *   - a lost frame is corrected by the next refresh (absolute state, so a lost
+ *     "release" can never leave the throttle stuck — the old edge-triggered
+ *     db press/release protocol had exactly that runaway failure mode);
+ *   - a dead app / dead link / dead bridge all look identical here: dv frames
+ *     stop, the lease expires, the car coasts. Nothing upstream can keep the
+ *     car moving on the operator's behalf, because nothing else exists that
+ *     extends the lease;
+ *   - a parked car (neutral throttle) needs no lease and no traffic at all.
  *
  * The 2018 accelerometer drive mode (dm/ad/as) was removed when this firmware
  * was reconciled with the React Native app, which drives via on-screen buttons.
@@ -34,8 +48,15 @@ const int drivePin = 11;
 int speedFactor = 120;       // forward throttle servo angle (app sends 95..165)
 const int steer = 9;
 char cmd[16];                // serial command line buffer (replaces String inByte)
-const int keepAliveTimeoutMs = 600;
-int connectionT;
+
+// Motion lease — see the header comment. Must match MOTION_LEASE_MS in
+// shared/protocol.ts. The app refreshes an engaged control every 150ms, so the
+// lease tolerates 3-4 consecutive lost/late frames before coasting.
+const unsigned long motionLeaseMs = 600;
+char throttleState = 'n';          // last commanded throttle: f / n / b
+char steerState = 'c';             // last commanded steering: l / c / r
+unsigned long lastDriveStateAt = 0;
+
 int tempMotorT;
 int rangeT;
 int batVolt;
@@ -141,7 +162,6 @@ void setup() {
   pinMode(directionPin, INPUT);
 
   // Set Timer
-  connectionT = timer.setInterval(keepAliveTimeoutMs, stopCar);
   tempMotorT = timer.setInterval(3000, tempMotor);
   rangeT = timer.setInterval(35, frangeS);
   batVolt = timer.setInterval(30000, battVoltage);
@@ -188,6 +208,14 @@ void loop() {
   // Start Millis Function (Blinkers)
   currentMillis = millis();
 
+  // Motion lease: while the throttle is non-neutral, a fresh dv frame must have
+  // arrived within motionLeaseMs — otherwise the operator (or the link to them)
+  // is gone and we coast to neutral. Neutral needs no lease. The unsigned
+  // subtraction is rollover-safe.
+  if (throttleState != 'n' && currentMillis - lastDriveStateAt > motionLeaseMs) {
+    stopCar();
+  }
+
   // Blinkers
   if (blinkersState == 1 && blinkON == 1) {
     if (currentMillis - previousMillis > interval) {
@@ -223,7 +251,7 @@ void loop() {
   }
 
   // Incoming command line ("<code><value>\n"). Read into a fixed char buffer
-  // instead of a String to avoid heap churn from the 10Hz keep-alive.
+  // instead of a String to avoid heap churn from the drive-state refresh stream.
   if (Serial.available()) {
     int n = Serial.readBytesUntil('\n', cmd, sizeof(cmd) - 1);
     cmd[n] = '\0';
@@ -235,29 +263,24 @@ void loop() {
 
 // Dispatch one decoded command line.
 void handleCommand(const char *line) {
-  // Keep Alive — restart the safety-stop timer and show the "connected" LED.
-  if (strncmp(line, "kp", 2) == 0) {
-    timer.restartTimer(connectionT);
-    // Repaint the configurable "normal" underglow (was hardcoded blue). The
-    // stop/brake handlers override this to red; the next keep-alive restores it.
-    analogWrite(redLED, glowR);
-    analogWrite(blueLED, glowB);
+  // Absolute drive state ("dv<throttle><steer>"). Each frame fully describes
+  // the desired throttle + steering; the app re-sends it on every change and
+  // on a fixed cadence, so a lost frame is corrected by the next one.
+  if (strncmp(line, "dv", 2) == 0) {
+    if (line[2] != '\0' && line[3] != '\0') {
+      applyDriveState(line[2], line[3]);
+    }
     return;
   }
 
-  // Stop the car (e.g. on leaving the drive screen).
+  // Stop the car (explicit: leaving the drive screen, app backgrounded, or the
+  // bridge saw the last app disconnect).
   if (strncmp(line, "st", 2) == 0) {
     stopCar();
     return;
   }
 
   int value = atoi(line + 2); // numeric payload after the 2-char code
-
-  // Drive with Buttons
-  if (strncmp(line, "db", 2) == 0) {
-    driveButton(line[2]);
-    return;
-  }
 
   //////////////
   // OPTIONS //
@@ -293,8 +316,8 @@ void handleCommand(const char *line) {
 
   // Bottom strip ("underglow") colour ("lc<r>,<b>"). The strip has only red and
   // blue channels, so the app does the colour maths and sends two raw PWM values
-  // (0..255) which we apply directly. We store them so each keep-alive repaints
-  // the same colour; pure red stays reserved for the stop/brake alert.
+  // (0..255) which we apply directly. We store them so each drive-state frame
+  // repaints the same colour; pure red stays reserved for the stop/brake alert.
   if (strncmp(line, "lc", 2) == 0) {
     const char *comma = strchr(line + 2, ',');
     if (comma != NULL) {
@@ -347,71 +370,80 @@ void handleCommand(const char *line) {
   }
 }
 
-// Act on a single drive-button character (w/s/x forward-stack, a/d/g steer).
-void driveButton(char comm) {
-  // Forward
-  if (comm == 'w') {
-    driveSrv.write(speedFactor);
-
-    preventNeutral = 0;
-    preventBackward = 0;
-    // Stop Lights
-    digitalWrite(stopLED, LOW);
+// Apply one absolute drive-state frame. Frames repeat while a control is held,
+// so servo writes are idempotent re-assertions; the light/blinker effects key
+// off the state TRANSITIONS so refreshes don't retrigger them.
+void applyDriveState(char throttle, char steer) {
+  // Malformed input must never extend the motion lease.
+  if ((throttle != 'f' && throttle != 'n' && throttle != 'b') ||
+      (steer != 'l' && steer != 'c' && steer != 'r')) {
+    return;
   }
-  // Reverse
-  else if (comm == 's' && preventBackward != 1) {
-    driveSrv.write(15);
+  lastDriveStateAt = millis();
+  byte throttleChanged = (throttle != throttleState) ? 1 : 0;
+  byte steerChanged = (steer != steerState) ? 1 : 0;
+  throttleState = throttle;
+  steerState = steer;
 
-    preventNeutral = 0;
-    // All 4 Blinkers
-    blinkers4State = 1;
-
-    // Stop Lights
+  // Throttle
+  if (throttle == 'f') {
+    // A FRESH forward press overrides an engaged front-obstacle brake
+    // (preventNeutral), exactly like a new press did with the old buttons; a
+    // mere refresh of an already-held forward does NOT fight the brake's own
+    // 35ms reassertion loop.
+    if (throttleChanged || preventNeutral == 0) {
+      driveSrv.write(speedFactor);
+      preventNeutral = 0;
+      preventBackward = 0;
+    }
     digitalWrite(stopLED, LOW);
-  }
-  // Stop
-  else if (comm == 'x' && preventNeutral != 1) {
-    driveSrv.write(90);
-
-    // All 4 Blinkers (Off)
-    blinkers4State = 0;
-    ledState = 0;
-    digitalWrite(blinkLLED, LOW);
-    digitalWrite(blinkRLED, LOW);
-
-    // Stop Lights
+  } else if (throttle == 'b') {
+    if (preventBackward != 1) {
+      driveSrv.write(15);
+      preventNeutral = 0;
+    }
+    digitalWrite(stopLED, LOW);
+  } else { // 'n' — released
+    if (preventNeutral != 1) {
+      driveSrv.write(90);
+    }
     digitalWrite(stopLED, HIGH);
   }
-  // Left
-  else if (comm == 'a') {
+  // Hazards follow reversing.
+  if (throttleChanged) {
+    blinkers4State = (throttle == 'b') ? 1 : 0;
+    if (blinkers4State == 0) {
+      ledState = 0;
+      digitalWrite(blinkLLED, LOW);
+      digitalWrite(blinkRLED, LOW);
+    }
+  }
+
+  // Steering
+  if (steer == 'l') {
     turnservo.write(65 + steerCalib);
-
-    // Blinkers
-    if (blinkersState == 1 && blinkers4State == 0) {
-      blinkON = 1;
-      blinkSide = 'l';
-    }
-  }
-  // Right
-  else if (comm == 'd') {
+  } else if (steer == 'r') {
     turnservo.write(115 + steerCalib);
-
-    // Blinkers
-    if (blinkersState == 1 && blinkers4State == 0) {
+  } else {
+    turnservo.write(90 + steerCalib);
+  }
+  if (steerChanged) {
+    if (steer == 'c') {
+      blinkON = 0;
+      ledState = 0;
+      digitalWrite(blinkLLED, LOW);
+      digitalWrite(blinkRLED, LOW);
+    } else if (blinkersState == 1 && blinkers4State == 0) {
       blinkON = 1;
-      blinkSide = 'r';
+      blinkSide = steer;
     }
   }
-  // Aligned (centre)
-  else if (comm == 'g') {
-    turnservo.write(90 + steerCalib);
 
-    // Blinkers (Off)
-    blinkON = 0;
-    ledState = 0;
-    digitalWrite(blinkLLED, LOW);
-    digitalWrite(blinkRLED, LOW);
-  }
+  // Repaint the configurable "normal" underglow. The safety stop / obstacle
+  // brake force it red; the next operator frame restores the chosen colour, so
+  // a car that stays red is a car that is hearing nothing.
+  analogWrite(redLED, glowR);
+  analogWrite(blueLED, glowB);
 }
 
 // Emit one telemetry frame ("<code><value>X") without allocating a String.
@@ -421,12 +453,24 @@ void sendTelemetry(const char *code, long value) {
   Serial.print('X');
 }
 
-// Stop The Car
+// Safety stop: coast to neutral throttle, centre the steering, and reset the
+// tracked drive state so the expired lease can't re-trip. Fired by the motion
+// lease, an explicit 'st', and the motor-temperature cutoff.
 void stopCar() {
   driveSrv.write(90);
   turnservo.write(90 + steerCalib);
+  throttleState = 'n';
+  steerState = 'c';
   preventNeutral = 0;
 
+  // Signals: stop lights on, blinkers off, red underglow alert. The next dv
+  // frame repaints the normal glow — a car that stays red is hearing nothing.
+  digitalWrite(stopLED, HIGH);
+  blinkers4State = 0;
+  blinkON = 0;
+  ledState = 0;
+  digitalWrite(blinkLLED, LOW);
+  digitalWrite(blinkRLED, LOW);
   analogWrite(redLED, 255);
   analogWrite(blueLED, 0);
 }

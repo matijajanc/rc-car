@@ -1,5 +1,7 @@
 import {
   COMMAND_CODES,
+  DRIVE_THROTTLE,
+  MOTION_LEASE_MS,
   TELEMETRY_CODES,
   TELEMETRY_TERMINATOR,
   parseCommandStream,
@@ -20,10 +22,11 @@ export interface SimulatorOptions {
    */
   rangeProblemIntervalMs?: number;
   /**
-   * If no keep-alive ('kp') arrives within this window the virtual car stops,
-   * mirroring the real car's safety behaviour. 0 disables the check.
+   * Motion lease: how long a non-neutral throttle stays valid without a fresh
+   * drive-state ('dv') frame before the virtual car coasts to neutral,
+   * mirroring the firmware's dead-man. 0 disables the check.
    */
-  keepAliveTimeoutMs?: number;
+  motionLeaseMs?: number;
   /** Injectable RNG for deterministic tests. Defaults to Math.random. */
   random?: () => number;
   /** Injectable clock for deterministic tests. Defaults to Date.now. */
@@ -37,7 +40,7 @@ const DEFAULTS: Required<Omit<SimulatorOptions, 'random' | 'now' | 'logger'>> = 
   batteryIntervalMs: 5000,
   tempIntervalMs: 7000,
   rangeProblemIntervalMs: 4000,
-  keepAliveTimeoutMs: 400,
+  motionLeaseMs: MOTION_LEASE_MS,
 };
 
 function randomInt(random: () => number, min: number, max: number): number {
@@ -66,7 +69,9 @@ export class CarSimulator implements CarLink {
   private commandBuffer = '';
   private speed = 0;
   private rangeProblem = false;
-  private lastKeepAlive = 0;
+  private throttle: string = DRIVE_THROTTLE.NEUTRAL;
+  private lastDriveStateAt = 0;
+  private lastLoggedCommand = '';
   private running = false;
 
   constructor(options: SimulatorOptions = {}) {
@@ -75,7 +80,7 @@ export class CarSimulator implements CarLink {
       batteryIntervalMs: options.batteryIntervalMs ?? DEFAULTS.batteryIntervalMs,
       tempIntervalMs: options.tempIntervalMs ?? DEFAULTS.tempIntervalMs,
       rangeProblemIntervalMs: options.rangeProblemIntervalMs ?? DEFAULTS.rangeProblemIntervalMs,
-      keepAliveTimeoutMs: options.keepAliveTimeoutMs ?? DEFAULTS.keepAliveTimeoutMs,
+      motionLeaseMs: options.motionLeaseMs ?? DEFAULTS.motionLeaseMs,
     };
     this.random = options.random ?? Math.random;
     this.now = options.now ?? Date.now;
@@ -84,7 +89,7 @@ export class CarSimulator implements CarLink {
 
   open(): Promise<void> {
     this.running = true;
-    this.lastKeepAlive = this.now();
+    this.lastDriveStateAt = this.now();
 
     this.timers.push(
       setInterval(() => this.emitSpeed(), this.opts.speedIntervalMs),
@@ -147,12 +152,24 @@ export class CarSimulator implements CarLink {
   }
 
   private emitSpeed(): void {
-    // Safety: if the controller stops sending keep-alives, the car stops.
+    // Motion lease, exactly like the firmware: a non-neutral throttle without a
+    // fresh dv frame within the lease window coasts to neutral.
     if (
-      this.opts.keepAliveTimeoutMs > 0 &&
-      this.now() - this.lastKeepAlive > this.opts.keepAliveTimeoutMs
+      this.throttle !== DRIVE_THROTTLE.NEUTRAL &&
+      this.opts.motionLeaseMs > 0 &&
+      this.now() - this.lastDriveStateAt > this.opts.motionLeaseMs
     ) {
-      this.speed = 0;
+      this.throttle = DRIVE_THROTTLE.NEUTRAL;
+      this.logger('[simulator] motion lease expired — coasting to neutral');
+    }
+    // Crude vehicle model: ramp toward a cruising speed while the throttle is
+    // engaged, coast down toward 0 when it isn't.
+    if (this.throttle === DRIVE_THROTTLE.FORWARD) {
+      this.speed = Math.min(45, this.speed + 8);
+    } else if (this.throttle === DRIVE_THROTTLE.REVERSE) {
+      this.speed = Math.min(15, this.speed + 5);
+    } else {
+      this.speed = Math.max(0, this.speed - 15);
     }
     this.send(TELEMETRY_CODES.SPEED, this.speed);
   }
@@ -173,21 +190,30 @@ export class CarSimulator implements CarLink {
   /** React to a decoded command body the way a real car roughly would. */
   private handleCommand(command: string): void {
     const code = command.slice(0, 2);
-    // The keep-alive is a 10Hz heartbeat; echoing each one floods debug logs
-    // (the server already coalesces keep-alives in its verbose trace).
-    if (code !== COMMAND_CODES.KEEP_ALIVE) {
+    // The drive state repeats several times a second while a control is held;
+    // echoing each refresh floods debug logs, so log only when it changes.
+    if (command !== this.lastLoggedCommand) {
+      this.lastLoggedCommand = command;
       this.logger(`[simulator] <- ${command}`);
     }
     switch (code) {
-      case COMMAND_CODES.KEEP_ALIVE:
-        this.lastKeepAlive = this.now();
+      case COMMAND_CODES.DRIVE_STATE: {
+        // "dv<throttle><steer>" — accept only well-formed frames, like the
+        // firmware (garbage must never extend the motion lease).
+        const throttle = command[2];
+        if (
+          throttle === DRIVE_THROTTLE.FORWARD ||
+          throttle === DRIVE_THROTTLE.NEUTRAL ||
+          throttle === DRIVE_THROTTLE.REVERSE
+        ) {
+          this.throttle = throttle;
+          this.lastDriveStateAt = this.now();
+        }
         break;
+      }
       case COMMAND_CODES.STOP:
+        this.throttle = DRIVE_THROTTLE.NEUTRAL;
         this.speed = 0;
-        break;
-      case COMMAND_CODES.DRIVE_BUTTONS:
-        // Any drive input nudges the virtual speed up to a cruising value.
-        this.speed = Math.min(45, this.speed + 5);
         break;
       default:
         // Settings/calibration commands have no effect on telemetry.
