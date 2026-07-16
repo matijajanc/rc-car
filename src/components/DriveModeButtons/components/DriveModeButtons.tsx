@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StatusBar } from 'react-native';
-import { DRIVE_STEER, DRIVE_THROTTLE } from '../../../../shared/protocol';
+import { DRIVE_STEER } from '../../../../shared/protocol';
 import type { SteerState, ThrottleState } from '../../../../shared/protocol';
 import styles from './assets/styles/styles';
 import SpeedometerContainer from '../../Speedometer/SpeedometerContainer';
@@ -9,6 +9,7 @@ import MotorTemperatureContainer from '../../MotorTemperature/MotorTemperatureCo
 import DriveButton from './DriveButton/DriveButton';
 import ArrowIcon from './DriveButton/Arrow-icon';
 import CarAlert from './CarAlert';
+import ThrottlePad from './ThrottlePad/ThrottlePad';
 
 interface Props {
   /** Press reports the direction; release reports neutral/centre. */
@@ -24,19 +25,7 @@ const DriveModeButton = ({ onThrottle, onSteer, navigate }: Props): React.JSX.El
   <View style={styles.container}>
     <StatusBar hidden />
     <CarAlert />
-    <View style={styles.upDownBox}>
-      <DriveButton
-        callbackBtnPress={() => onThrottle(DRIVE_THROTTLE.FORWARD)}
-        callbackBtnRelease={() => onThrottle(DRIVE_THROTTLE.NEUTRAL)}
-        additionalStyles={styles.bottomSpace}
-        arrow={<ArrowIcon transform="translate(0 100) rotate(270)" />}
-      />
-      <DriveButton
-        callbackBtnPress={() => onThrottle(DRIVE_THROTTLE.REVERSE)}
-        callbackBtnRelease={() => onThrottle(DRIVE_THROTTLE.NEUTRAL)}
-        arrow={<ArrowIcon transform="translate(100 0) rotate(90)" />}
-      />
-    </View>
+    <ThrottlePad onThrottle={onThrottle} />
     <View style={styles.mainBox}>
       <SpeedometerContainer navigate={() => navigate('Speed')} />
       <View style={styles.carDataBox}>
