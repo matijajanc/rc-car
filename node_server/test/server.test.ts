@@ -123,7 +123,7 @@ describe('bridge', () => {
       }
     });
 
-    client.send('dvfc\n'); // forward + straight
+    client.send('dvfc80\n'); // forward + straight at level 80
     await waitFor(() => maxSpeed > 0);
     expect(maxSpeed).toBeGreaterThan(0);
   });

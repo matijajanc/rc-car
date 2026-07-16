@@ -70,6 +70,7 @@ export class CarSimulator implements CarLink {
   private speed = 0;
   private rangeProblem = false;
   private throttle: string = DRIVE_THROTTLE.NEUTRAL;
+  private forwardLevel = 0;
   private lastDriveStateAt = 0;
   private lastLoggedCommand = '';
   private running = false;
@@ -162,10 +163,12 @@ export class CarSimulator implements CarLink {
       this.throttle = DRIVE_THROTTLE.NEUTRAL;
       this.logger('[simulator] motion lease expired — coasting to neutral');
     }
-    // Crude vehicle model: ramp toward a cruising speed while the throttle is
-    // engaged, coast down toward 0 when it isn't.
+    // Crude vehicle model: ramp toward a target speed set by the throttle. The
+    // forward target scales with the 0..100 level (0 km/h .. ~45 km/h).
     if (this.throttle === DRIVE_THROTTLE.FORWARD) {
-      this.speed = Math.min(45, this.speed + 8);
+      const target = Math.round((this.forwardLevel / 100) * 45);
+      this.speed =
+        this.speed < target ? Math.min(target, this.speed + 8) : Math.max(target, this.speed - 8);
     } else if (this.throttle === DRIVE_THROTTLE.REVERSE) {
       this.speed = Math.min(15, this.speed + 5);
     } else {
@@ -198,8 +201,8 @@ export class CarSimulator implements CarLink {
     }
     switch (code) {
       case COMMAND_CODES.DRIVE_STATE: {
-        // "dv<throttle><steer>" — accept only well-formed frames, like the
-        // firmware (garbage must never extend the motion lease).
+        // "dv<throttle><steer>[level]" — accept only well-formed frames, like
+        // the firmware (garbage must never extend the motion lease).
         const throttle = command[2];
         if (
           throttle === DRIVE_THROTTLE.FORWARD ||
@@ -207,12 +210,17 @@ export class CarSimulator implements CarLink {
           throttle === DRIVE_THROTTLE.REVERSE
         ) {
           this.throttle = throttle;
+          this.forwardLevel =
+            throttle === DRIVE_THROTTLE.FORWARD
+              ? Math.max(0, Math.min(100, parseInt(command.slice(4), 10) || 0))
+              : 0;
           this.lastDriveStateAt = this.now();
         }
         break;
       }
       case COMMAND_CODES.STOP:
         this.throttle = DRIVE_THROTTLE.NEUTRAL;
+        this.forwardLevel = 0;
         this.speed = 0;
         break;
       default:

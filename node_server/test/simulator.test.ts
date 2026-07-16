@@ -5,12 +5,12 @@ describe('simulator command logging', () => {
     const messages: string[] = [];
     const sim = new CarSimulator({ logger: (m) => messages.push(m) });
 
-    sim.write('dvfc\n'); // press forward — echoed
-    sim.write('dvfc\n'); // refresh of the same state — suppressed
-    sim.write('dvfc\n'); // refresh — suppressed
+    sim.write('dvfc80\n'); // press forward — echoed
+    sim.write('dvfc80\n'); // refresh of the same state — suppressed
+    sim.write('dvfc80\n'); // refresh — suppressed
     sim.write('dvnc\n'); // release — echoed
 
-    expect(messages.filter((m) => m.includes('<- dvfc'))).toHaveLength(1);
+    expect(messages.filter((m) => m.includes('<- dvfc80'))).toHaveLength(1);
     expect(messages.filter((m) => m.includes('<- dvnc'))).toHaveLength(1);
   });
 });
@@ -39,7 +39,7 @@ describe('simulator motion lease', () => {
 
     // Hold forward, refreshing well inside the 600ms lease.
     for (let i = 0; i < 6; i += 1) {
-      sim.write('dvfc\n');
+      sim.write('dvfc80\n');
       jest.advanceTimersByTime(100);
     }
     expect(lastSpeed(frames)).not.toBe('sp0X');
@@ -57,7 +57,7 @@ describe('simulator motion lease', () => {
     sim.onData((c) => frames.push(c));
     void sim.open();
 
-    sim.write('dvfc\n');
+    sim.write('dvfc80\n');
     jest.advanceTimersByTime(300);
     sim.write('st\n');
     jest.advanceTimersByTime(100);
@@ -72,7 +72,7 @@ describe('simulator motion lease', () => {
     sim.onData((c) => frames.push(c));
     void sim.open();
 
-    sim.write('dvfc\n');
+    sim.write('dvfc80\n');
     // Keep sending garbage past the lease window — it must not keep the car alive.
     for (let i = 0; i < 12; i += 1) {
       sim.write('dvzz\n');
@@ -123,5 +123,36 @@ describe('simulator range-sensor telemetry', () => {
 
     expect(frames.some((f) => f.startsWith('rs'))).toBe(false);
     void sim.close();
+  });
+});
+
+describe('simulator proportional speed', () => {
+  const quiet = {
+    batteryIntervalMs: 1e7,
+    tempIntervalMs: 1e7,
+    rangeProblemIntervalMs: 0,
+    logger: () => {},
+  };
+  afterEach(() => jest.useRealTimers());
+
+  const steadySpeed = (frame: string): number => {
+    jest.useFakeTimers();
+    const frames: string[] = [];
+    const sim = new CarSimulator({ ...quiet, speedIntervalMs: 100 });
+    sim.onData((c) => frames.push(c));
+    void sim.open();
+    for (let i = 0; i < 12; i += 1) {
+      sim.write(frame);
+      jest.advanceTimersByTime(100);
+    }
+    const last = frames.filter((f) => f.startsWith('sp')).pop() ?? 'sp0X';
+    void sim.close();
+    return Number(last.replace('sp', '').replace('X', ''));
+  };
+
+  it('holds a higher steady speed at a higher forward level', () => {
+    const low = steadySpeed('dvfc20\n');
+    const high = steadySpeed('dvfc100\n');
+    expect(high).toBeGreaterThan(low);
   });
 });
