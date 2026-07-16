@@ -498,3 +498,18 @@ together (before the fix, only the throttle codes appeared). Autolinking pulls i
 the native module, so this needs an **APK rebuild** (same Apple-Silicon `aapt2`
 caveat as the rest of the native build — build via CI/x86 or a local SDK).
 
+---
+
+## 9. Variable-throttle touchpad (2026)
+
+The two forward/reverse drive buttons were replaced by a left-side vertical
+throttle touchpad (`ThrottlePad`): top three-quarters for variable forward
+(0..100%), bottom quarter for fixed reverse, boundary neutral, spring-return.
+The `dv` drive-state wire frame now carries a third component — a forward level
+magnitude ('dvfc80' = forward, centre, 80%; neutral/'dvnc' and reverse/'dvbc'
+never carry a level). See `shared/protocol.ts` (DRIVE_LEVEL_MIN/MAX/STEP and
+`encodeDriveState`), `src/utils/throttle-curve.ts` (app-side expo mapping), and
+CLAUDE.md §drive-controls. The firmware maps 0..100 linearly onto the ESC angle
+(90° idle to `speedFactor`°), so the Speed (`sf`) setting is now the max-speed
+ceiling.
+
