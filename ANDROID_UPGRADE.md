@@ -513,3 +513,8 @@ CLAUDE.md §drive-controls. The firmware maps 0..100 linearly onto the ESC angle
 (90° idle to `speedFactor`°), so the Speed (`sf`) setting is now the max-speed
 ceiling.
 
+Full context: the implementation plan
+[`docs/superpowers/plans/2026-07-16-variable-throttle-touchpad.md`](docs/superpowers/plans/2026-07-16-variable-throttle-touchpad.md)
+and the design spec
+[`docs/superpowers/specs/2026-07-16-variable-throttle-touchpad-design.md`](docs/superpowers/specs/2026-07-16-variable-throttle-touchpad-design.md).
+

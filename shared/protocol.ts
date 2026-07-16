@@ -28,19 +28,20 @@ export const CODE_LENGTH = 2;
  */
 export const COMMAND_CODES = {
   /**
-   * Absolute drive state ("motion lease") — value is "<throttle><steer>[level]",
-   * e.g. 'dvfc' = forward + straight (no level), 'dvnc' = fully idle.
-   * Forward frames also carry a 0..100 magnitude ('dvfc80' = forward, centre, 80%);
-   * neutral and reverse never do. See DRIVE_THROTTLE / DRIVE_STEER, DRIVE_LEVEL_*,
-   * and {@link encodeDriveState}. The app re-asserts the FULL state on every
-   * change and on a fixed cadence; the firmware treats a non-neutral throttle as
-   * valid only for MOTION_LEASE_MS since the last dv frame, then coasts to
-   * neutral. This replaces BOTH the old edge-triggered drive buttons ('db'
-   * press/release events — a lost release frame meant a runaway car) and the old
-   * 'kp' keep-alive (liveness inference that both false-tripped and kept a stale
-   * throttle alive). There is deliberately NO keep-alive concept anywhere in this
-   * protocol: the only thing that keeps the car moving is the operator's finger,
-   * restated a few times a second.
+   * Absolute drive state ("motion lease") — value is "<throttle><steer>[level]".
+   * The app ALWAYS includes the 0..100 magnitude on a forward frame ('dvfc80' =
+   * forward at 80% + straight); neutral and reverse never carry a level ('dvnc' =
+   * fully idle, 'dvbc' = reverse + straight). ({@link encodeDriveState} still
+   * permits a bare 'dvfc' when `level` is omitted, but the app never emits that.)
+   * See DRIVE_THROTTLE / DRIVE_STEER, DRIVE_LEVEL_*, and {@link encodeDriveState}.
+   * The app re-asserts the FULL state on every change and on a fixed cadence; the
+   * firmware treats a non-neutral throttle as valid only for MOTION_LEASE_MS since
+   * the last dv frame, then coasts to neutral. This replaces BOTH the old
+   * edge-triggered drive buttons ('db' press/release events — a lost release frame
+   * meant a runaway car) and the old 'kp' keep-alive (liveness inference that both
+   * false-tripped and kept a stale throttle alive). There is deliberately NO
+   * keep-alive concept anywhere in this protocol: the only thing that keeps the
+   * car moving is the operator's finger, restated a few times a second.
    */
   DRIVE_STATE: 'dv',
   STEER_CALIBRATE: 'sc',
