@@ -53,20 +53,20 @@ describe('drive session (motion lease sender)', () => {
     expect(mockAcquire).toHaveBeenCalledTimes(1);
   });
 
-  it('sends a state change immediately, then refreshes it every 150ms while engaged', () => {
+  it('sends a forward level immediately, then refreshes it every 150ms while engaged', () => {
     startDriveSession();
     mockSend.mockClear();
 
-    setThrottle(DRIVE_THROTTLE.FORWARD);
-    expect(sentFrames()).toEqual(['dvfc']); // immediate
+    setThrottle(DRIVE_THROTTLE.FORWARD, 80);
+    expect(sentFrames()).toEqual(['dvfc80']); // immediate (direction change)
 
-    jest.advanceTimersByTime(460); // ticks at 150/300/450 all re-assert
-    expect(sentFrames()).toEqual(['dvfc', 'dvfc', 'dvfc', 'dvfc']);
+    jest.advanceTimersByTime(460); // heartbeats at 150/300/450 re-assert
+    expect(sentFrames()).toEqual(['dvfc80', 'dvfc80', 'dvfc80', 'dvfc80']);
   });
 
   it('drops to the slow idle tick once everything is released', () => {
     startDriveSession();
-    setThrottle(DRIVE_THROTTLE.FORWARD);
+    setThrottle(DRIVE_THROTTLE.FORWARD, 80);
     setThrottle(DRIVE_THROTTLE.NEUTRAL);
     mockSend.mockClear();
 
@@ -86,24 +86,24 @@ describe('drive session (motion lease sender)', () => {
     expect(mockSend).not.toHaveBeenCalled();
   });
 
-  it('combines throttle and steering into one absolute state', () => {
+  it('combines throttle+level and steering into one absolute state', () => {
     startDriveSession();
     mockSend.mockClear();
-    setThrottle(DRIVE_THROTTLE.FORWARD);
+    setThrottle(DRIVE_THROTTLE.FORWARD, 80);
     setSteer(DRIVE_STEER.LEFT);
-    expect(sentFrames()).toEqual(['dvfc', 'dvfl']);
+    expect(sentFrames()).toEqual(['dvfc80', 'dvfl80']);
   });
 
   it('backgrounding zeroes the state, sends one stop, and stops streaming', () => {
     startDriveSession();
-    setThrottle(DRIVE_THROTTLE.FORWARD);
+    setThrottle(DRIVE_THROTTLE.FORWARD, 80);
     mockSend.mockClear();
 
     mockChangeHandler?.('background');
     expect(sentFrames()).toEqual([COMMAND_CODES.STOP]);
 
     // Suspended: no dv frames flow, and input is ignored until foregrounded.
-    setThrottle(DRIVE_THROTTLE.FORWARD);
+    setThrottle(DRIVE_THROTTLE.FORWARD, 80);
     jest.advanceTimersByTime(1000);
     expect(sentFrames()).toEqual([COMMAND_CODES.STOP]);
   });
@@ -137,5 +137,48 @@ describe('drive session (motion lease sender)', () => {
     // Fully stopped: no stray timers keep sending.
     jest.advanceTimersByTime(2000);
     expect(sentFrames()).toEqual([COMMAND_CODES.STOP]);
+  });
+
+  it('coalesces rapid same-direction level changes', () => {
+    startDriveSession();
+    mockSend.mockClear();
+
+    setThrottle(DRIVE_THROTTLE.FORWARD, 10); // immediate (direction change)
+    jest.advanceTimersByTime(20);
+    setThrottle(DRIVE_THROTTLE.FORWARD, 35); // +20ms < 60ms -> coalesced
+    jest.advanceTimersByTime(20);
+    setThrottle(DRIVE_THROTTLE.FORWARD, 55); // +40ms < 60ms -> coalesced
+    expect(sentFrames()).toEqual(['dvfc10']);
+
+    jest.advanceTimersByTime(40); // t=80ms, still before the 150ms heartbeat
+    setThrottle(DRIVE_THROTTLE.FORWARD, 60); // >=60ms since last send -> sends
+    expect(sentFrames()).toEqual(['dvfc10', 'dvfc60']);
+  });
+
+  it('the 150ms heartbeat re-asserts the latest coalesced level', () => {
+    startDriveSession();
+    mockSend.mockClear();
+
+    setThrottle(DRIVE_THROTTLE.FORWARD, 10); // immediate
+    jest.advanceTimersByTime(20);
+    setThrottle(DRIVE_THROTTLE.FORWARD, 35); // coalesced (dropped)
+    jest.advanceTimersByTime(130); // t=150ms -> heartbeat asserts current state
+    expect(sentFrames()).toEqual(['dvfc10', 'dvfc35']);
+  });
+
+  it('a release to neutral is sent immediately, even inside the coalescing window', () => {
+    startDriveSession();
+    setThrottle(DRIVE_THROTTLE.FORWARD, 50);
+    mockSend.mockClear();
+    setThrottle(DRIVE_THROTTLE.NEUTRAL); // direction change -> immediate
+    expect(sentFrames()).toEqual(['dvnc']);
+  });
+
+  it('treats a forward level below one step as neutral', () => {
+    startDriveSession();
+    setThrottle(DRIVE_THROTTLE.FORWARD, 40); // dvfc40
+    mockSend.mockClear();
+    setThrottle(DRIVE_THROTTLE.FORWARD, 2); // below DRIVE_LEVEL_STEP -> coasts to neutral
+    expect(sentFrames()).toEqual(['dvnc']);
   });
 });
