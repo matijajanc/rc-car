@@ -81,6 +81,17 @@ export const DRIVE_STEER = {
 export type SteerState = (typeof DRIVE_STEER)[keyof typeof DRIVE_STEER];
 
 /**
+ * Forward throttle magnitude carried by a 'dv' frame ("dvfc80" = forward,
+ * centre, 80%). Only the FORWARD throttle carries a level; neutral and reverse
+ * never do. The app quantizes to DRIVE_LEVEL_STEP and never emits a forward
+ * frame below one step (it sends neutral instead — see src/utils/drive-state.ts).
+ * The firmware maps 0..100 linearly onto the ESC angle 90 (idle) .. speedFactor.
+ */
+export const DRIVE_LEVEL_MIN = 0;
+export const DRIVE_LEVEL_MAX = 100;
+export const DRIVE_LEVEL_STEP = 5;
+
+/**
  * Motion-lease timings (ms). These three numbers are a tuned set — change them
  * together or not at all:
  *  - MOTION_LEASE_MS: how long the firmware honours a non-neutral throttle
@@ -97,9 +108,17 @@ export const MOTION_LEASE_MS = 600;
 export const DRIVE_STATE_ACTIVE_REFRESH_MS = 150;
 export const DRIVE_STATE_IDLE_REFRESH_MS = 1000;
 
-/** Build the body of a drive-state command, e.g. ('f','c') -> 'dvfc'. */
-export function encodeDriveState(throttle: ThrottleState, steer: SteerState): string {
-  return `${COMMAND_CODES.DRIVE_STATE}${throttle}${steer}`;
+/** Build the body of a drive-state command, e.g. ('f','c',80) -> 'dvfc80'. The
+ * level is appended only for a FORWARD throttle and is clamped to 0..100; a
+ * missing level (or any non-forward throttle) yields the bare frame, e.g.
+ * ('n','l') -> 'dvnl'. */
+export function encodeDriveState(throttle: ThrottleState, steer: SteerState, level?: number): string {
+  const base = `${COMMAND_CODES.DRIVE_STATE}${throttle}${steer}`;
+  if (throttle === DRIVE_THROTTLE.FORWARD && level !== undefined) {
+    const clamped = Math.max(DRIVE_LEVEL_MIN, Math.min(DRIVE_LEVEL_MAX, Math.round(level)));
+    return `${base}${clamped}`;
+  }
+  return base;
 }
 
 /**

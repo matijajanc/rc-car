@@ -23,4 +23,13 @@ describe('app <-> car protocol', () => {
   it('frames an underglow colour command with its compound "<r>,<b>" value', () => {
     expect(frameCommand(COMMAND_CODES.UNDERGLOW_COLOR, '255,64')).toBe('lc255,64\n');
   });
+
+  it('appends a forward level only to forward frames', () => {
+    expect(frameCommand(encodeDriveState(DRIVE_THROTTLE.FORWARD, DRIVE_STEER.CENTER, 80))).toBe(
+      'dvfc80\n',
+    );
+    expect(frameCommand(encodeDriveState(DRIVE_THROTTLE.REVERSE, DRIVE_STEER.CENTER, 80))).toBe(
+      'dvbc\n',
+    );
+  });
 });

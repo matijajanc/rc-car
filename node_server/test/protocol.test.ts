@@ -2,6 +2,9 @@ import {
   CODE_LENGTH,
   COMMAND_CODES,
   COMMAND_TERMINATOR,
+  DRIVE_LEVEL_MAX,
+  DRIVE_LEVEL_MIN,
+  DRIVE_LEVEL_STEP,
   DRIVE_STEER,
   DRIVE_THROTTLE,
   TELEMETRY_CODES,
@@ -125,6 +128,26 @@ describe('drive state (dv)', () => {
 
   it('maps the code back to its name', () => {
     expect(commandName(COMMAND_CODES.DRIVE_STATE)).toBe('DRIVE_STATE');
+  });
+
+  it('appends a forward level and clamps it to 0..100', () => {
+    expect(encodeDriveState(DRIVE_THROTTLE.FORWARD, DRIVE_STEER.CENTER, 80)).toBe('dvfc80');
+    expect(encodeDriveState(DRIVE_THROTTLE.FORWARD, DRIVE_STEER.LEFT, 0)).toBe('dvfl0');
+    expect(encodeDriveState(DRIVE_THROTTLE.FORWARD, DRIVE_STEER.CENTER, 130)).toBe('dvfc100');
+    expect(encodeDriveState(DRIVE_THROTTLE.FORWARD, DRIVE_STEER.CENTER, -5)).toBe('dvfc0');
+  });
+
+  it('never appends a level to neutral or reverse', () => {
+    expect(encodeDriveState(DRIVE_THROTTLE.NEUTRAL, DRIVE_STEER.CENTER, 80)).toBe('dvnc');
+    expect(encodeDriveState(DRIVE_THROTTLE.REVERSE, DRIVE_STEER.RIGHT, 80)).toBe('dvbr');
+  });
+
+  it('omitting the level keeps the bare forward frame (back-compatible)', () => {
+    expect(encodeDriveState(DRIVE_THROTTLE.FORWARD, DRIVE_STEER.CENTER)).toBe('dvfc');
+  });
+
+  it('exposes the level quantization constants', () => {
+    expect([DRIVE_LEVEL_MIN, DRIVE_LEVEL_MAX, DRIVE_LEVEL_STEP]).toEqual([0, 100, 5]);
   });
 });
 
