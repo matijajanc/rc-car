@@ -12,8 +12,8 @@ import CarAlert from './CarAlert';
 import ThrottlePad from './ThrottlePad/ThrottlePad';
 
 interface Props {
-  /** Press reports the direction; release reports neutral/centre. */
-  onThrottle: (throttle: ThrottleState) => void;
+  /** Reports the desired throttle; forward carries a 0..100 level. */
+  onThrottle: (throttle: ThrottleState, level?: number) => void;
   onSteer: (steer: SteerState) => void;
   navigate: (route: string) => void;
 }
