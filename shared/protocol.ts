@@ -112,7 +112,11 @@ export const DRIVE_STATE_IDLE_REFRESH_MS = 1000;
  * level is appended only for a FORWARD throttle and is clamped to 0..100; a
  * missing level (or any non-forward throttle) yields the bare frame, e.g.
  * ('n','l') -> 'dvnl'. */
-export function encodeDriveState(throttle: ThrottleState, steer: SteerState, level?: number): string {
+export function encodeDriveState(
+  throttle: ThrottleState,
+  steer: SteerState,
+  level?: number,
+): string {
   const base = `${COMMAND_CODES.DRIVE_STATE}${throttle}${steer}`;
   if (throttle === DRIVE_THROTTLE.FORWARD && level !== undefined) {
     const clamped = Math.max(DRIVE_LEVEL_MIN, Math.min(DRIVE_LEVEL_MAX, Math.round(level)));
