@@ -16,7 +16,9 @@
  * the ABSOLUTE drive state ("dv<throttle><steer>", throttle f/n/b, steer l/c/r)
  * on every change and on a fixed cadence while any control is engaged. A
  * non-neutral throttle is honoured only for motionLeaseMs since the last dv
- * frame; after that the car coasts to neutral and waits. Consequences:
+ * frame; after that the car coasts to neutral and waits. Forward frames carry
+ * a 0..100 level ("dvfc80") mapped onto the ESC angle 90..speedFactor.
+ * Consequences:
  *   - a lost frame is corrected by the next refresh (absolute state, so a lost
  *     "release" can never leave the throttle stuck — the old edge-triggered
  *     db press/release protocol had exactly that runaway failure mode);
@@ -268,7 +270,7 @@ void handleCommand(const char *line) {
   // on a fixed cadence, so a lost frame is corrected by the next one.
   if (strncmp(line, "dv", 2) == 0) {
     if (line[2] != '\0' && line[3] != '\0') {
-      applyDriveState(line[2], line[3]);
+      applyDriveState(line[2], line[3], atoi(line + 4));
     }
     return;
   }
@@ -373,12 +375,14 @@ void handleCommand(const char *line) {
 // Apply one absolute drive-state frame. Frames repeat while a control is held,
 // so servo writes are idempotent re-assertions; the light/blinker effects key
 // off the state TRANSITIONS so refreshes don't retrigger them.
-void applyDriveState(char throttle, char steer) {
+void applyDriveState(char throttle, char steer, int level) {
   // Malformed input must never extend the motion lease.
   if ((throttle != 'f' && throttle != 'n' && throttle != 'b') ||
       (steer != 'l' && steer != 'c' && steer != 'r')) {
     return;
   }
+  if (level < 0) level = 0;
+  if (level > 100) level = 100;
   lastDriveStateAt = millis();
   byte throttleChanged = (throttle != throttleState) ? 1 : 0;
   byte steerChanged = (steer != steerState) ? 1 : 0;
@@ -387,12 +391,13 @@ void applyDriveState(char throttle, char steer) {
 
   // Throttle
   if (throttle == 'f') {
-    // A FRESH forward press overrides an engaged front-obstacle brake
-    // (preventNeutral), exactly like a new press did with the old buttons; a
-    // mere refresh of an already-held forward does NOT fight the brake's own
-    // 35ms reassertion loop.
+    // Map the 0..100 forward level onto the ESC servo range: 90 (idle) up to
+    // speedFactor (the app's "max speed" setting). level 100 == the old
+    // single-speed behaviour. A FRESH forward press still overrides an engaged
+    // front-obstacle brake; a mere level change while already forward does not.
+    int angle = 90 + (int)((long)(speedFactor - 90) * level / 100);
     if (throttleChanged || preventNeutral == 0) {
-      driveSrv.write(speedFactor);
+      driveSrv.write(angle);
       preventNeutral = 0;
       preventBackward = 0;
     }
