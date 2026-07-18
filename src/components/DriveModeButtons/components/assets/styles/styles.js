@@ -49,7 +49,9 @@ const styles = StyleSheet.create({
     // Same 40px inset as the old throttle buttons — clears the landscape
     // edge-swipe (back) gesture zone.
     left: 40,
-    top: 15,
+    // Dropped the top down ~15% of screen height (was a flat 15px) so the
+    // forward end of the pad sits lower and stays reachable with a phone case.
+    top: '15%',
     bottom: 15,
     width: 96,
     zIndex: 2,
