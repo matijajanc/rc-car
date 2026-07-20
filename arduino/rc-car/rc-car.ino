@@ -16,16 +16,21 @@
  * the ABSOLUTE drive state ("dv<throttle><steer>", throttle f/n/b, steer l/c/r)
  * on every change and on a fixed cadence while any control is engaged. A
  * non-neutral throttle is honoured only for motionLeaseMs since the last dv
- * frame; after that the car coasts to neutral and waits. Forward frames carry
- * a 0..100 level ("dvfc80") mapped onto the ESC angle 90..speedFactor.
- * Consequences:
+ * frame; after that the operator (or the link to them) is gone. If the car was
+ * rolling forward it actively BRAKES to a full stop (brake-to-stop, see
+ * startBrakeToStop/brakeToStop) rather than freewheeling into something, then
+ * settles to neutral and waits. Forward frames carry a 0..100 level ("dvfc80")
+ * mapped onto the ESC angle 90..speedFactor. Consequences:
  *   - a lost frame is corrected by the next refresh (absolute state, so a lost
  *     "release" can never leave the throttle stuck — the old edge-triggered
  *     db press/release protocol had exactly that runaway failure mode);
  *   - a dead app / dead link / dead bridge all look identical here: dv frames
- *     stop, the lease expires, the car coasts. Nothing upstream can keep the
- *     car moving on the operator's behalf, because nothing else exists that
- *     extends the lease;
+ *     stop, the lease expires, the car brakes to a stop. Nothing upstream can
+ *     keep the car moving on the operator's behalf, because nothing else exists
+ *     that extends the lease;
+ *   - a DELIBERATE stop (leaving the drive screen / backgrounding / the bridge
+ *     seeing the last socket close -> 'st') and the motor-temp cutoff still
+ *     coast to neutral via stopCar(); only a lost link mid-drive brakes;
  *   - a parked car (neutral throttle) needs no lease and no traffic at all.
  *
  * The 2018 accelerometer drive mode (dm/ad/as) was removed when this firmware
@@ -53,11 +58,36 @@ char cmd[16];                // serial command line buffer (replaces String inBy
 
 // Motion lease — see the header comment. Must match MOTION_LEASE_MS in
 // shared/protocol.ts. The app refreshes an engaged control every 150ms, so the
-// lease tolerates 3-4 consecutive lost/late frames before coasting.
-const unsigned long motionLeaseMs = 600;
+// lease tolerates 2 consecutive lost/late frames before it expires.
+const unsigned long motionLeaseMs = 400;
 char throttleState = 'n';          // last commanded throttle: f / n / b
 char steerState = 'c';             // last commanded steering: l / c / r
 unsigned long lastDriveStateAt = 0;
+
+// Brake-to-stop — when the motion lease expires while rolling forward (the app,
+// link or bridge went away mid-drive, e.g. the car drove out of Wi-Fi range) we
+// HOLD the ESC in brake until the car has actually stopped, then settle to
+// neutral. A freewheeling car used to coast into things. Because holding the
+// brake past standstill becomes reverse THRUST on this ESC, three independent
+// release conditions guarantee we can never sit in reverse: no wheel pulse for
+// brakeQuietMs (wheels at rest), the wheels turning backward, or a hard time cap.
+// The quiet-window / direction-flip are the PRIMARY release and decide the real
+// stop time; the cap is only a backstop for when the speed sensor lies or dies.
+//
+// The cap MUST be longer than a genuine stop or it truncates the brake and the
+// car coasts the rest — and a full-speed stop can take ~3s. But sizing every cap
+// for top speed would allow a long reverse-runaway if the sensor fails after a
+// LOW-speed drop. So scale the cap with speedFactor (the max-speed setting): a
+// gentle setting gets a short cap, the top setting gets brakeCapMaxMs. All of
+// these are tunable and MUST be bench-tested on the car (wheels off the ground).
+byte braking = 0;
+unsigned long brakeStartedAt = 0;
+unsigned long brakeCapMs = 0;                 // hard cap for THIS brake; set in startBrakeToStop
+const unsigned long brakeQuietMs = 150;       // no wheel pulse this long => stopped
+const unsigned long brakeCapMinMs = 800;      // cap at the lowest speed setting
+const unsigned long brakeCapMaxMs = 3500;     // cap at brakeSpeedFactorMax (>= worst real stop)
+const int brakeSpeedFactorMax = 165;          // speedFactor that maps to brakeCapMaxMs
+volatile unsigned long lastPulseAt = 0;       // millis() of the last wheel pulse (set in ISR)
 
 int tempMotorT;
 int rangeT;
@@ -106,7 +136,7 @@ volatile int rpmcount = 0;
 int rpm = 0;
 unsigned long lastmillis = 0;
 int carSpeed = 0;
-volatile char speedDirection;
+volatile char speedDirection = 'n';  // 'f'/'b' once wheels turn; 'n' until then
 const int directionPin = 3;
 
 // Range Sensors (Front)
@@ -212,10 +242,15 @@ void loop() {
 
   // Motion lease: while the throttle is non-neutral, a fresh dv frame must have
   // arrived within motionLeaseMs — otherwise the operator (or the link to them)
-  // is gone and we coast to neutral. Neutral needs no lease. The unsigned
-  // subtraction is rollover-safe.
+  // is gone. Rather than freewheel, brake to a full stop if we were rolling
+  // forward. Neutral needs no lease. The unsigned subtraction is rollover-safe.
   if (throttleState != 'n' && currentMillis - lastDriveStateAt > motionLeaseMs) {
-    stopCar();
+    startBrakeToStop();
+  }
+  // Drive the brake-to-stop control loop each iteration until the car has
+  // actually stopped, then it releases itself to neutral.
+  if (braking) {
+    brakeToStop();
   }
 
   // Blinkers
@@ -384,6 +419,7 @@ void applyDriveState(char throttle, char steer, int level) {
   if (level < 0) level = 0;
   if (level > 100) level = 100;
   lastDriveStateAt = millis();
+  braking = 0;  // a fresh operator frame means the link is back — it owns the ESC now
   byte throttleChanged = (throttle != throttleState) ? 1 : 0;
   byte steerChanged = (steer != steerState) ? 1 : 0;
   throttleState = throttle;
@@ -458,10 +494,13 @@ void sendTelemetry(const char *code, long value) {
   Serial.print('X');
 }
 
-// Safety stop: coast to neutral throttle, centre the steering, and reset the
-// tracked drive state so the expired lease can't re-trip. Fired by the motion
-// lease, an explicit 'st', and the motor-temperature cutoff.
+// Deliberate stop: coast to neutral throttle, centre the steering, and reset the
+// tracked drive state. Fired by an explicit 'st' (leaving the drive screen, app
+// backgrounded, the bridge seeing the last socket close) and the motor-temp
+// cutoff. The lost-link case is NOT here — it brakes to a stop, see
+// startBrakeToStop(); this path deliberately just coasts.
 void stopCar() {
+  braking = 0;
   driveSrv.write(90);
   turnservo.write(90 + steerCalib);
   throttleState = 'n';
@@ -480,9 +519,69 @@ void stopCar() {
   analogWrite(blueLED, 0);
 }
 
+// Begin a lost-link brake-to-stop (the motion lease expired mid-drive). Straighten
+// up and raise the stop/alert signals, then — only if we were rolling forward —
+// hold the ESC in brake and hand off to brakeToStop(). Anything else (already
+// stopped, or was reversing) just neutralises. throttleState is reset to 'n' so
+// the expired lease can't re-enter this every loop.
+void startBrakeToStop() {
+  throttleState = 'n';
+  steerState = 'c';
+  turnservo.write(90 + steerCalib);
+
+  digitalWrite(stopLED, HIGH);
+  blinkers4State = 0;
+  blinkON = 0;
+  ledState = 0;
+  digitalWrite(blinkLLED, LOW);
+  digitalWrite(blinkRLED, LOW);
+  analogWrite(redLED, 255);
+  analogWrite(blueLED, 0);
+
+  if (speedDirection == 'f') {
+    braking = 1;
+    brakeStartedAt = currentMillis;
+    // Size the hard cap to the current max-speed setting: linear from
+    // brakeCapMinMs at idle (speedFactor 90) to brakeCapMaxMs at brakeSpeedFactorMax.
+    int sf = speedFactor;
+    if (sf < 90) sf = 90;
+    if (sf > brakeSpeedFactorMax) sf = brakeSpeedFactorMax;
+    brakeCapMs = brakeCapMinMs +
+                 (brakeCapMaxMs - brakeCapMinMs) * (unsigned long)(sf - 90) / (brakeSpeedFactorMax - 90);
+    driveSrv.write(15);
+  } else {
+    braking = 0;
+    driveSrv.write(90);
+  }
+}
+
+// Hold the ESC in brake until the car has actually stopped, then settle to
+// neutral. Releases as soon as ANY of: no wheel pulse for brakeQuietMs (the
+// wheels are at rest — this naturally scales with speed, so a fast car brakes
+// hard and a crawl releases early), the wheels start turning backward, or the
+// speed-scaled brakeCapMs hard cap (backstop so a silent speed sensor can never
+// leave us commanding reverse). lastPulseAt is read with interrupts off — it is
+// a 4-byte value the wheel ISR also writes, so a plain read could tear.
+void brakeToStop() {
+  noInterrupts();
+  unsigned long pulseAt = lastPulseAt;
+  interrupts();
+
+  byte stopped = (currentMillis - pulseAt > brakeQuietMs) ||
+                 (speedDirection == 'b') ||
+                 (currentMillis - brakeStartedAt > brakeCapMs);
+  if (stopped) {
+    driveSrv.write(90);
+    braking = 0;
+  } else {
+    driveSrv.write(15);
+  }
+}
+
 // Car Speed (read RPM)
 void car_rpm() {
   rpmcount++;
+  lastPulseAt = millis();  // for the brake-to-stop quiet-window
   car_dir();
 }
 

@@ -107,7 +107,7 @@ export async function startBridge(
   // The serial link can be down/reopening at any moment (car off, cable out,
   // mid-reconnect) and its write() may throw. A crashed bridge is strictly
   // worse than a dropped frame — the car's own motion lease coasts it to
-  // neutral within ~600ms when frames stop — so drop-and-warn (throttled)
+  // neutral within ~400ms when frames stop — so drop-and-warn (throttled)
   // instead of letting a relay write take the process down.
   let writeWarnedAt = 0;
   function writeToCar(frame: string): void {

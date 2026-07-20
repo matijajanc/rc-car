@@ -25,7 +25,7 @@ export type CarLinkStatus = 'alive' | 'lost';
 export const CAR_LINK_EVENT = 'carLinkStatus';
 
 // The firmware streams `sp` every ~500ms; require several missed frames so
-// normal jitter never trips the alert. Comfortably above the car's own 600ms
+// normal jitter never trips the alert. Comfortably above the car's own 400ms
 // motion-lease window and under the server's 3s telemetry-gap log.
 const CAR_LINK_TIMEOUT_MS = 2500;
 const CHECK_INTERVAL_MS = 500;

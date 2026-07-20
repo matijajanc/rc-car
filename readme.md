@@ -148,8 +148,10 @@ the firmware and protocol now match what the app actually sends.)*
 
 - **Motion lease** — the app streams the absolute drive state (`dv<throttle><steer>`)
   every 150 ms while a control is held; a non-neutral throttle is only honoured for
-  ~600 ms since the last frame, then the car coasts to neutral. There is no
-  keep-alive: nothing can keep the car moving except the operator's finger,
+  ~400 ms since the last frame. After that a car that was rolling forward **brakes
+  to a full stop** (a lost link mid-drive would otherwise freewheel into things); a
+  deliberate stop (`st`) or the motor-temp cutoff still coasts to neutral. There is
+  no keep-alive: nothing can keep the car moving except the operator's finger,
   restated a few times a second. This is the main safety net.
 - **Motor-temperature cutoff** — the car stops if the LM35 (A0) reads ≥ 50 °C.
 - **Obstacle brake** — the front ultrasonic brakes when something is within

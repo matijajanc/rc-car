@@ -21,7 +21,7 @@ import { acquireDriveLocks, releaseDriveLocks } from './drive-locks';
  * frame: immediately on a direction change, coalesced (>= SEND_MIN_INTERVAL_MS)
  * on same-direction level changes, re-asserted every 150ms while engaged, and
  * once a second while idle. The firmware honours a non-neutral throttle only for
- * ~600ms since the last frame, so a lost frame self-corrects on the next one.
+ * ~400ms since the last frame, so a lost frame self-corrects on the next one.
  *
  * A resting finger sends neutral (a forward level below one step is coerced to
  * neutral), so it holds no lease and the first real push is an n->f press.

@@ -36,7 +36,9 @@ export const COMMAND_CODES = {
    * See DRIVE_THROTTLE / DRIVE_STEER, DRIVE_LEVEL_*, and {@link encodeDriveState}.
    * The app re-asserts the FULL state on every change and on a fixed cadence; the
    * firmware treats a non-neutral throttle as valid only for MOTION_LEASE_MS since
-   * the last dv frame, then coasts to neutral. This replaces BOTH the old
+   * the last dv frame, then brakes a forward-moving car to a full stop — a lost
+   * link mid-drive used to freewheel (a deliberate 'st' still coasts). This
+   * replaces BOTH the old
    * edge-triggered drive buttons ('db' press/release events — a lost release frame
    * meant a runaway car) and the old 'kp' keep-alive (liveness inference that both
    * false-tripped and kept a stale throttle alive). There is deliberately NO
@@ -98,16 +100,17 @@ export const DRIVE_LEVEL_STEP = 5;
  * Motion-lease timings (ms). These three numbers are a tuned set — change them
  * together or not at all:
  *  - MOTION_LEASE_MS: how long the firmware honours a non-neutral throttle
- *    without a fresh dv frame before coasting to neutral. The firmware has its
- *    own copy (`motionLeaseMs` in arduino/rc-car/rc-car.ino) that MUST match.
- *  - ACTIVE refresh: dv cadence while any control is engaged — 4 consecutive
- *    lost/late frames before the car coasts, and dense enough uplink traffic to
- *    keep the phone's Wi-Fi radio out of power-save while driving.
+ *    without a fresh dv frame before the lease expires (a forward-moving car
+ *    then brakes to a stop). The firmware has its own copy (`motionLeaseMs` in
+ *    arduino/rc-car/rc-car.ino) that MUST match.
+ *  - ACTIVE refresh: dv cadence while any control is engaged — 2 consecutive
+ *    lost/late frames before the lease expires, and dense enough uplink traffic
+ *    to keep the phone's Wi-Fi radio out of power-save while driving.
  *  - IDLE refresh: dv cadence while everything is neutral. Not a safety signal
  *    (a parked car needs no lease) — it only keeps the radio awake through
  *    driving pauses so the first press afterwards reacts instantly.
  */
-export const MOTION_LEASE_MS = 600;
+export const MOTION_LEASE_MS = 400;
 export const DRIVE_STATE_ACTIVE_REFRESH_MS = 150;
 export const DRIVE_STATE_IDLE_REFRESH_MS = 1000;
 

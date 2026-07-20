@@ -37,7 +37,7 @@ describe('simulator motion lease', () => {
     sim.onData((c) => frames.push(c));
     void sim.open();
 
-    // Hold forward, refreshing well inside the 600ms lease.
+    // Hold forward, refreshing well inside the 400ms lease.
     for (let i = 0; i < 6; i += 1) {
       sim.write('dvfc80\n');
       jest.advanceTimersByTime(100);
